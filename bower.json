@@ -1,0 +1,29 @@
+{
+  "name": "angular-fontselect",
+  "version": "0.0.0",
+  "authors": [
+    "Hannes Diercks <hannes.diercks@jimdo.com>"
+  ],
+  "description": "A fontselect directive for AngularJS",
+  "main": "dist/angular-fontselect.js",
+  "keywords": [
+    "fonts",
+    "directive",
+    "angular",
+    "webfonts"
+  ],
+  "license": "MIT",
+  "private": true,
+  "devDependencies": {
+    "angular": "~1.2.8",
+    "angular-mocks": "~1.2.9",
+    "jquery": "~2.0.3"
+  },
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
