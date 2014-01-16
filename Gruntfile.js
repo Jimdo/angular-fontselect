@@ -9,8 +9,10 @@ module.exports = function(grunt) {
   'use strict';
 
   var source = [
+    'src/js/helpers.js',
     'src/js/module.js',
-    'src/js/directive.js'
+    'src/js/fontselect.controller.js',
+    'src/js/fontselect.directive.js',
   ];
 
   var packageFiles = ['package.json', 'bower.json'];
@@ -122,6 +124,9 @@ module.exports = function(grunt) {
         process: function (src, filepath) {
           /* Normalize line-feeds */
           src = grunt.util.normalizelf(src);
+
+          /* Remove jshint comments */
+          src = src.replace(/[\s]*\/\* (jshint|global).*\n/g, '');
 
           /* Trim */
           src = src.replace(/^\s+|\s+$/g, '');

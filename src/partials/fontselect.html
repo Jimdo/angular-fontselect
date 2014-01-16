@@ -1,2 +1,9 @@
 <div class="fs-main">
+	<button ng-click="toggle()">Toggle</button>
+	<input type="hidden" value="{{currentFont}}"/>
+	<div class="fs-window" ng-show="active">
+		<ul>
+			<li ng-repeat="font in fonts.websave">{{font.name}}</li>
+		</ul>
+	</div>
 </div>
