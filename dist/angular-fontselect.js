@@ -9,17 +9,8 @@
  */
 (function(angular) {
   'use strict';
-  // src/js/helpers.js
-  function _bind(fn, me) {
-    return function() {
-      return fn.apply(me, arguments);
-    };
-  }
 
-  // src/js/module.js
-  angular.module('fontselect.module', []);
-
-  // src/js/fontselect.controller.js
+  // src/js/defaults.js
   /** @const */
   var CATEGORY_WEBSAVE = 'websave';
   
@@ -51,10 +42,88 @@
       stack: '"Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace'
     }
   ];
+
+  // src/js/helpers.js
+  function _bind(fn, me) {
+    return function() {
+      return fn.apply(me, arguments);
+    };
+  }
+
+  // src/js/module.js
+  var fontselectModule = angular.module('fontselect.module', []);
+
+  // src/js/fonts.service.js
+  /** @const */
+  var REQUIRED_FONT_OBJECT_KEYS = [
+    'name',
+    'key',
+    'stack'
+  ];
   
-  var FontselectController = function($scope) {
+  function FontsService($scope) {
     var self = this;
   
+    self.$scope = $scope;
+    self._init();
+  
+    return self;
+  }
+  
+  FontsService.prototype = {
+    _init: function() {
+      var self = this;
+      
+      self._fonts = self._fonts || {};
+      self._fonts[CATEGORY_WEBSAVE] = angular.copy(DEFAULT_WEBSAVE_FONTS);
+    },
+  
+    getAll: function() {
+      return this._fonts;
+    },
+  
+    add: function(fontObj, category) {
+      var self = this;
+  
+      if (angular.isString(category)) {
+        category = CATEGORY_WEBSAVE;
+      }
+  
+      if (!self.isValidFontObject(fontObj)) {
+        throw 'Invalid font object.';
+      }
+  
+      self._fonts[CATEGORY_WEBSAVE].push(fontObj);
+    },
+  
+    isValidFontObject: function(fontObj) {
+      if (!angular.isObject(fontObj)) {
+        return false;
+      }
+  
+      var valid = true;
+  
+      angular.forEach(REQUIRED_FONT_OBJECT_KEYS, function(key) {
+        if (angular.isUndefined(fontObj[key])) {
+          valid = false;
+        }
+      });
+  
+      return valid;
+    }
+  };
+  
+  fontselectModule.factory(
+    'fontselect.fonts',
+    ['$rootScope', function($rootScope) { return new FontsService($rootScope); }]
+  );
+
+  // src/js/fontselect.controller.js
+  var FontselectController = function($scope, fonts) {
+    var self = this;
+  
+    self.fonts = fonts;
+    $scope.fonts = fonts.getAll();
     self.$scope = $scope;
     self.toScope();
     self.name = 'FontselectController';
@@ -68,8 +137,6 @@
   
       $scope.active = false;
       $scope.currentFont = 'something';
-      $scope.fonts = {};
-      self.populateFonts();
       $scope.toggle = _bind(self.toggle, self);
     },
     /* Workaround to be able to get the instance from $scope in tests. */
@@ -79,20 +146,15 @@
       var $scope = this.$scope;
   
       $scope.active = !$scope.active;
-    },
-  
-    populateFonts: function() {
-      var fonts = this.$scope.fonts;
-  
-      fonts[CATEGORY_WEBSAVE] = DEFAULT_WEBSAVE_FONTS;
     }
   };
   
-  FontselectController.$inject = ['$scope'];
+  FontselectController.$inject = ['$scope', 'fontselect.fonts'];
 
   // src/js/fontselect.directive.js
-  angular.module('fontselect.module').directive('fontselect', [function() {
+  fontselectModule.directive('fontselect', [function() {
     return {
+      scope: {},
       restrict: 'E',
       templateUrl: 'fontselect.html',
       replace: true,

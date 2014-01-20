@@ -1,6 +1,7 @@
 /* global FontselectController */
-angular.module('fontselect.module').directive('fontselect', [function() {
+fontselectModule.directive('fontselect', [function() {
   return {
+    scope: {},
     restrict: 'E',
     templateUrl: 'fontselect.html',
     replace: true,

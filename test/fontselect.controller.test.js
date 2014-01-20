@@ -9,7 +9,7 @@ describe('fontselect controller', function() {
     }, self);
   };
 
-  var elm, scope, instance;
+  var elm, rootScope, scope, instance;
 
   beforeEach(module('fontselect.module'));
 
@@ -19,10 +19,11 @@ describe('fontselect controller', function() {
         '<fontselect />' +
       '</div>');
 
-    scope = $rootScope;
-    $compile(elm)(scope);
-    scope.$digest();
-    instance = elm.find('.fs-main').scope().getSelf();
+    rootScope = $rootScope;
+    $compile(elm)(rootScope);
+    rootScope.$digest();
+    scope = elm.find('.fs-main div').scope();
+    instance = scope.getSelf();
   }));
 
   it('should exist', function() {

@@ -24,3 +24,9 @@ __Complete build:__ `grunt`
 __All tests without build:__ `grunt test`
 
 __Watch and test headless on every file change:__ `grunt watch:start`
+
+
+Future Features
+---------------
+
+* We'd like to have the ability to filter/extend the font collection per directive.

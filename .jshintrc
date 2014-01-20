@@ -63,5 +63,19 @@
     "onevar"        : false,
     "passfail"      : false,
     "white"         : false,
-    "predef"        : ["angular", "describe", "beforeEach", "it", "expect", "inject", "module", "require", "_bind"]
+    "predef"        : [
+        "angular",
+        "describe",
+        "beforeEach",
+        "afterEach",
+        "it",
+        "expect",
+        "runs",
+        "waits",
+        "inject",
+        "module",
+        "require",
+        "fontselectModule",
+        "_bind"
+    ]
 }
