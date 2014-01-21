@@ -5,7 +5,7 @@ module.exports = {
     frameworks: [
       'jasmine'
     ],
-    files: files.testEnv.concat(files.source).concat([files.allPartials, files.tests])
+    files: files.testEnv.concat(files.source).concat([files.allPartialsCombined, files.unitTests])
   },
   all: {
     options: {

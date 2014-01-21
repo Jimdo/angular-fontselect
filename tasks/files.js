@@ -17,8 +17,9 @@ var files = {
     'bower_components/angular-mocks/angular-mocks.js'
   ],
   package: ['package.json', 'bower.json'],
-  allPartials: 'src/partials/all.js',
-  tests: 'test/**/*.js',
+  allPartials: 'src/partials/*.html',
+  allPartialsCombined: 'src/partials/all.js',
+  unitTests: 'test/unit/**/*.js',
   partialsDir: 'src/partials',
   allHTML: '*.html'
 };

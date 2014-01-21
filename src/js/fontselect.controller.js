@@ -1,9 +1,11 @@
+var id = 1;
 
 var FontselectController = function($scope, fonts) {
   var self = this;
 
   self.fonts = fonts;
   $scope.fonts = fonts.getAll();
+  $scope.id = id++;
   self.$scope = $scope;
   self.toScope();
   self.name = 'FontselectController';
@@ -15,8 +17,10 @@ FontselectController.prototype = {
     var self = this;
     var $scope = self.$scope;
 
+    $scope.data = {
+      currentFont: undefined,
+    };
     $scope.active = false;
-    $scope.currentFont = 'something';
     $scope.toggle = _bind(self.toggle, self);
   },
   /* Workaround to be able to get the instance from $scope in tests. */
@@ -26,6 +30,10 @@ FontselectController.prototype = {
     var $scope = this.$scope;
 
     $scope.active = !$scope.active;
+  },
+
+  _resetIDs: function() {
+    id = 1;
   }
 };
 

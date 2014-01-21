@@ -1,4 +1,4 @@
-/* global DEFAULT_WEBSAVE_FONTS, CATEGORY_WEBSAVE */
+/* global DEFAULT_WEBSAFE_FONTS, CATEGORY_WEBSAFE */
 
 /** @const */
 var REQUIRED_FONT_OBJECT_KEYS = [
@@ -21,7 +21,7 @@ FontsService.prototype = {
     var self = this;
     
     self._fonts = self._fonts || {};
-    self._fonts[CATEGORY_WEBSAVE] = angular.copy(DEFAULT_WEBSAVE_FONTS);
+    self._fonts[CATEGORY_WEBSAFE] = angular.copy(DEFAULT_WEBSAFE_FONTS);
   },
 
   getAll: function() {
@@ -32,14 +32,14 @@ FontsService.prototype = {
     var self = this;
 
     if (angular.isString(category)) {
-      category = CATEGORY_WEBSAVE;
+      category = CATEGORY_WEBSAFE;
     }
 
     if (!self.isValidFontObject(fontObj)) {
       throw 'Invalid font object.';
     }
 
-    self._fonts[CATEGORY_WEBSAVE].push(fontObj);
+    self._fonts[CATEGORY_WEBSAFE].push(fontObj);
   },
 
   isValidFontObject: function(fontObj) {

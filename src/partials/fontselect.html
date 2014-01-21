@@ -1,9 +1,12 @@
-<div class="fs-main">
+<div class="fs-main" id="fontselect-{{id}}">
 	<button ng-click="toggle()">Toggle</button>
-	<input type="hidden" value="{{currentFont}}"/>
+	<input type="hidden" value="{{data.currentFont}}"/>
 	<div class="fs-window" ng-show="active">
 		<ul>
-			<li ng-repeat="font in fonts.websave">{{font.name}}</li>
+			<li ng-repeat="font in fonts.websafe">
+				<input type="radio" ng-model="data.currentFont" value="{{font.key}}" id="fs-{{id}}-font-{{font.key}}" />
+				<label for="fs-{{id}}-font-{{font.key}}">{{font.name}}</label>
+			</li>
 		</ul>
 	</div>
 </div>

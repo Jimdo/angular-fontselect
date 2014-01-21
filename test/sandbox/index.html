@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Angular Fontselect Sandbox</title>
+</head>
+<body ng-app="myApp">
+  <my-app>
+  </my-app>
+
+  <!-- In production use:
+  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script>
+  -->
+  <script src="/bower_components/jquery/jquery.js"></script>
+  <script src="/bower_components/angular/angular.js"></script>
+  <script src="/src/js/defaults.js"></script>
+  <script src="/src/js/helpers.js"></script>
+  <script src="/src/js/module.js"></script>
+  <script src="/src/js/fonts.service.js"></script>
+  <script src="/src/js/fontselect.controller.js"></script>
+  <script src="/src/js/fontselect.directive.js"></script>
+  <script src="/src/partials/all.js"></script>
+  <script type="text/javascript">
+angular.module('myApp', ['fontselect.module']).directive('myApp', function() {
+  return {
+    restrict: 'E',
+    replace: false,
+    template: '<fontselect />',
+    controller: ['$scope', 'fontselect.fonts', function($scope, fontsService) {
+      /* do something with $scope or the fontsService (for example, add a font) */
+      fontsService.add({name: 'Foo', key: 'foo', stack: 'Foo, "Comic Sans", serif'});
+    }]
+  };
+});
+  </script>
+</body>
+</html>

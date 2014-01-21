@@ -1,7 +1,7 @@
 describe('fontsService', function() {
   'use strict';
 
-  var fontsService, customFont; //, scope, instance;
+  var fontsService, customFont;
 
   customFont = {
     name: 'Foo',
@@ -32,7 +32,7 @@ describe('fontsService', function() {
   describe('add method', function() {
     it('should expand the fonts object', function() {
       fontsService.add(customFont);
-      expect(fontsService._fonts.websave).toContain(customFont);
+      expect(fontsService._fonts.websafe).toContain(customFont);
     });
 
     it('should throw an error if we add an invalid font object', function() {
@@ -41,18 +41,4 @@ describe('fontsService', function() {
       }).toThrow();
     });
   });
-
-  // afterEach(function() {
-  //   fontsService.reset();
-  // });
-
-
-  // it('should get created', function() {
-  //   expect(rootScope.fontselectApi).toBeDefined();
-  // });
-  // it('should be able to receive additional fonts from external configuration.', function() {
-  //   expect(elm.find('li').length).toBe(5);
-  //   scope.fonts.websave.push({name: 'Foo', key: 'foo', stack: 'ASDF'});
-  //   expect(elm.find('li').length).toBe(6);
-  // });
 });

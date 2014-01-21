@@ -26,7 +26,9 @@ module.exports = function(grunt) {
   
   grunt.registerTask('watch:start', ['karma:watch:start', 'watch:andtest']);
 
-  grunt.registerTask('test', ['ngtemplates', 'jshint', 'karma:all']);
+  grunt.registerTask('test', ['ngtemplates', 'jshint', 'karma:all', 'protractor']);
+
+  grunt.registerTask('test:e2e', ['protractor']);
 
   grunt.registerTask('build', ['concat', 'uglify']);
 

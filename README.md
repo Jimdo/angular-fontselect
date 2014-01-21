@@ -26,6 +26,28 @@ __All tests without build:__ `grunt test`
 __Watch and test headless on every file change:__ `grunt watch:start`
 
 
+Sandbox
+-------
+
+There is a Sandbox for building castles and end to end testing.
+In the projects root folder execute `node-dev test/sandbox/web-server.js`
+
+Then go to http://localhost:8000/test/sandbox/index.html in your favorite browser.
+
+
+End to End Testing
+------------------
+
+Make sure you have a silenium standalone server running at port 4444
+See [protractor README](https://github.com/angular/protractor/blob/master/README.md) 
+for details.
+
+Start the [Sandbox](#sandbox)
+
+Execute `grunt protractor`
+
+
+
 Future Features
 ---------------
 

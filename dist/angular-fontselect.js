@@ -7,15 +7,15 @@
  * Copyright 2014, Jimdo, Hannes Diercks <hannes.diercks@jimdo.com>
  * Released under the MIT license
  */
-(function(angular) {
+(function(angular, undefined) {
   'use strict';
 
   // src/js/defaults.js
   /** @const */
-  var CATEGORY_WEBSAVE = 'websave';
+  var CATEGORY_WEBSAFE = 'websafe';
   
   /** @const */
-  var DEFAULT_WEBSAVE_FONTS = [
+  var DEFAULT_WEBSAFE_FONTS = [
     {
       name: 'Arial',
       key: 'arial',
@@ -75,7 +75,7 @@
       var self = this;
       
       self._fonts = self._fonts || {};
-      self._fonts[CATEGORY_WEBSAVE] = angular.copy(DEFAULT_WEBSAVE_FONTS);
+      self._fonts[CATEGORY_WEBSAFE] = angular.copy(DEFAULT_WEBSAFE_FONTS);
     },
   
     getAll: function() {
@@ -86,14 +86,14 @@
       var self = this;
   
       if (angular.isString(category)) {
-        category = CATEGORY_WEBSAVE;
+        category = CATEGORY_WEBSAFE;
       }
   
       if (!self.isValidFontObject(fontObj)) {
         throw 'Invalid font object.';
       }
   
-      self._fonts[CATEGORY_WEBSAVE].push(fontObj);
+      self._fonts[CATEGORY_WEBSAFE].push(fontObj);
     },
   
     isValidFontObject: function(fontObj) {
@@ -119,11 +119,14 @@
   );
 
   // src/js/fontselect.controller.js
+  var id = 1;
+  
   var FontselectController = function($scope, fonts) {
     var self = this;
   
     self.fonts = fonts;
     $scope.fonts = fonts.getAll();
+    $scope.id = id++;
     self.$scope = $scope;
     self.toScope();
     self.name = 'FontselectController';
@@ -135,8 +138,10 @@
       var self = this;
       var $scope = self.$scope;
   
+      $scope.data = {
+        currentFont: undefined,
+      };
       $scope.active = false;
-      $scope.currentFont = 'something';
       $scope.toggle = _bind(self.toggle, self);
     },
     /* Workaround to be able to get the instance from $scope in tests. */
@@ -146,6 +151,10 @@
       var $scope = this.$scope;
   
       $scope.active = !$scope.active;
+    },
+  
+    _resetIDs: function() {
+      id = 1;
     }
   };
   
@@ -167,7 +176,7 @@
     'use strict';
   
     $templateCache.put('fontselect.html',
-      "<div class=fs-main><button ng-click=toggle()>Toggle</button><input type=hidden value={{currentFont}}><div class=fs-window ng-show=active><ul><li ng-repeat=\"font in fonts.websave\">{{font.name}}</li></ul></div></div>"
+      "<div class=fs-main id=fontselect-{{id}}><button ng-click=toggle()>Toggle</button><input type=hidden value={{data.currentFont}}><div class=fs-window ng-show=active><ul><li ng-repeat=\"font in fonts.websafe\"><input type=radio ng-model=data.currentFont value={{font.key}} id=fs-{{id}}-font-{{font.key}}><label for=fs-{{id}}-font-{{font.key}}>{{font.name}}</label></li></ul></div></div>"
     );
   
   }]);

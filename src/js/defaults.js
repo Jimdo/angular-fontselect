@@ -1,10 +1,10 @@
 /* jshint unused: false */
 
 /** @const */
-var CATEGORY_WEBSAVE = 'websave';
+var CATEGORY_WEBSAFE = 'websafe';
 
 /** @const */
-var DEFAULT_WEBSAVE_FONTS = [
+var DEFAULT_WEBSAFE_FONTS = [
   {
     name: 'Arial',
     key: 'arial',

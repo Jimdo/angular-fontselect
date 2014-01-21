@@ -16,6 +16,6 @@ module.exports = {
   'fontselect.module': {
     cwd: files.partialsDir,
     src: files.allHTML,
-    dest: files.allPartials,
+    dest: files.allPartialsCombined,
   }
 };
