@@ -145,6 +145,16 @@ describe('fontselect directive', function() {
   });
 
   describe('font list', function() {
+
+    function normalizeFontStack(stack) {
+      stack = stack.replace(/"/g, '\'').split(',');
+      angular.forEach(stack, function(font, i) {
+        stack[i] = font.replace(/^\s+|\s+$/g, '');
+      });
+
+      return stack.join(',');
+    }
+
     it('should have radio buttons inside the list items', function() {
       expect(elm.find('li input[type="radio"]').length).toBe(5);
     });
@@ -159,8 +169,8 @@ describe('fontselect directive', function() {
     });
 
     it('should be able to provide a preview of the font', function() {
-      expect(elm.find('li label').eq(0).css('font-family').replace(/"/g, '\''))
-        .toBe(DEFAULT_WEBSAFE_FONTS[0].stack.replace(/"/g, '\''));
+      expect(normalizeFontStack(elm.find('li label').eq(0).css('font-family')))
+        .toBe(normalizeFontStack(DEFAULT_WEBSAFE_FONTS[0].stack));
     });
 
   });
