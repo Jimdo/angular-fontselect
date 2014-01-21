@@ -158,6 +158,11 @@ describe('fontselect directive', function() {
         .toBe(elm.find('label').attr('for'));
     });
 
+    it('should be able to provide a preview of the font', function() {
+      expect(elm.find('li label').eq(0).css('font-family').replace(/"/g, '\''))
+        .toBe(DEFAULT_WEBSAFE_FONTS[0].stack.replace(/"/g, '\''));
+    });
+
   });
 
   describe('search', function() {

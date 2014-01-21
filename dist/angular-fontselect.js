@@ -211,7 +211,7 @@
     'use strict';
   
     $templateCache.put('fontselect.html',
-      "<div class=fs-main id=fontselect-{{id}}><button ng-click=toggle()>Toggle</button><input type=hidden value={{data.currentFont}}><div class=fs-window ng-show=active><input name=fs-{{id}}-search ng-model=search><div><button ng-repeat=\"category in categories\" ng-class=\"{active: category.key == data.category}\" ng-click=setCategoryFilter(category.key) ng-model=data.category>{{category.name}}</button></div><ul><li ng-repeat=\"font in fonts.websafe | filter:search | filter:{category: data.category}:true \"><input type=radio ng-model=data.currentFont value={{font.key}} id=fs-{{id}}-font-{{font.key}}><label for=fs-{{id}}-font-{{font.key}}>{{font.name}}</label></li></ul></div></div>"
+      "<div class=fs-main id=fontselect-{{id}}><button ng-click=toggle()>Toggle</button><input type=hidden value={{data.currentFont}}><div class=fs-window ng-show=active><input name=fs-{{id}}-search ng-model=search><div><button ng-repeat=\"category in categories\" ng-class=\"{active: category.key == data.category}\" ng-click=setCategoryFilter(category.key) ng-model=data.category>{{category.name}}</button></div><ul><li ng-repeat=\"font in fonts.websafe | filter:search | filter:{category: data.category}:true \"><input type=radio ng-model=data.currentFont value={{font.key}} id=fs-{{id}}-font-{{font.key}}><label for=fs-{{id}}-font-{{font.key}} style=\"font-family: {{font.stack}}\">{{font.name}}</label></li></ul></div></div>"
     );
   
   }]);

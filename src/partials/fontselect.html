@@ -13,7 +13,9 @@
 		<ul>
 			<li ng-repeat="font in fonts.websafe | filter:search | filter:{category: data.category}:true ">
 				<input type="radio" ng-model="data.currentFont" value="{{font.key}}" id="fs-{{id}}-font-{{font.key}}" />
-				<label for="fs-{{id}}-font-{{font.key}}">{{font.name}}</label>
+				<label
+					for="fs-{{id}}-font-{{font.key}}"
+					style="font-family: {{font.stack}};">{{font.name}}</label>
 			</li>
 		</ul>
 	</div>
