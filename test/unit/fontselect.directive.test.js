@@ -15,27 +15,32 @@ describe('fontselect directive', function() {
     {
       name: 'Arial',
       key: 'arial',
+      category: 'sans-serif',
       stack: 'Arial, "Helvetica Neue", Helvetica, sans-serif'
     },
     {
-      name: 'Lucida Grande',
-      key: 'lucidagrande',
-      stack: '"Lucida Bright", Georgia, serif'
+      name: 'Courier New',
+      key: 'couriernew',
+      category: 'other',
+      stack: '"Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace'
     },
     {
       name: 'Verdana',
       key: 'verdana',
+      category: 'sans-serif',
       stack: 'Verdana, Geneva, sans-serif'
     },
     {
       name: 'Times New Roman',
       key: 'timesnewroman',
+      category: 'serif',
       stack: 'TimesNewRoman, "Times New Roman", Times, Baskerville, Georgia, serif'
     },
     {
-      name: 'Courier New',
-      key: 'couriernew',
-      stack: '"Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace'
+      name: 'Brush Script',
+      key: 'brushscript',
+      category: 'handwriting',
+      stack: '"Brush Script MT", cursive'
     }
   ];
 
@@ -79,8 +84,8 @@ describe('fontselect directive', function() {
     expect(elm.find('fontselect').length).toBe(0);
   });
 
-  it('should have a button', function() {
-    expect(elm.find('button').length).toBe(1);
+  it('should have a toggle button', function() {
+    expect(elm.find('button[ng-click="toggle()"]').length).toBe(1);
   });
 
   it('should become active when button is clicked', function() {
@@ -151,6 +156,19 @@ describe('fontselect directive', function() {
     it('should link the labels to the radio buttons', function() {
       expect(elm.find('input[type="radio"]').attr('id'))
         .toBe(elm.find('label').attr('for'));
+    });
+
+  });
+
+  describe('search', function() {
+    it('should have a search input field', function() {
+      expect(elm.find('input[name="fs-1-search"]').length).toBe(1);
+    });
+  });
+
+  describe('category filter', function() {
+    it('should have a radio list with categories', function() {
+      expect(elm.find('button[ng-model="data.category"]').length).toBe(4);
     });
   });
 

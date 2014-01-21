@@ -19,27 +19,32 @@
     {
       name: 'Arial',
       key: 'arial',
+      category: 'sansserif',
       stack: 'Arial, "Helvetica Neue", Helvetica, sans-serif'
     },
     {
-      name: 'Lucida Grande',
-      key: 'lucidagrande',
-      stack: '"Lucida Bright", Georgia, serif'
+      name: 'Courier New',
+      key: 'couriernew',
+      category: 'other',
+      stack: '"Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace'
     },
     {
       name: 'Verdana',
       key: 'verdana',
+      category: 'sansserif',
       stack: 'Verdana, Geneva, sans-serif'
     },
     {
       name: 'Times New Roman',
       key: 'timesnewroman',
+      category: 'serif',
       stack: 'TimesNewRoman, "Times New Roman", Times, Baskerville, Georgia, serif'
     },
     {
-      name: 'Courier New',
-      key: 'couriernew',
-      stack: '"Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace'
+      name: 'Brush Script',
+      key: 'brushscript',
+      category: 'handwriting',
+      stack: '"Brush Script MT", cursive'
     }
   ];
 
@@ -138,10 +143,30 @@
       var self = this;
       var $scope = self.$scope;
   
+      $scope.categories = [
+        {
+          name: 'Serif',
+          key: 'serif'
+        },
+        {
+          name: 'Sans-serif',
+          key: 'sansserif'
+        },
+        {
+          name: 'Handwriting',
+          key: 'handwriting'
+        },
+        {
+          name: 'Other',
+          key: 'other'
+        }
+      ];
       $scope.data = {
         currentFont: undefined,
+        category: undefined
       };
       $scope.active = false;
+      $scope.setCategoryFilter = _bind(self.setCategoryFilter, self);
       $scope.toggle = _bind(self.toggle, self);
     },
     /* Workaround to be able to get the instance from $scope in tests. */
@@ -151,6 +176,16 @@
       var $scope = this.$scope;
   
       $scope.active = !$scope.active;
+    },
+  
+    setCategoryFilter: function(category) {
+      var data = this.$scope.data;
+  
+      if (data.category === category) {
+        data.category = undefined;
+      } else {
+        data.category = category;
+      }
     },
   
     _resetIDs: function() {
@@ -176,7 +211,7 @@
     'use strict';
   
     $templateCache.put('fontselect.html',
-      "<div class=fs-main id=fontselect-{{id}}><button ng-click=toggle()>Toggle</button><input type=hidden value={{data.currentFont}}><div class=fs-window ng-show=active><ul><li ng-repeat=\"font in fonts.websafe\"><input type=radio ng-model=data.currentFont value={{font.key}} id=fs-{{id}}-font-{{font.key}}><label for=fs-{{id}}-font-{{font.key}}>{{font.name}}</label></li></ul></div></div>"
+      "<div class=fs-main id=fontselect-{{id}}><button ng-click=toggle()>Toggle</button><input type=hidden value={{data.currentFont}}><div class=fs-window ng-show=active><input name=fs-{{id}}-search ng-model=search><div><button ng-repeat=\"category in categories\" ng-class=\"{active: category.key == data.category}\" ng-click=setCategoryFilter(category.key) ng-model=data.category>{{category.name}}</button></div><ul><li ng-repeat=\"font in fonts.websafe | filter:search | filter:{category: data.category}:true \"><input type=radio ng-model=data.currentFont value={{font.key}} id=fs-{{id}}-font-{{font.key}}><label for=fs-{{id}}-font-{{font.key}}>{{font.name}}</label></li></ul></div></div>"
     );
   
   }]);
