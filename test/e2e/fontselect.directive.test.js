@@ -1,7 +1,7 @@
 /* global browser, element, by */
 describe('fontselect directive', function() {
 
-  var sandboxUrl = 'http://localhost:8000/test/sandbox/testbox.html';
+  var sandboxUrl = 'http://localhost:8000/test/e2e/index.html';
 
   beforeEach(function() {
     browser.get(sandboxUrl);

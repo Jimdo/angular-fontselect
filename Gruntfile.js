@@ -30,7 +30,14 @@ module.exports = function(grunt) {
 
   grunt.registerTask('test:e2e', ['protractor']);
 
-  grunt.registerTask('build', ['ngtemplates', 'concat', 'uglify']);
+  grunt.registerTask('build:less', [
+    'less:dist',
+    'less:distmin',
+    'concat:bannerToDistStyle',
+    'concat:bannerToDistStyleMin'
+  ]);
+
+  grunt.registerTask('build', ['ngtemplates', 'build:less', 'concat', 'uglify']);
 
   grunt.registerTask('dist', ['test', 'bump', 'build', 'git:dist']);
 

@@ -3,6 +3,8 @@
 <head>
   <meta charset="utf-8">
   <title>Angular Fontselect Sandbox</title>
+  <link rel="stylesheet/less" type="text/css" href="styles.less" />
+  <link rel="stylesheet/css" type="text/css" href="/dist/angular-fontselect.css" />
 </head>
 <body ng-app="myApp">
   <my-app>
@@ -13,13 +15,8 @@
   -->
   <script src="/bower_components/jquery/jquery.js"></script>
   <script src="/bower_components/angular/angular.js"></script>
-  <script src="/src/js/defaults.js"></script>
-  <script src="/src/js/helpers.js"></script>
-  <script src="/src/js/module.js"></script>
-  <script src="/src/js/fonts.service.js"></script>
-  <script src="/src/js/fontselect.controller.js"></script>
-  <script src="/src/js/fontselect.directive.js"></script>
-  <script src="/src/partials/all.js"></script>
+  <script src="/bower_components/less/dist/less-1.6.1.js"></script>
+  <script src="/dist/angular-fontselect.js"></script>
   <script type="text/javascript">
 angular.module('myApp', ['fontselect.module']).directive('myApp', function() {
   return {
