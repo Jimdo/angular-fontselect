@@ -1,5 +1,5 @@
 /*!
- * angular-fontselect v0.0.2
+ * angular-fontselect v0.0.3
  * https://github.com/Jimdo/angular-fontselect
  *
  * A fontselect directive for AngularJS
