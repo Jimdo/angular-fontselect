@@ -1,2 +1,2 @@
 /* jshint unused: false, -W079 */
-var fontselectModule = angular.module('fontselect.module', []);
+var fontselectModule = angular.module('jdFontselect', []);

@@ -46,12 +46,12 @@ describe('fontselect directive', function() {
 
   var elm, rootScope, scope, hiddeninput, fontsService, instance;
 
-  beforeEach(module('fontselect.module'));
+  beforeEach(module('jdFontselect'));
 
   beforeEach(inject(function($rootScope, $compile, $injector) {
     elm = angular.element(
       '<div>' +
-        '<fontselect />' +
+        '<jd-fontselect />' +
       '</div>');
 
     rootScope = $rootScope;
@@ -59,7 +59,7 @@ describe('fontselect directive', function() {
     rootScope.$digest();
     scope = elm.find('.fs-main div').scope();
     hiddeninput = elm.find('input[type="hidden"]');
-    fontsService = $injector.get('fontselect.fonts');
+    fontsService = $injector.get('jdFontselect.fonts');
     instance = scope.getSelf();
   }));
 
@@ -133,7 +133,7 @@ describe('fontselect directive', function() {
   it('should increase the id for every instance', function() {
     var elm2 = angular.element(
       '<div>' +
-        '<fontselect />' +
+        '<jd-fontselect />' +
       '</div>');
 
     inject(function($rootScope, $compile) {

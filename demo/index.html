@@ -18,12 +18,12 @@
   <script src="/bower_components/less/dist/less-1.6.1.js"></script>
   <script src="/dist/angular-fontselect.js"></script>
   <script type="text/javascript">
-angular.module('myApp', ['fontselect.module']).directive('myApp', function() {
+angular.module('myApp', ['jdFontselect']).directive('myApp', function() {
   return {
     restrict: 'E',
     replace: false,
-    template: '<fontselect />',
-    controller: ['$scope', 'fontselect.fonts', function($scope, fontsService) {
+    template: '<jd-fontselect />',
+    controller: ['$scope', 'jdFontselect.fonts', function($scope, fontsService) {
       /* do something with $scope or the fontsService (for example, add a font) */
       fontsService.add({name: 'Foo', key: 'foo', stack: 'Foo, "Comic Sans", serif'});
     }]

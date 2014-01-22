@@ -67,4 +67,4 @@ FontselectController.prototype = {
   }
 };
 
-FontselectController.$inject = ['$scope', 'fontselect.fonts'];
+FontselectController.$inject = ['$scope', 'jdFontselect.fonts'];

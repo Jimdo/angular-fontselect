@@ -1,5 +1,5 @@
 /* global FontselectController */
-fontselectModule.directive('fontselect', [function() {
+fontselectModule.directive('jdFontselect', [function() {
   return {
     scope: {},
     restrict: 'E',

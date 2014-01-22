@@ -6,13 +6,13 @@ A fontselect directive for AngularJS
 Directive:
 ----------
 
-	`fontselect`
+	`<jd-fontselect />`
 
 
 Provider Name
 -------------
 
-	`fontselect.module`
+	`jdFontselect`
 
 
 Building

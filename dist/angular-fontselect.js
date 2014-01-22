@@ -56,7 +56,7 @@
   }
 
   // src/js/module.js
-  var fontselectModule = angular.module('fontselect.module', []);
+  var fontselectModule = angular.module('jdFontselect', []);
 
   // src/js/fonts.service.js
   /** @const */
@@ -119,7 +119,7 @@
   };
   
   fontselectModule.factory(
-    'fontselect.fonts',
+    'jdFontselect.fonts',
     ['$rootScope', function($rootScope) { return new FontsService($rootScope); }]
   );
 
@@ -193,10 +193,10 @@
     }
   };
   
-  FontselectController.$inject = ['$scope', 'fontselect.fonts'];
+  FontselectController.$inject = ['$scope', 'jdFontselect.fonts'];
 
   // src/js/fontselect.directive.js
-  fontselectModule.directive('fontselect', [function() {
+  fontselectModule.directive('jdFontselect', [function() {
     return {
       scope: {},
       restrict: 'E',
@@ -207,7 +207,7 @@
   }]);
 
   // src/partials/all.js
-  angular.module('fontselect.module').run(['$templateCache', function($templateCache) {
+  angular.module('jdFontselect').run(['$templateCache', function($templateCache) {
     'use strict';
   
     $templateCache.put('fontselect.html',

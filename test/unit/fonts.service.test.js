@@ -9,11 +9,11 @@ describe('fontsService', function() {
     stack: 'Foo, "Comic Sans", serif'
   };
 
-  beforeEach(module('fontselect.module'));
+  beforeEach(module('jdFontselect'));
 
   beforeEach(inject(function() {
     inject(function($injector) {
-      fontsService = $injector.get('fontselect.fonts');
+      fontsService = $injector.get('jdFontselect.fonts');
     });
   }));
 

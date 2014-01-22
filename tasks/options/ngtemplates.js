@@ -13,7 +13,7 @@ module.exports = {
       removeStyleLinkTypeAttributes: true
     }
   },
-  'fontselect.module': {
+  'jdFontselect': {
     cwd: files.partialsDir,
     src: files.allHTML,
     dest: files.allPartialsCombined,

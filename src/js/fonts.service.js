@@ -60,6 +60,6 @@ FontsService.prototype = {
 };
 
 fontselectModule.factory(
-  'fontselect.fonts',
+  'jdFontselect.fonts',
   ['$rootScope', function($rootScope) { return new FontsService($rootScope); }]
 );
