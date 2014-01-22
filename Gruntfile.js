@@ -37,7 +37,7 @@ module.exports = function(grunt) {
     'concat:bannerToDistStyleMin'
   ]);
 
-  grunt.registerTask('build', ['ngtemplates', 'build:less', 'concat', 'uglify']);
+  grunt.registerTask('build', ['ngtemplates', 'build:less', 'concat:dist', 'uglify']);
 
   grunt.registerTask('dist', ['test', 'bump', 'build', 'git:dist']);
 
