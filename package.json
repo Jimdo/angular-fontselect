@@ -12,7 +12,7 @@
     "webfonts"
   ],
   "scripts": {
-    "test": "test"
+    "test": "grunt karma:headless"
   },
   "repository": {
     "type": "git",
