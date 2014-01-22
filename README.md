@@ -37,13 +37,13 @@ __Watch and test on every file change:__ `grunt watch:start`
 __Run e2e tests:__ `grunt test:e2e`
 
 
-Sandbox
--------
+Demo
+----
 
-There is a Sandbox for building castles and end to end testing.  
-In the projects root folder execute `node-dev test/sandbox/web-server.js`
+There is a Sandbox for building castles playing around.  
+In the projects root folder execute `node-dev scripts/web-server.js`
 
-Then go to [http://localhost:8000/test/sandbox/index.html](http://localhost:8000/test/sandbox/index.html)
+Then go to [http://localhost:8000/demo/index.html](http://localhost:8000/demo/index.html)
 in your favorite browser.
 
 
@@ -54,9 +54,9 @@ Make sure you have a silenium standalone server running at port 4444
 See [protractor README](https://github.com/angular/protractor/blob/master/README.md) 
 for details.
 
-Start the [Sandbox](#sandbox)
+Start the build in webserver with `node-dev scripts/web-server.js`
 
-Execute `grunt protractor`
+Execute `grunt test:e2e`
 
 
 Future Features

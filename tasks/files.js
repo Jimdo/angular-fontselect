@@ -8,6 +8,11 @@ var files = {
     'src/js/fontselect.controller.js',
     'src/js/fontselect.directive.js',
   ],
+  sourceStyle: [
+    'src/less/fontselect.less'
+  ],
+  distStyle: 'dist/<%= pkg.name %>.css',
+  distStyleMin: 'dist/<%= pkg.name %>.min.css',
   dist: 'dist/<%= pkg.name %>.js',
   distMin: 'dist/<%= pkg.name %>.min.js',
   dists: 'dist/*',
