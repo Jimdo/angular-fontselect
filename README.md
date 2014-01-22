@@ -3,6 +3,14 @@ Angular Font-Selector
 
 A fontselect directive for AngularJS
 
+Directive:
+----------
+
+	fontselect
+
+Provider Name
+----------
+	fontselect.module
 
 Building
 --------
@@ -13,10 +21,10 @@ We use [Grunt](http://gruntjs.com/) for building and
 Before you can use the `grunt` command you need to install our
 npm package dependencies and bower components by executing
 
-```bash
-npm install
-bower install
-```
+	bash
+	npm install
+	bower install
+
 
 Then you should be able to execute the following commands:
 
