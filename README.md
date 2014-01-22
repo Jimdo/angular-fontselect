@@ -6,13 +6,13 @@ A fontselect directive for AngularJS
 Directive:
 ----------
 
-	`<jd-fontselect />`
+	<jd-fontselect />
 
 
 Provider Name
 -------------
 
-	`jdFontselect`
+	jdFontselect
 
 
 Building
@@ -24,7 +24,6 @@ We use [Grunt](http://gruntjs.com/) for building and
 Before you can use the `grunt` command you need to install our
 npm package dependencies and bower components by executing
 
-	bash
 	npm install
 	bower install
 
