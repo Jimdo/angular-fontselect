@@ -19,6 +19,12 @@ module.exports = {
       singleRun: true
     }
   },
+  travis: {
+    options: {
+      browsers: ['PhantomJS', 'Firefox'],
+      singleRun: true
+    }
+  },
   watch: {
     options: {
       browsers: ['Chrome'],

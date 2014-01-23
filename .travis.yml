@@ -1,0 +1,24 @@
+language: node_js
+node_js:
+  - "0.11"
+
+before_install:
+  - npm install -g bower grunt-cli
+
+install:
+  - npm install
+  - bower install
+
+env:
+  global:
+    - secure: "tJw7bSYJ6ZBYr1Psv8PD9wUAfXb2XAIDWHiN4bcVtIcDr5BY5+T8bgpaDaJ/xOLGG1IE/qZ0NTiGADQGHAQivI+dSC4vEz84OvCsjmSicBaUVFnR6Oa0Bi6HG2ERTnO9jufay5T6ihoSXXFkynIXpHqDcb8Su5zEvKhg2UJe1g4="
+
+before_script:
+  - export DISPLAY=:99.0
+  - sh -e /etc/init.d/xvfb start
+  # - ./node_modules/protractor/bin/webdriver-manager update --standalone
+  # - node scripts/web-server.js &
+  # - ./node_modules/protractor/bin/webdriver-manager start &
+
+script:
+  - grunt test:travis

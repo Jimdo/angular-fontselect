@@ -16,6 +16,7 @@ module.exports = function(grunt) {
 
   config = _.extend(config, Helpers.loadConfig('./tasks/options/'));
 
+  Helpers.setUpApiKeys();
 
   /* Load grunt tasks from NPM packages */
   require('load-grunt-tasks')(grunt);
@@ -27,6 +28,8 @@ module.exports = function(grunt) {
   grunt.registerTask('watch:start', ['karma:watch:start', 'watch:andtest']);
 
   grunt.registerTask('test', ['ngtemplates', 'jshint', 'karma:all', 'protractor']);
+
+  grunt.registerTask('test:travis', ['ngtemplates', 'jshint', 'karma:travis']);
 
   grunt.registerTask('test:e2e', ['protractor']);
 
