@@ -4,3 +4,7 @@ function _bind(fn, me) {
     return fn.apply(me, arguments);
   };
 }
+
+function _createKey(name) {
+  return name.toLowerCase().replace(/[^a-z]+/g, '-');
+}

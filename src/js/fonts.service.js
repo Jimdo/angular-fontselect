@@ -85,10 +85,6 @@ FontsService.prototype = {
     ];
   },
 
-  _createFontKey: function(name) {
-    return name.toLowerCase().replace(/[^a-z]/g, '-');
-  },
-
   _getGoogleFonts: function() {
     var self = this;
 
@@ -106,7 +102,7 @@ FontsService.prototype = {
       angular.forEach(response.items, function(font) {
         self.add({
           name: font.family,
-          key: self._createFontKey(font.family),
+          key: _createKey(font.family),
           stack: '"' + font.family + '" sans-serif'
         }, PROVIDER_GOOGLE);
       });

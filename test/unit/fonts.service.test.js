@@ -9,8 +9,6 @@ describe('fontsService', function() {
     stack: 'Foo, "Comic Sans", serif'
   };
 
-  beforeEach(module('jdFontselect'));
-
   beforeEach(inject(function() {
     inject(function($injector) {
       fontsService = $injector.get('jdFontselect.fonts');

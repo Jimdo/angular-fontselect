@@ -6,7 +6,6 @@ var FontselectController = function($scope, fontsService) {
 
   self.fontsService = fontsService;
   self.$scope = $scope;
-  self.toScope();
   self.name = 'FontselectController';
   self._construct();
 };
@@ -32,9 +31,6 @@ FontselectController.prototype = {
     $scope.toggle = _bind(self.toggle, self);
   },
 
-  /* Workaround to be able to get the instance from $scope in tests. */
-  toScope: function() {},
-  
   toggle: function() {
     var $scope = this.$scope;
 

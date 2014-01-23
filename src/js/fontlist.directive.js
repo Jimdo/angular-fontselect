@@ -1,10 +1,10 @@
 fontselectModule.directive('jdFontlist', [function() {
   return {
     scope: {
-      id: '&fsid',
+      id: '=fsid',
       fonts: '=',
       current: '=',
-      provider: '@'
+      providerName: '@provider'
     },
     restrict: 'E',
     templateUrl: 'fontlist.html',
@@ -14,6 +14,8 @@ fontselectModule.directive('jdFontlist', [function() {
         size: 30,
         current: 0
       };
+
+      $scope.providerKey = _createKey($scope.providerName);
       
       $scope.setCurrentPage = function(currentPage) {
         $scope.page.current = currentPage;

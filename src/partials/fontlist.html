@@ -1,5 +1,5 @@
-<div>
-	<h3>{{provider}}</h3>
+<div class="jd-fontselect-provider jd-fontselect-provider-{{providerKey}}">
+	<h3>{{providerName}}</h3>
 	<ul>
 		<li ng-repeat="font in fonts | filter:current.search | filter:{category: current.category}:true | startFrom: page.current * page.size | limitTo: page.size ">
 			<input 

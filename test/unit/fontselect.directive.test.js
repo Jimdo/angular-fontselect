@@ -1,89 +1,13 @@
-/* global FontselectController, DEFAULT_WEBSAFE_FONTS */
-/* jshint -W020 */
+/* global FontselectController, DEFAULT_WEBSAFE_FONTS, $rootScope, $compile, $injector, $scope, elm  */
 describe('fontselect directive', function() {
   'use strict';
-
-  FontselectController.prototype.toScope = function() {
-    var self = this;
-    self.$scope.getSelf = _bind(function() {
-      return self;
-    }, self);
-  };
-
-  /* Overwrite the default font list for tests. */
-  DEFAULT_WEBSAFE_FONTS = [
-    {
-      name: 'Arial',
-      key: 'arial',
-      category: 'sans-serif',
-      stack: 'Arial, "Helvetica Neue", Helvetica, sans-serif'
-    },
-    {
-      name: 'Courier New',
-      key: 'couriernew',
-      category: 'other',
-      stack: '"Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace'
-    },
-    {
-      name: 'Verdana',
-      key: 'verdana',
-      category: 'sans-serif',
-      stack: 'Verdana, Geneva, sans-serif'
-    },
-    {
-      name: 'Times New Roman',
-      key: 'timesnewroman',
-      category: 'serif',
-      stack: 'TimesNewRoman, "Times New Roman", Times, Baskerville, Georgia, serif'
-    },
-    {
-      name: 'Brush Script',
-      key: 'brushscript',
-      category: 'handwriting',
-      stack: '"Brush Script MT", cursive'
-    }
-  ];
-
-  var httpBackend, elm, rootScope, scope, hiddeninput, fontsService, instance;
-
-  var googleApiRx = /http(s)?:\/\/www.googleapis.com\/webfonts\/v1\/.*/;
-
-  beforeEach(module('jdFontselect'));
-
-  beforeEach(inject(function($rootScope, $compile, $injector, $httpBackend) {
-    elm = angular.element(
-      '<div>' +
-        '<jd-fontselect />' +
-      '</div>');
-
-    rootScope = $rootScope;
-
-    httpBackend = $httpBackend;
-    httpBackend.when('GET', googleApiRx).respond([]);
-    httpBackend.expectGET(googleApiRx);
-
-    $compile(elm)(rootScope);
-    rootScope.$digest();
-
-    scope = elm.find('.fs-main div').scope();
-    hiddeninput = elm.find('input[type="hidden"]');
-    fontsService = $injector.get('jdFontselect.fonts');
-    instance = scope.getSelf();
-  }));
-
-  afterEach(function() {
-    httpBackend.flush(1);
-    httpBackend.verifyNoOutstandingExpectation();
-    httpBackend.verifyNoOutstandingRequest();
-    scope.getSelf()._resetIDs();
-  });
 
   it('s controller should exist', function() {
     expect(FontselectController).toBeDefined();
   });
 
   it('should be able to get itself', function() {
-    expect(instance).toBeInstanceOf(FontselectController);
+    expect($scope.getSelf()).toBeInstanceOf(FontselectController);
   });
 
   it('should add an wrapper element with fs-main class.', inject(function() {
@@ -99,21 +23,28 @@ describe('fontselect directive', function() {
   });
 
   it('should become active when button is clicked', function() {
-    expect(scope.active).toBe(false);
+    expect($scope.active).toBe(false);
     elm.find('button').click();
-    expect(scope.active).toBe(true);
-  });
-
-  it('should have a hidden input element', function() {
-    expect(hiddeninput.length).toBe(1);
+    expect($scope.active).toBe(true);
   });
 
   it('should have no current font on initiation.', function() {
-    expect(scope.currentFont).not.toBeDefined();
+    expect($scope.currentFont).not.toBeDefined();
   });
 
-  it('\'s hidden input should have the active font as a value', function() {
-    expect(hiddeninput.val()).toBe('');
+  describe('direct out', function() {
+    var hiddeninput;
+    beforeEach(function() {
+      hiddeninput = elm.find('input[type="hidden"]');
+    });
+
+    it('should have a hidden input element', function() {
+      expect(hiddeninput.length).toBe(1);
+    });
+
+    it('\'s hidden input should have the active font as a value', function() {
+      expect(hiddeninput.val()).toBe('');
+    });
   });
 
   it('should provide a list with some fonts', function() {
@@ -131,8 +62,11 @@ describe('fontselect directive', function() {
 
   it('should expend if we add a new font via the fonts service', function() {
     var length = elm.find('li').length;
-    fontsService.add({name: 'Drrrt', key: 'drt', stack: 'Bar, sans-serif'});
-    scope.$digest();
+
+    $injector.get('jdFontselect.fonts')
+      .add({name: 'Drrrt', key: 'drt', stack: 'Bar, sans-serif'});
+
+    $scope.$digest();
     expect(elm.find('li').length).toBe(length + 1);
   });
 
@@ -146,13 +80,12 @@ describe('fontselect directive', function() {
         '<jd-fontselect />' +
       '</div>');
 
-    inject(function($rootScope, $compile) {
-      $compile(elm2)(rootScope);
-      rootScope.$digest();
-    });
+    $compile(elm2)($rootScope);
+    $rootScope.$digest();
 
     expect(elm2.find('.fs-main').attr('id')).toBe('fontselect-2');
   });
+
 
   describe('font list', function() {
 
@@ -179,10 +112,14 @@ describe('fontselect directive', function() {
     });
 
     it('should be able to provide a preview of the font', function() {
+
       expect(normalizeFontStack(elm.find('li label').eq(0).css('font-family')))
         .toBe(normalizeFontStack(DEFAULT_WEBSAFE_FONTS[0].stack));
     });
 
+    it('should create multiple font lists for providers', function() {
+      expect(elm.find('.jd-fontselect-provider').length).toBeGreaterThan(1);
+    });
   });
 
   describe('search', function() {

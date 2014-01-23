@@ -32,6 +32,14 @@ describe('fontselect directive', function() {
       fontradios = element.all(by.model('current.font'));
     });
 
+    it('should have a list for default webfonts', function() {
+      expect(element.all(by.css('.jd-fontselect-provider-websafe-fonts')).count()).toBe(1);
+    });
+
+    it('should have a list for google webfonts', function() {
+      expect(element.all(by.css('.jd-fontselect-provider-google-fonts')).count()).toBe(1);
+    });
+
     it('should have no radio checked', function() {
       expect(element.all(by.css('li input:checked')).count()).toBe(0);
     });
@@ -45,6 +53,12 @@ describe('fontselect directive', function() {
       fontradios.get(1).click();
       fontradios.get(2).click();
       fontradios.get(3).click();
+      expect(element.all(by.css('li input:checked')).count()).toBe(1);
+    });
+
+    it('should link radio buttons between the single font lists.', function() {
+      fontradios.get(1).click();
+      element.all(by.css('.jd-fontselect-provider-google-fonts input')).get(3).click();
       expect(element.all(by.css('li input:checked')).count()).toBe(1);
     });
   });

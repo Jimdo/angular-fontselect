@@ -70,6 +70,10 @@
       return fn.apply(me, arguments);
     };
   }
+  
+  function _createKey(name) {
+    return name.toLowerCase().replace(/[^a-z]+/g, '-');
+  }
 
   // src/js/startFrom.filter.js
   /* From: http://tech.small-improvements.com/2013/09/10/angularjs-performance-with-large-lists/ */
@@ -169,10 +173,6 @@
       ];
     },
   
-    _createFontKey: function(name) {
-      return name.toLowerCase().replace(/[^a-z]/g, '-');
-    },
-  
     _getGoogleFonts: function() {
       var self = this;
   
@@ -190,7 +190,7 @@
         angular.forEach(response.items, function(font) {
           self.add({
             name: font.family,
-            key: self._createFontKey(font.family),
+            key: _createKey(font.family),
             stack: '"' + font.family + '" sans-serif'
           }, PROVIDER_GOOGLE);
         });
@@ -211,7 +211,6 @@
   
     self.fontsService = fontsService;
     self.$scope = $scope;
-    self.toScope();
     self.name = 'FontselectController';
     self._construct();
   };
@@ -237,9 +236,6 @@
       $scope.toggle = _bind(self.toggle, self);
     },
   
-    /* Workaround to be able to get the instance from $scope in tests. */
-    toScope: function() {},
-    
     toggle: function() {
       var $scope = this.$scope;
   
@@ -278,10 +274,10 @@
   fontselectModule.directive('jdFontlist', [function() {
     return {
       scope: {
-        id: '&fsid',
+        id: '=fsid',
         fonts: '=',
         current: '=',
-        provider: '@'
+        providerName: '@provider'
       },
       restrict: 'E',
       templateUrl: 'fontlist.html',
@@ -291,6 +287,8 @@
           size: 30,
           current: 0
         };
+  
+        $scope.providerKey = _createKey($scope.providerName);
         
         $scope.setCurrentPage = function(currentPage) {
           $scope.page.current = currentPage;
@@ -324,7 +322,7 @@
     'use strict';
   
     $templateCache.put('fontlist.html',
-      "<div><h3>{{provider}}</h3><ul><li ng-repeat=\"font in fonts | filter:current.search | filter:{category: current.category}:true | startFrom: page.current * page.size | limitTo: page.size \"><input type=radio ng-model=current.font value={{font.key}} name=fs-{{id}}-font id=fs-{{id}}-font-{{font.key}}><label for=fs-{{id}}-font-{{font.key}} style=\"font-family: {{font.stack}}\">{{font.name}}</label></li></ul><button ng-repeat=\"i in getPages() track by $index\" ng-click=setCurrentPage($index)>{{$index + 1}}</button></div>"
+      "<div class=\"jd-fontselect-provider jd-fontselect-provider-{{providerKey}}\"><h3>{{providerName}}</h3><ul><li ng-repeat=\"font in fonts | filter:current.search | filter:{category: current.category}:true | startFrom: page.current * page.size | limitTo: page.size \"><input type=radio ng-model=current.font value={{font.key}} name=fs-{{id}}-font id=fs-{{id}}-font-{{font.key}}><label for=fs-{{id}}-font-{{font.key}} style=\"font-family: {{font.stack}}\">{{font.name}}</label></li></ul><button ng-repeat=\"i in getPages() track by $index\" ng-click=setCurrentPage($index)>{{$index + 1}}</button></div>"
     );
   
   
