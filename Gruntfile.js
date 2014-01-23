@@ -28,7 +28,7 @@ module.exports = function(grunt) {
 
   grunt.registerTask('test', ['ngtemplates', 'jshint', 'karma:all', 'protractor']);
 
-  grunt.registerTask('test:travis', ['ngtemplates', 'jshint', 'karma:travis']);
+  grunt.registerTask('test:travis', ['ngtemplates', 'jshint', 'karma:travis', 'protractor']);
 
   grunt.registerTask('test:e2e', ['protractor']);
 

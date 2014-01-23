@@ -1,7 +1,6 @@
 language: node_js
 node_js:
   - "0.11"
-  - "0.10"
 
 before_install:
   - npm install -g bower grunt-cli
@@ -13,3 +12,9 @@ install:
 before_script:
   - export DISPLAY=:99.0
   - sh -e /etc/init.d/xvfb start
+  - ./node_modules/protractor/bin/webdriver-manager update --standalone
+  - node scripts/web-server.js &
+  - ./node_modules/protractor/bin/webdriver-manager start
+
+script:
+  - grunt test:travis
