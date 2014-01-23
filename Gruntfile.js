@@ -16,6 +16,7 @@ module.exports = function(grunt) {
 
   config = _.extend(config, Helpers.loadConfig('./tasks/options/'));
 
+  Helpers.setUpApiKeys();
 
   /* Load grunt tasks from NPM packages */
   require('load-grunt-tasks')(grunt);
