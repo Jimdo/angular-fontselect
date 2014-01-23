@@ -57,10 +57,11 @@ project root and include it in the demos and tests.
 
 You can provide your production API Keys by setting them as constants no your application.
 
-	angular.module('myApp', []).constant('jdFontselectConfig', {
-		googleApiKey: '__yourKeyHere__'
-	});
-
+```js
+angular.module('myApp', ['jdFontselect']).constant('jdFontselectConfig', {
+	googleApiKey: '__yourKeyHere__'
+});
+```
 
 Demo
 ----
