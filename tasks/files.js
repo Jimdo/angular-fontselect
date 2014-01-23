@@ -11,7 +11,7 @@ var source = [
   'src/js/fontlist.directive.js'
 ];
 var testSource = _.clone(source);
-testSource.splice(1, 0, 'tmp.apiKeys.js');
+testSource.splice(1, 0, 'tmp.apikeys.js');
 
 var files = {
   grunt: 'Gruntfile.js',
@@ -25,7 +25,7 @@ var files = {
   dist: 'dist/<%= pkg.name %>.js',
   distMin: 'dist/<%= pkg.name %>.min.js',
   dists: 'dist/*',
-  apiKeys: 'tmp.apiKeys.js',
+  apiKeys: 'tmp.apikeys.js',
   testEnv: [
     'bower_components/jquery/jquery.js',
     'bower_components/angular/angular.js',
