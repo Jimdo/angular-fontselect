@@ -11,7 +11,7 @@ install:
 
 env:
   global:
-    - secure: "tJw7bSYJ6ZBYr1Psv8PD9wUAfXb2XAIDWHiN4bcVtIcDr5BY5+T8bgpaDaJ/xOLGG1IE/qZ0NTiGADQGHAQivI+dSC4vEz84OvCsjmSicBaUVFnR6Oa0Bi6HG2ERTnO9jufay5T6ihoSXXFkynIXpHqDcb8Su5zEvKhg2UJe1g4="
+    - secure: "SNOWHArQYU/zvLyr5uA72QUskkTkOPYtV07h0rWYe0Pnw6pnFLIqiKfLkfnp7wkDthP43IMD33ftvJBrHHZCbUZPCCKHzI8MYEGKCgX6eUCrFmkGZ+qljykZCGFB0YA3VGlL2rGH2P1b73gYpjVeH/so8maYHJA3tUCopU9wtQk="
 
 before_script:
   - export DISPLAY=:99.0

@@ -44,17 +44,19 @@ Helpers.getTemplate = function(name) {
   return fs.readFileSync('./tasks/templates/' + name + '.tpl', 'utf8');
 };
 
-Helpers.setUpApiKeys = function() {
+Helpers.setUpApiKeyFile = function() {
   var keys = {}, hasKeys = false;
 
-  if (process.env.GOOGLE_TEST_API_KEY) {
-    keys.googleFontsApi = process.env.GOOGLE_TEST_API_KEY;
+  if (process.env.JD_FONTSELECT_GOOGLE_FONTS_API_KEY) {
+    keys.googleApiKey = process.env.JD_FONTSELECT_GOOGLE_FONTS_API_KEY;
     hasKeys = true;
   }
 
   if (hasKeys) {
-    fs.writeFileSync('tmp.apikeys.js', 'fontselectModule.constant("jdFontselectConfig", ' +
-      JSON.stringify(keys) + ');');
+    fs.writeFileSync(
+      'tmp.apikeys.js',
+      'angular.module("jdFontselect").constant("jdFontselectConfig", ' + JSON.stringify(keys) + ');'
+    );
   }
 };
 

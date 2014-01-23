@@ -44,17 +44,23 @@ describe('fontselect directive', function() {
     }
   ];
 
-  var elm, rootScope, scope, hiddeninput, fontsService, instance;
+  var httpBackend, elm, rootScope, scope, hiddeninput, fontsService, instance;
+
+  var googleApiRx = /http(s)?:\/\/www.googleapis.com\/webfonts\/v1\/.*/;
 
   beforeEach(module('jdFontselect'));
 
-  beforeEach(inject(function($rootScope, $compile, $injector) {
+  beforeEach(inject(function($rootScope, $compile, $injector, $httpBackend) {
     elm = angular.element(
       '<div>' +
         '<jd-fontselect />' +
       '</div>');
 
     rootScope = $rootScope;
+
+    httpBackend = $httpBackend;
+    httpBackend.when('GET', googleApiRx).respond([]);
+    httpBackend.expectGET(googleApiRx);
 
     $compile(elm)(rootScope);
     rootScope.$digest();
@@ -66,6 +72,9 @@ describe('fontselect directive', function() {
   }));
 
   afterEach(function() {
+    httpBackend.flush(1);
+    httpBackend.verifyNoOutstandingExpectation();
+    httpBackend.verifyNoOutstandingRequest();
     scope.getSelf()._resetIDs();
   });
 

@@ -3,6 +3,6 @@ var files = require('../files');
 module.exports = {
   andtest: {
     files: files.source.concat(files.sourceStyle).concat([files.allPartials, files.grunt, files.unitTests]),
-    tasks: ['ngtemplates', 'jshint', 'karma:watch:run']
+    tasks: ['test:beforeEach', 'karma:watch:run']
   }
 };

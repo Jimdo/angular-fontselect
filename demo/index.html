@@ -10,13 +10,19 @@
   <my-app>
   </my-app>
 
-  <!-- In production use:
-  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script>
-  -->
   <script src="/bower_components/jquery/jquery.js"></script>
   <script src="/bower_components/angular/angular.js"></script>
   <script src="/bower_components/less/dist/less-1.6.1.js"></script>
-  <script src="/dist/angular-fontselect.js"></script>
+  <script src="/src/js/module.js"></script>
+  <script src="/tmp.apikeys.js"></script>
+  <script src="/src/js/defaults.js"></script>
+  <script src="/src/js/helpers.js"></script>
+  <script src="/src/js/startFrom.filter.js"></script>
+  <script src="/src/js/fonts.service.js"></script>
+  <script src="/src/js/fontselect.controller.js"></script>
+  <script src="/src/js/fontselect.directive.js"></script>
+  <script src="/src/js/fontlist.directive.js"></script>
+  <script src="/src/partials/all.js"></script>
   <script type="text/javascript">
 angular.module('myApp', ['jdFontselect']).directive('myApp', function() {
   return {

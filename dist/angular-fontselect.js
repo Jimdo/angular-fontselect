@@ -105,9 +105,9 @@
     _init: function() {
       var self = this;
       
-      self._getGoogleFonts();
       self._fonts = self._fonts || {};
       self._fonts[PROVIDER_WEBSAFE] = angular.copy(DEFAULT_WEBSAFE_FONTS);
+      self._getGoogleFonts();
     },
   
     getAllFonts: function() {

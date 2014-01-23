@@ -16,22 +16,17 @@ module.exports = function(grunt) {
 
   config = _.extend(config, Helpers.loadConfig('./tasks/options/'));
 
-  Helpers.setUpApiKeys();
-
   /* Load grunt tasks from NPM packages */
   require('load-grunt-tasks')(grunt);
   grunt.loadTasks('tasks');
 
   /* Aditional Tasks */
-  grunt.registerTask('git:dist', ['gitcommit:dist', 'gittag:dist', 'gitpush:dist', 'gitpush:disttags']);
-  
   grunt.registerTask('watch:start', ['karma:watch:start', 'watch:andtest']);
 
-  grunt.registerTask('test', ['ngtemplates', 'jshint', 'karma:all', 'protractor']);
-
-  grunt.registerTask('test:travis', ['ngtemplates', 'jshint', 'karma:travis']);
-
-  grunt.registerTask('test:e2e', ['protractor']);
+  grunt.registerTask('test:beforeEach', ['jshint', 'ngtemplates', 'build:apikeys']);
+  grunt.registerTask('test', ['test:beforeEach', 'karma:all', 'protractor']);
+  grunt.registerTask('test:travis', ['test:beforeEach', 'karma:travis']);
+  grunt.registerTask('test:e2e', ['test:beforeEach', 'protractor']);
 
   grunt.registerTask('build:less', [
     'less:dist',
@@ -39,9 +34,10 @@ module.exports = function(grunt) {
     'concat:bannerToDistStyle',
     'concat:bannerToDistStyleMin'
   ]);
+  grunt.registerTask('build:apikeys', function() { Helpers.setUpApiKeyFile(); });
+  grunt.registerTask('build', ['ngtemplates', 'build:apikeys', 'build:less', 'concat:dist', 'uglify']);
 
-  grunt.registerTask('build', ['ngtemplates', 'build:less', 'concat:dist', 'uglify']);
-
+  grunt.registerTask('git:dist', ['gitcommit:dist', 'gittag:dist', 'gitpush:dist', 'gitpush:disttags']);
   grunt.registerTask('dist', ['test', 'bump', 'build', 'git:dist']);
 
   grunt.registerTask('default', ['test', 'build']);

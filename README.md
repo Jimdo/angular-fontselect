@@ -39,11 +39,34 @@ __Watch and test on every file change:__ `grunt watch:start`
 __Run e2e tests:__ `grunt test:e2e`
 
 
+API KEYS
+--------
+
+
+#### For Development / Testing
+
+The tests expect a valid API Key for Google Web fonts.
+[Get one](https://developers.google.com/fonts/docs/developer_api#Auth)
+
+You should set your key into the environment Variable
+`JD_FONTSELECT_GOOGLE_FONTS_API_KEY="__yourKeyHere__"`
+The build and test tasks will then create a file named `tmp.apikeys.js` in the
+project root and include it in the demos and tests.
+
+#### In Production
+
+You can provide your production API Keys by setting them as constants no your application.
+
+	angular.module('myApp', []).constant('jdFontselectConfig', {
+		googleApiKey: '__yourKeyHere__'
+	});
+
+
 Demo
 ----
 
 There is a Sandbox for building castles playing around.  
-In the projects root folder execute `node-dev scripts/web-server.js`
+In the projects root folder execute `node scripts/web-server.js`
 
 Then go to [http://localhost:8000/demo/index.html](http://localhost:8000/demo/index.html)
 in your favorite browser.
