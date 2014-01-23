@@ -14,7 +14,7 @@ before_script:
   - sh -e /etc/init.d/xvfb start
   - ./node_modules/protractor/bin/webdriver-manager update --standalone
   - node scripts/web-server.js &
-  - ./node_modules/protractor/bin/webdriver-manager start
+  - ./node_modules/protractor/bin/webdriver-manager start &
 
 script:
   - grunt test:travis
