@@ -21,7 +21,7 @@ describe('fontselect directive', function() {
   });
 
   it('should have a list of checkboxes', function() {
-    expect(element.all(by.css('li input')).count()).toBe(5);
+    expect(element.all(by.css('li input')).count()).toBeGreaterThan(5);
   });
 
   describe('font list', function() {
@@ -29,7 +29,7 @@ describe('fontselect directive', function() {
 
     beforeEach(function() {
       element(by.tagName('button')).click();
-      fontradios = element.all(by.model('data.currentFont'));
+      fontradios = element.all(by.model('current.font'));
     });
 
     it('should have no radio checked', function() {
@@ -50,32 +50,34 @@ describe('fontselect directive', function() {
   });
 
   describe('search', function() {
-    var search;
+    var search, numberOfFonts;
 
     beforeEach(function() {
       element(by.tagName('button')).click();
-      search = element(by.model('search'));
+      search = element(by.model('current.search'));
+      numberOfFonts = element.all(by.css('li')).count();
     });
 
     it('should reduce the length of the font list on click', function() {
-      expect(element.all(by.css('li')).count()).toBe(5);
+      expect(numberOfFonts).toBeGreaterThan(5);
       search.sendKeys('ver');
-      expect(element.all(by.css('li')).count()).toBe(1);
+      expect(element.all(by.css('li')).count()).toBeLessThan(numberOfFonts);
     });
   });
 
   describe('categories', function() {
-    var categoryradios;
+    var categoryradios, numberOfFonts;
 
     beforeEach(function() {
+      numberOfFonts = element.all(by.css('li')).count();
       element(by.tagName('button')).click();
-      categoryradios = element.all(by.model('data.category'));
+      categoryradios = element.all(by.model('current.category'));
     });
 
     it('should reduce the length of the font list on click', function() {
-      expect(element.all(by.css('li')).count()).toBe(5);
+      expect(numberOfFonts).toBeGreaterThan(5);
       categoryradios.get(1).click();
-      expect(element.all(by.css('li')).count()).toBe(2);
+      expect(element.all(by.css('li')).count()).toBeLessThan(numberOfFonts);
     });
   });
 

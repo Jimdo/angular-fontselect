@@ -1,11 +1,10 @@
+/* global PROVIDERS, PROVIDER_WEBSAFE */
 var id = 1;
 
-var FontselectController = function($scope, fonts) {
+var FontselectController = function($scope, fontsService) {
   var self = this;
 
-  self.fonts = fonts;
-  $scope.fonts = fonts.getAll();
-  $scope.id = id++;
+  self.fontsService = fontsService;
   self.$scope = $scope;
   self.toScope();
   self.name = 'FontselectController';
@@ -17,32 +16,22 @@ FontselectController.prototype = {
     var self = this;
     var $scope = self.$scope;
 
-    $scope.categories = [
-      {
-        name: 'Serif',
-        key: 'serif'
-      },
-      {
-        name: 'Sans-serif',
-        key: 'sansserif'
-      },
-      {
-        name: 'Handwriting',
-        key: 'handwriting'
-      },
-      {
-        name: 'Other',
-        key: 'other'
-      }
-    ];
-    $scope.data = {
-      currentFont: undefined,
-      category: undefined
-    };
+    $scope.fonts = self.fontsService.getAllFonts();
+    $scope.id = id++;
+    $scope.providers = PROVIDERS;
     $scope.active = false;
+    $scope.categories = self.fontsService.getCategories();
+    $scope.current = {
+      provider: PROVIDER_WEBSAFE,
+      category: undefined,
+      font: undefined,
+      search: undefined
+    };
+
     $scope.setCategoryFilter = _bind(self.setCategoryFilter, self);
     $scope.toggle = _bind(self.toggle, self);
   },
+
   /* Workaround to be able to get the instance from $scope in tests. */
   toScope: function() {},
   
@@ -53,12 +42,12 @@ FontselectController.prototype = {
   },
 
   setCategoryFilter: function(category) {
-    var data = this.$scope.data;
+    var current = this.$scope.current;
 
-    if (data.category === category) {
-      data.category = undefined;
+    if (current.category === category) {
+      current.category = undefined;
     } else {
-      data.category = category;
+      current.category = category;
     }
   },
 

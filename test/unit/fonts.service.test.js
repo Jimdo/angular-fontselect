@@ -22,7 +22,7 @@ describe('fontsService', function() {
   });
 
   it('should have a getAll method', function() {
-    expect(fontsService.getAll).toBeTypeOf('Function');
+    expect(fontsService.getAllFonts).toBeTypeOf('Function');
   });
 
   it('should have an add method', function() {
@@ -32,7 +32,7 @@ describe('fontsService', function() {
   describe('add method', function() {
     it('should expand the fonts object', function() {
       fontsService.add(customFont);
-      expect(fontsService._fonts.websafe).toContain(customFont);
+      expect(fontsService._fonts['Websafe Fonts']).toContain(customFont);
     });
 
     it('should throw an error if we add an invalid font object', function() {

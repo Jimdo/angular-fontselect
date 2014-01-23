@@ -1,22 +1,20 @@
 <div class="fs-main" id="fontselect-{{id}}">
 	<button ng-click="toggle()">Toggle</button>
-	<input type="hidden" value="{{data.currentFont}}"/>
+	<input type="hidden" value="{{current.font}}"/>
 	<div class="fs-window" ng-show="active">
-		<input type="text" name="fs-{{id}}-search" ng-model="search" />
+		<input type="text" name="fs-{{id}}-search" ng-model="current.search" />
 		<div>
 			<button
 				ng-repeat="category in categories"
-				ng-class="{active: category.key == data.category}"
+				ng-class="{active: category.key == current.category}"
 				ng-click="setCategoryFilter(category.key)"
-				ng-model="data.category">{{category.name}}</button>
+				ng-model="current.category">{{category.name}}</button>
 		</div>
-		<ul>
-			<li ng-repeat="font in fonts.websafe | filter:search | filter:{category: data.category}:true ">
-				<input type="radio" ng-model="data.currentFont" value="{{font.key}}" id="fs-{{id}}-font-{{font.key}}" />
-				<label
-					for="fs-{{id}}-font-{{font.key}}"
-					style="font-family: {{font.stack}};">{{font.name}}</label>
-			</li>
-		</ul>
+		<jd-fontlist
+			fsid="id"
+			current="current"
+			fonts="fonts[provider]"
+			provider="{{provider}}"
+			ng-repeat="provider in providers" />
 	</div>
 </div>

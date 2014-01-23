@@ -1,4 +1,4 @@
-/* global DEFAULT_WEBSAFE_FONTS, CATEGORY_WEBSAFE */
+/* global DEFAULT_WEBSAFE_FONTS, PROVIDER_WEBSAFE, PROVIDER_GOOGLE */
 
 /** @const */
 var REQUIRED_FONT_OBJECT_KEYS = [
@@ -7,10 +7,11 @@ var REQUIRED_FONT_OBJECT_KEYS = [
   'stack'
 ];
 
-function FontsService($scope) {
+function FontsService($http, config) {
   var self = this;
 
-  self.$scope = $scope;
+  self.config = config;
+  self.$http = $http;
   self._init();
 
   return self;
@@ -21,25 +22,30 @@ FontsService.prototype = {
     var self = this;
     
     self._fonts = self._fonts || {};
-    self._fonts[CATEGORY_WEBSAFE] = angular.copy(DEFAULT_WEBSAFE_FONTS);
+    self._fonts[PROVIDER_WEBSAFE] = angular.copy(DEFAULT_WEBSAFE_FONTS);
+    self._getGoogleFonts();
   },
 
-  getAll: function() {
+  getAllFonts: function() {
     return this._fonts;
   },
 
-  add: function(fontObj, category) {
+  add: function(fontObj, provider) {
     var self = this;
 
-    if (angular.isString(category)) {
-      category = CATEGORY_WEBSAFE;
+    if (!angular.isString(provider)) {
+      provider = PROVIDER_WEBSAFE;
     }
 
     if (!self.isValidFontObject(fontObj)) {
       throw 'Invalid font object.';
     }
 
-    self._fonts[CATEGORY_WEBSAFE].push(fontObj);
+    if (!angular.isArray(self._fonts[provider])) {
+      self._fonts[provider] = [];
+    }
+
+    self._fonts[provider].push(fontObj);
   },
 
   isValidFontObject: function(fontObj) {
@@ -56,10 +62,59 @@ FontsService.prototype = {
     });
 
     return valid;
+  },
+
+  getCategories: function() {
+    return [
+      {
+        name: 'Serif',
+        key: 'serif'
+      },
+      {
+        name: 'Sans-serif',
+        key: 'sansserif'
+      },
+      {
+        name: 'Handwriting',
+        key: 'handwriting'
+      },
+      {
+        name: 'Other',
+        key: 'other'
+      }
+    ];
+  },
+
+  _createFontKey: function(name) {
+    return name.toLowerCase().replace(/[^a-z]/g, '-');
+  },
+
+  _getGoogleFonts: function() {
+    var self = this;
+
+    if (!self.config.googleApiKey) {
+      return;
+    }
+
+    self.$http({
+      method: 'GET',
+      url: 'https://www.googleapis.com/webfonts/v1/webfonts',
+      params: {
+        key: self.config.googleApiKey
+      }
+    }).success(function(response) {
+      angular.forEach(response.items, function(font) {
+        self.add({
+          name: font.family,
+          key: self._createFontKey(font.family),
+          stack: '"' + font.family + '" sans-serif'
+        }, PROVIDER_GOOGLE);
+      });
+    });
   }
 };
 
 fontselectModule.factory(
   'jdFontselect.fonts',
-  ['$rootScope', function($rootScope) { return new FontsService($rootScope); }]
+  ['$http', 'jdFontselectConfig', function($http, config) { return new FontsService($http, config); }]
 );

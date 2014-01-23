@@ -55,8 +55,10 @@ describe('fontselect directive', function() {
       '</div>');
 
     rootScope = $rootScope;
+
     $compile(elm)(rootScope);
     rootScope.$digest();
+
     scope = elm.find('.fs-main div').scope();
     hiddeninput = elm.find('input[type="hidden"]');
     fontsService = $injector.get('jdFontselect.fonts');
@@ -66,7 +68,6 @@ describe('fontselect directive', function() {
   afterEach(function() {
     scope.getSelf()._resetIDs();
   });
-
 
   it('s controller should exist', function() {
     expect(FontselectController).toBeDefined();
@@ -182,8 +183,8 @@ describe('fontselect directive', function() {
   });
 
   describe('category filter', function() {
-    it('should have a radio list with categories', function() {
-      expect(elm.find('button[ng-model="data.category"]').length).toBe(4);
+    it('should have a list with categories', function() {
+      expect(elm.find('button[ng-model="current.category"]').length).toBe(4);
     });
   });
 

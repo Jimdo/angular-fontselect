@@ -1,12 +1,14 @@
 var files = {
   grunt: 'Gruntfile.js',
   source: [
+    'src/js/module.js',
     'src/js/defaults.js',
     'src/js/helpers.js',
-    'src/js/module.js',
+    'src/js/startFrom.filter.js',
     'src/js/fonts.service.js',
     'src/js/fontselect.controller.js',
     'src/js/fontselect.directive.js',
+    'src/js/fontlist.directive.js'
   ],
   sourceStyle: [
     'src/less/fontselect.less'

@@ -1,7 +1,16 @@
 /* jshint unused: false */
 
 /** @const */
-var CATEGORY_WEBSAFE = 'websafe';
+var PROVIDER_WEBSAFE = 'Websafe Fonts';
+
+/** @const */
+var PROVIDER_GOOGLE = 'Google Fonts';
+
+/** @const */
+var PROVIDERS = [
+  PROVIDER_WEBSAFE,
+  PROVIDER_GOOGLE
+];
 
 /** @const */
 var DEFAULT_WEBSAFE_FONTS = [
@@ -36,3 +45,7 @@ var DEFAULT_WEBSAFE_FONTS = [
     stack: '"Brush Script MT", cursive'
   }
 ];
+
+fontselectModule.constant('jdFontselectConfig', {
+  googleApiKey: false
+});
