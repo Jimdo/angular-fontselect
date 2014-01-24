@@ -110,7 +110,8 @@
       var self = this;
       
       self._fonts = self._fonts || {};
-      self._fonts[PROVIDER_WEBSAFE] = angular.copy(DEFAULT_WEBSAFE_FONTS);
+      self._map = {};
+      self._addDefaultFonts();
       self._getGoogleFonts();
     },
   
@@ -133,7 +134,23 @@
         self._fonts[provider] = [];
       }
   
-      self._fonts[provider].push(fontObj);
+      if (!angular.isObject(self._map[provider])) {
+        self._map[provider] = {};
+      }
+  
+      var index = self._fonts[provider].push(fontObj)-1;
+  
+      self._map[provider][fontObj.key] = index;
+    },
+  
+    getFontByKey: function(key, provider) {
+      var self = this;
+      try {
+        return self._fonts[provider][self._map[provider][key]];
+      } catch (e) {
+        // TODO: ERROR
+        return false;
+      }
     },
   
     isValidFontObject: function(fontObj) {
@@ -194,6 +211,14 @@
             stack: '"' + font.family + '" sans-serif'
           }, PROVIDER_GOOGLE);
         });
+      });
+    },
+  
+    _addDefaultFonts: function() {
+      var self = this;
+  
+      angular.forEach(DEFAULT_WEBSAFE_FONTS, function(font) {
+        self.add(font);
       });
     }
   };
@@ -271,7 +296,7 @@
   }]);
 
   // src/js/fontlist.directive.js
-  fontselectModule.directive('jdFontlist', [function() {
+  fontselectModule.directive('jdFontlist', ['jdFontselect.fonts', function(fontsService) {
     return {
       scope: {
         id: '=fsid',
@@ -283,18 +308,39 @@
       templateUrl: 'fontlist.html',
       replace: true,
       controller: ['$scope', '$filter', function($scope, $filter) {
+        var _filteredFonts, _lastPageCount = 0;
+  
         $scope.page = {
           size: 30,
+          count: 0,
           current: 0
         };
   
         $scope.providerKey = _createKey($scope.providerName);
-        
+  
+        /**
+         * Set the current page
+         *
+         * @param {Number} currentPage
+         * @return {void}
+         */
         $scope.setCurrentPage = function(currentPage) {
           $scope.page.current = currentPage;
         };
+  
+        /**
+         * Get an array with the length similar to the
+         * amount of pages we have. (So we can use it in a repeater)
+         *
+         * Also update the current page and the current amount of pages.
+         *
+         * @return {Array}
+         */
         $scope.getPages = function() {
-          var pages = new Array($scope.numberOfPages());
+          _updatePageCount();
+          var pages = new Array($scope.page.count);
+  
+          _updateCurrentPage();
   
           /* Display the page buttons only if we have at least two pages. */
           if (pages.length <= 1) {
@@ -303,16 +349,92 @@
           return pages;
         };
   
-        $scope.numberOfPages = function() {
+        /**
+         * Check if this list is active
+         *
+         * @return {Boolean}
+         */
+        $scope.isActive = function() {
+          return $scope.current.provider === $scope.providerName;
+        };
+  
+        /**
+         * Activate or deactivate the this List.
+         *
+         * @return {void}
+         */
+        $scope.toggle = function() {
+          if ($scope.isActive()) {
+            $scope.current.provider = undefined;
+          } else {
+            $scope.current.provider = $scope.providerName;
+          }
+        };
+  
+        /**
+         * Calculate the amount of pages we have.
+         *
+         * @return {void}
+         */
+        function _updatePageCount() {
+          _lastPageCount = $scope.page.count;
+  
           if (!angular.isArray($scope.fonts)) {
             return 0;
           }
   
-          var filteredFonts = $filter('filter')($scope.fonts, $scope.current.search);
-          filteredFonts = $filter('filter')($scope.fonts, {category: $scope.current.category}, true);
+          if (_updateFilteredFonts()) {
+            $scope.page.count = Math.ceil(_filteredFonts.length / $scope.page.size);
+          }
+        }
   
-          return Math.ceil(filteredFonts.length / $scope.page.size);
-        };
+        /**
+         * Apply the current filters to our internal font object.
+         *
+         * @return {Boolean}
+         */
+        function _updateFilteredFonts() {
+          if (!angular.isArray($scope.fonts)) {
+            _filteredFonts = 0;
+            return false;
+          }
+  
+          _filteredFonts = $filter('filter')($scope.fonts, $scope.current.search);
+          _filteredFonts = $filter('filter')(_filteredFonts, {category: $scope.current.category}, true);
+  
+          return true;
+        }
+  
+        /**
+         * Whenever the amount of pages is changing:
+         * Make sure we're not staying on a page that does not exist.
+         * And if we have a font selected, try to stay on the page of
+         * that font.
+         *
+         * @return {void}
+         */
+        function _updateCurrentPage() {
+          /* do nothing if the amount of pages hasn't change */
+          if (_lastPageCount === $scope.page.count) {
+            return;
+          }
+  
+          /* try to get the complete current font object */
+          var currentFont = fontsService.getFontByKey($scope.current.font, $scope.providerName);
+          /* check if the current font is anywhere on our current pages */
+          var index = _filteredFonts.indexOf(currentFont);
+  
+          /* If we have a font selected and it's inside the filter we use */
+          if (currentFont && index >= 0) {
+            /* go to this page */
+            $scope.page.current = Math.ceil((index + 1) / $scope.page.size) - 1;
+          } else {
+            /* Just go to the last page if the current does not exist */
+            if ($scope.page.current > $scope.page.count) {
+              $scope.page.current = $scope.page.count-1;
+            }
+          }
+        }
       }]
     };
   }]);
@@ -322,12 +444,12 @@
     'use strict';
   
     $templateCache.put('fontlist.html',
-      "<div class=\"jd-fontselect-provider jd-fontselect-provider-{{providerKey}}\"><h3>{{providerName}}</h3><ul><li ng-repeat=\"font in fonts | filter:current.search | filter:{category: current.category}:true | startFrom: page.current * page.size | limitTo: page.size \"><input type=radio ng-model=current.font value={{font.key}} name=fs-{{id}}-font id=fs-{{id}}-font-{{font.key}}><label for=fs-{{id}}-font-{{font.key}} style=\"font-family: {{font.stack}}\">{{font.name}}</label></li></ul><button ng-repeat=\"i in getPages() track by $index\" ng-click=setCurrentPage($index)>{{$index + 1}}</button></div>"
+      "<div class=\"jd-fontselect-provider jd-fontselect-provider-{{providerKey}}\" ng-class=\"{active: isActive()}\"><h3 ng-click=toggle()>{{providerName}}</h3><div ng-if=isActive()><ul><li ng-repeat=\"font in fonts | filter:current.search | filter:{category: current.category}:true | startFrom: page.current * page.size | limitTo: page.size \"><input type=radio ng-model=current.font value={{font.key}} name=fs-{{id}}-font id=fs-{{id}}-font-{{font.key}}><label for=fs-{{id}}-font-{{font.key}} style=\"font-family: {{font.stack}}\">{{font.name}}</label></li></ul><button ng-repeat=\"i in getPages() track by $index\" ng-class=\"{active: page.current == $index}\" ng-click=setCurrentPage($index)>{{$index + 1}}</button></div></div>"
     );
   
   
     $templateCache.put('fontselect.html',
-      "<div class=fs-main id=fontselect-{{id}}><button ng-click=toggle()>Toggle</button><input type=hidden value={{current.font}}><div class=fs-window ng-show=active><input name=fs-{{id}}-search ng-model=current.search><div><button ng-repeat=\"category in categories\" ng-class=\"{active: category.key == current.category}\" ng-click=setCategoryFilter(category.key) ng-model=current.category>{{category.name}}</button></div><jd-fontlist fsid=id current=current fonts=fonts[provider] provider={{provider}} ng-repeat=\"provider in providers\"></div></div>"
+      "<div class=fs-main id=fontselect-{{id}}><button ng-click=toggle() class=jd-fontselect-toggle>Select Font</button><input type=hidden value={{current.font}}><div class=fs-window ng-show=active><input name=fs-{{id}}-search ng-model=current.search><div><button ng-repeat=\"category in categories\" ng-class=\"{active: category.key == current.category}\" ng-click=setCategoryFilter(category.key) ng-model=current.category>{{category.name}}</button></div><jd-fontlist fsid=id current=current fonts=fonts[provider] provider={{provider}} ng-repeat=\"provider in providers\"></div></div>"
     );
   
   }]);

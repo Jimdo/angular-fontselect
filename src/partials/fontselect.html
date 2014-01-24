@@ -1,5 +1,5 @@
 <div class="fs-main" id="fontselect-{{id}}">
-	<button ng-click="toggle()">Toggle</button>
+	<button ng-click="toggle()" class="jd-fontselect-toggle">Select Font</button>
 	<input type="hidden" value="{{current.font}}"/>
 	<div class="fs-window" ng-show="active">
 		<input type="text" name="fs-{{id}}-search" ng-model="current.search" />

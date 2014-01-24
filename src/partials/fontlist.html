@@ -1,19 +1,22 @@
-<div class="jd-fontselect-provider jd-fontselect-provider-{{providerKey}}">
-	<h3>{{providerName}}</h3>
-	<ul>
-		<li ng-repeat="font in fonts | filter:current.search | filter:{category: current.category}:true | startFrom: page.current * page.size | limitTo: page.size ">
-			<input 
-				type="radio"
-				ng-model="current.font"
-				value="{{font.key}}"
-				name="fs-{{id}}-font"
-				id="fs-{{id}}-font-{{font.key}}" />
-			<label
-				for="fs-{{id}}-font-{{font.key}}"
-				style="font-family: {{font.stack}};">{{font.name}}</label>
-		</li>
-	</ul>
-	<button
-		ng-repeat="i in getPages() track by $index"
-		ng-click="setCurrentPage($index)">{{$index + 1}}</button>
+<div class="jd-fontselect-provider jd-fontselect-provider-{{providerKey}}" ng-class="{active: isActive()}">
+	<h3 ng-click="toggle()">{{providerName}}</h3>
+	<div ng-if="isActive()">
+		<ul>
+			<li ng-repeat="font in fonts | filter:current.search | filter:{category: current.category}:true | startFrom: page.current * page.size | limitTo: page.size ">
+				<input
+					type="radio"
+					ng-model="current.font"
+					value="{{font.key}}"
+					name="fs-{{id}}-font"
+					id="fs-{{id}}-font-{{font.key}}" />
+				<label
+					for="fs-{{id}}-font-{{font.key}}"
+					style="font-family: {{font.stack}};">{{font.name}}</label>
+			</li>
+		</ul>
+		<button
+			ng-repeat="i in getPages() track by $index"
+			ng-class="{active: page.current == $index}"
+			ng-click="setCurrentPage($index)">{{$index + 1}}</button>
+	</div>
 </div>

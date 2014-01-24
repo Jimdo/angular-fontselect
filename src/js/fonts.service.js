@@ -22,7 +22,8 @@ FontsService.prototype = {
     var self = this;
     
     self._fonts = self._fonts || {};
-    self._fonts[PROVIDER_WEBSAFE] = angular.copy(DEFAULT_WEBSAFE_FONTS);
+    self._map = {};
+    self._addDefaultFonts();
     self._getGoogleFonts();
   },
 
@@ -45,7 +46,23 @@ FontsService.prototype = {
       self._fonts[provider] = [];
     }
 
-    self._fonts[provider].push(fontObj);
+    if (!angular.isObject(self._map[provider])) {
+      self._map[provider] = {};
+    }
+
+    var index = self._fonts[provider].push(fontObj)-1;
+
+    self._map[provider][fontObj.key] = index;
+  },
+
+  getFontByKey: function(key, provider) {
+    var self = this;
+    try {
+      return self._fonts[provider][self._map[provider][key]];
+    } catch (e) {
+      // TODO: ERROR
+      return false;
+    }
   },
 
   isValidFontObject: function(fontObj) {
@@ -106,6 +123,14 @@ FontsService.prototype = {
           stack: '"' + font.family + '" sans-serif'
         }, PROVIDER_GOOGLE);
       });
+    });
+  },
+
+  _addDefaultFonts: function() {
+    var self = this;
+
+    angular.forEach(DEFAULT_WEBSAFE_FONTS, function(font) {
+      self.add(font);
     });
   }
 };
