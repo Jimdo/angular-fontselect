@@ -87,6 +87,39 @@
     };
   });
 
+  // src/js/fuzzy.filter.js
+  /**
+   * Fuzzy search filter for angular.
+   * Remove all entries from list that do not contain the
+   * characters of our search (in the right sequence)
+   *
+   * Allow a configurable amount of typos (default: 1)
+   *
+   * @author Tim Sebastian <tim.sebastian@jimdo.com>
+   * @author Hannes Diercks <hannes.diercks@jimdo.com>
+   */
+  fontselectModule.filter('fuzzySearch', function() {
+    /** @const */
+    var IGNORE_TYPING_ERRORS_AMOUNT = 1;
+  
+    return function(input, search) {
+      if (!angular.isString(search) || search.length === 0) {
+        return input;
+      }
+  
+      return input.filter(function(font) {
+        var src = search;
+  
+        if (IGNORE_TYPING_ERRORS_AMOUNT) {
+          for (var i = 0; i < IGNORE_TYPING_ERRORS_AMOUNT; i++) {
+            src = src.replace(new RegExp('[^' + font.name + ']', 'i'), '');
+          }
+        }
+        return new RegExp(src.split('').join('.*'), 'i').test(font.name);
+      });
+    };
+  });
+
   // src/js/fonts.service.js
   /** @const */
   var REQUIRED_FONT_OBJECT_KEYS = [
@@ -399,7 +432,7 @@
             return false;
           }
   
-          _filteredFonts = $filter('filter')($scope.fonts, $scope.current.search);
+          _filteredFonts = $filter('fuzzySearch')($scope.fonts, $scope.current.search);
           _filteredFonts = $filter('filter')(_filteredFonts, {category: $scope.current.category}, true);
   
           return true;
@@ -444,7 +477,7 @@
     'use strict';
   
     $templateCache.put('fontlist.html',
-      "<div class=\"jd-fontselect-provider jd-fontselect-provider-{{providerKey}}\" ng-class=\"{active: isActive()}\"><h3 ng-click=toggle()>{{providerName}}</h3><div ng-if=isActive()><ul><li ng-repeat=\"font in fonts | filter:current.search | filter:{category: current.category}:true | startFrom: page.current * page.size | limitTo: page.size \"><input type=radio ng-model=current.font value={{font.key}} name=fs-{{id}}-font id=fs-{{id}}-font-{{font.key}}><label for=fs-{{id}}-font-{{font.key}} style=\"font-family: {{font.stack}}\">{{font.name}}</label></li></ul><button ng-repeat=\"i in getPages() track by $index\" ng-class=\"{active: page.current == $index}\" ng-click=setCurrentPage($index)>{{$index + 1}}</button></div></div>"
+      "<div class=\"jd-fontselect-provider jd-fontselect-provider-{{providerKey}}\" ng-class=\"{active: isActive()}\"><h3 ng-click=toggle()>{{providerName}}</h3><div ng-if=isActive()><ul><li ng-repeat=\"font in fonts | fuzzySearch:current.search | filter:{category: current.category}:true | startFrom: page.current * page.size | limitTo: page.size \"><input type=radio ng-model=current.font value={{font.key}} name=fs-{{id}}-font id=fs-{{id}}-font-{{font.key}}><label for=fs-{{id}}-font-{{font.key}} style=\"font-family: {{font.stack}}\">{{font.name}}</label></li></ul><button ng-repeat=\"i in getPages() track by $index\" ng-class=\"{active: page.current == $index}\" ng-click=setCurrentPage($index)>{{$index + 1}}</button></div></div>"
     );
   
   

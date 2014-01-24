@@ -101,7 +101,7 @@ fontselectModule.directive('jdFontlist', ['jdFontselect.fonts', function(fontsSe
           return false;
         }
 
-        _filteredFonts = $filter('filter')($scope.fonts, $scope.current.search);
+        _filteredFonts = $filter('fuzzySearch')($scope.fonts, $scope.current.search);
         _filteredFonts = $filter('filter')(_filteredFonts, {category: $scope.current.category}, true);
 
         return true;
