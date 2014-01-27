@@ -24,7 +24,6 @@ FontsService.prototype = {
     self._fonts = self._fonts || {};
     self._map = {};
     self._addDefaultFonts();
-    self._getGoogleFonts();
   },
 
   getAllFonts: function() {
@@ -57,11 +56,15 @@ FontsService.prototype = {
 
   getFontByKey: function(key, provider) {
     var self = this;
+    
+    if (!angular.isString(provider)) {
+      throw 'Provider is not set.';
+    }
+
     try {
       return self._fonts[provider][self._map[provider][key]];
     } catch (e) {
-      // TODO: ERROR
-      return false;
+      throw 'Font "' + key + '" not found in "' + provider + '".';
     }
   },
 
