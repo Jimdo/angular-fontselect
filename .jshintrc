@@ -76,6 +76,7 @@
         "iit",
         "xit",
         "expect",
+        "spyOn",
         "runs",
         "waits",
         "inject",

@@ -24,7 +24,6 @@ FontsService.prototype = {
     self._fonts = self._fonts || {};
     self._map = {};
     self._addDefaultFonts();
-    self._getGoogleFonts();
   },
 
   getAllFonts: function() {
@@ -106,7 +105,7 @@ FontsService.prototype = {
     ];
   },
 
-  _getGoogleFonts: function() {
+  _initGoogleFonts: function() {
     var self = this;
 
     if (!self.config.googleApiKey) {

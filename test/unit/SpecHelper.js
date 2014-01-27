@@ -53,7 +53,6 @@ DEFAULT_WEBSAFE_FONTS = [
   };
   
   /* Request Regex for catching Google Font API calls. */
-  var googleApiRx = /http(s)?:\/\/www.googleapis.com\/webfonts\/v1\/.*/;
 
   beforeEach(function() {
     /* Initiate the main module */
@@ -66,10 +65,6 @@ DEFAULT_WEBSAFE_FONTS = [
       $injector    = c;
       $httpBackend = d;
 
-      /* Intercept Google Font API Calls */
-      $httpBackend.when('GET', googleApiRx).respond([]);
-      $httpBackend.expectGET(googleApiRx);
-      
       /* Create the element for our directive */
       elm = angular.element(
         '<div>' +
@@ -88,8 +83,7 @@ DEFAULT_WEBSAFE_FONTS = [
   afterEach(function() {
     /* Each directive gets it's own id, we want to test only on id 1 */
     $scope.getSelf()._resetIDs();
-    /* Flush our expected Google Font API Call */
-    $httpBackend.flush(1);
+
     /* Make sure, there are no unexpected request */
     $httpBackend.verifyNoOutstandingExpectation();
     $httpBackend.verifyNoOutstandingRequest();

@@ -1,3 +1,4 @@
+/* global  PROVIDER_GOOGLE, PROVIDER_WEBSAFE */
 fontselectModule.directive('jdFontlist', ['jdFontselect.fonts', function(fontsService) {
   return {
     scope: {
@@ -10,7 +11,10 @@ fontselectModule.directive('jdFontlist', ['jdFontselect.fonts', function(fontsSe
     templateUrl: 'fontlist.html',
     replace: true,
     controller: ['$scope', '$filter', function($scope, $filter) {
-      var _filteredFonts, _lastPageCount = 0;
+      var _filteredFonts;
+      var _lastPageCount = 0;
+      var _activated = [PROVIDER_WEBSAFE];
+      var _initiate = {};
 
       $scope.page = {
         size: 30,
@@ -85,6 +89,10 @@ fontselectModule.directive('jdFontlist', ['jdFontselect.fonts', function(fontsSe
         if ($scope.isActive()) {
           $scope.current.provider = undefined;
         } else {
+          if (_activated.indexOf($scope.providerName) < 0) {
+            _initiate[$scope.providerName]();
+            _activated.push($scope.providerName);
+          }
           $scope.current.provider = $scope.providerName;
         }
       };
@@ -136,6 +144,15 @@ fontselectModule.directive('jdFontlist', ['jdFontselect.fonts', function(fontsSe
           }
         }
       }
+
+      /**
+       * Initiation for the google list.
+       *
+       * @return {void}
+       */
+      _initiate[PROVIDER_GOOGLE] = function() {
+        fontsService._initGoogleFonts();
+      };
     }]
   };
 }]);

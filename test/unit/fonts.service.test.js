@@ -1,4 +1,4 @@
-/* global PROVIDER_WEBSAFE */
+/* global PROVIDER_WEBSAFE, $httpBackend, elm */
 describe('fontsService', function() {
   'use strict';
 
@@ -55,5 +55,28 @@ describe('fontsService', function() {
     expect(function() {
       fontsService.getFontByKey('sdfsdf', 'fireball');
     }).toThrow('Font "sdfsdf" not found in "fireball".');
+  });
+
+  describe('google fonts', function() {
+    var googleApiRx = /http(s)?:\/\/www.googleapis.com\/webfonts\/v1\/.*/;
+    var $subScope;
+    beforeEach(function() {
+      $httpBackend.when('GET', googleApiRx).respond([]);
+      $httpBackend.expectGET(googleApiRx);
+
+      $subScope = elm.find('.jd-fontselect-provider-google-fonts h3').scope();
+      $subScope.toggle();
+    });
+
+    afterEach(function() {
+      $httpBackend.flush(1);
+    });
+
+    it('should not call the fontService initiator twice.', function() {
+      spyOn(fontsService, '_initGoogleFonts');
+      $subScope.toggle();
+      $subScope.toggle();
+      expect(fontsService._initGoogleFonts).not.toHaveBeenCalled();
+    });
   });
 });
