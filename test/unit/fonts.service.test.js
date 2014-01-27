@@ -1,3 +1,4 @@
+/* global PROVIDER_WEBSAFE */
 describe('fontsService', function() {
   'use strict';
 
@@ -38,5 +39,21 @@ describe('fontsService', function() {
         fontsService.add({foo: 'bar'});
       }).toThrow();
     });
+  });
+
+  it('should be able to get a single font by key and provider', function() {
+    expect(fontsService.getFontByKey('arial', PROVIDER_WEBSAFE).name).toBe('Arial');
+  });
+
+  it('should thow an error if we try to get a font without provider', function() {
+    expect(function() {
+      fontsService.getFontByKey('arial');
+    }).toThrow('Provider is not set.');
+  });
+
+  it('should throw an error when the font is not available', function() {
+    expect(function() {
+      fontsService.getFontByKey('sdfsdf', 'fireball');
+    }).toThrow('Font "sdfsdf" not found in "fireball".');
   });
 });
