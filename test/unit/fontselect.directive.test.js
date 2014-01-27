@@ -130,7 +130,7 @@ describe('fontselect directive', function() {
 
   describe('category filter', function() {
     it('should have a list with categories', function() {
-      expect(elm.find('button[ng-model="current.category"]').length).toBe(4);
+      expect(elm.find('button[ng-model="current.category"]').length).toBe(5);
     });
   });
 

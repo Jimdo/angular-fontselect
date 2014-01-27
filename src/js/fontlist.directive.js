@@ -153,6 +153,6 @@ fontselectModule.directive('jdFontlist', ['jdFontselect.fonts', function(fontsSe
       _initiate[PROVIDER_GOOGLE] = function() {
         fontsService._initGoogleFonts();
       };
-    }]
+    }] /* controller END */
   };
 }]);

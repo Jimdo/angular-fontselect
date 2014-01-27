@@ -10,7 +10,7 @@ module.exports = {
     process: Helpers.cleanupModules
   },
   dist: {
-    src: files.source.concat(files.allPartialsCombined),
+    src: [files.yepnope].concat(files.source).concat(files.allPartialsCombined),
     dest: files.dist
   },
   bannerToDistStyle: {

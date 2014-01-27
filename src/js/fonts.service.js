@@ -1,4 +1,4 @@
-/* global DEFAULT_WEBSAFE_FONTS, PROVIDER_WEBSAFE, PROVIDER_GOOGLE */
+/* global DEFAULT_WEBSAFE_FONTS, PROVIDER_WEBSAFE, PROVIDER_GOOGLE, GOOGLE_FONT_CATEGORIES */
 
 /** @const */
 var REQUIRED_FONT_OBJECT_KEYS = [
@@ -7,11 +7,30 @@ var REQUIRED_FONT_OBJECT_KEYS = [
   'stack'
 ];
 
-function FontsService($http, config) {
+/** @const */
+var METHOD_GET = 'get';
+
+/** @const */
+var URL_GOOGLE_FONTS_API = 'https://www.googleapis.com/webfonts/v1/webfonts';
+
+/** @const */
+var URL_WEBFONTLOADER = '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js';
+
+var _webFontLoaderInitiated = false;
+
+var _webFontLoaderDeferred, _webFontLoaderPromise;
+
+
+function FontsService($http, $q, config) {
   var self = this;
 
   self.config = config;
   self.$http = $http;
+  self.$q = $q;
+
+  _webFontLoaderDeferred = $q.defer();
+  _webFontLoaderPromise = _webFontLoaderDeferred.promise;
+  
   self._init();
 
   return self;
@@ -88,21 +107,61 @@ FontsService.prototype = {
     return [
       {
         name: 'Serif',
-        key: 'serif'
+        key: 'serif',
+        fallback: 'serif'
       },
       {
-        name: 'Sans-serif',
-        key: 'sansserif'
+        name: 'Sans Serif',
+        key: 'sansserif',
+        fallback: 'sans-serif'
       },
       {
         name: 'Handwriting',
-        key: 'handwriting'
+        key: 'handwriting',
+        fallback: 'cursive'
+        
+      },
+      {
+        name: 'Display',
+        key: 'display',
+        fallback: 'cursive'
       },
       {
         name: 'Other',
-        key: 'other'
+        key: 'other',
+        fallback: 'sans-serif'
       }
     ];
+  },
+
+  load: function(font, provider) {
+    if (font.loaded) {
+      return;
+    }
+
+    font.loaded = true;
+
+    if (provider === PROVIDER_WEBSAFE) {
+      return;
+    }
+
+    this['load' + provider](font);
+  },
+
+  _initWebFontLoader: function() {
+    if (_webFontLoaderInitiated) {
+      return;
+    }
+
+    _webFontLoaderInitiated = true;
+
+    yepnope({
+      test: typeof WebFont !== 'undefined',
+      nope: URL_WEBFONTLOADER,
+      complete: function() {
+        _webFontLoaderDeferred.resolve(WebFont);
+      }
+    });
   },
 
   _initGoogleFonts: function() {
@@ -112,21 +171,46 @@ FontsService.prototype = {
       return;
     }
 
+    self._initWebFontLoader();
+
     self.$http({
-      method: 'GET',
-      url: 'https://www.googleapis.com/webfonts/v1/webfonts',
+      method: METHOD_GET,
+      url: URL_GOOGLE_FONTS_API,
       params: {
         key: self.config.googleApiKey
       }
     }).success(function(response) {
       angular.forEach(response.items, function(font) {
+        var category = self._getGoogleFontCat(font.family);
+
         self.add({
           name: font.family,
           key: _createKey(font.family),
-          stack: '"' + font.family + '" sans-serif'
+          stack: '"' + font.family + '" ' + category.fallback,
+          category: category.key
         }, PROVIDER_GOOGLE);
       });
     });
+  },
+
+  _getGoogleFontCat: function(font) {
+    var self = this;
+
+    var categories = self.getCategories();
+    for (var i = 0, l = categories.length; i < l; i++) {
+      var category = categories[i];
+
+      if (typeof GOOGLE_FONT_CATEGORIES[category.name] === 'undefined') {
+        continue;
+      }
+
+      if (GOOGLE_FONT_CATEGORIES[category.name].indexOf(font) >= 0) {
+        return category;
+      }
+    }
+
+    // console.error('Category not Found:', font);
+    return categories[5];
   },
 
   _addDefaultFonts: function() {
@@ -138,7 +222,18 @@ FontsService.prototype = {
   }
 };
 
+FontsService.prototype['load' + PROVIDER_GOOGLE] = function(font) {
+  _webFontLoaderPromise.then(function(WebFont) {
+    WebFont.load({
+      google: {
+        families: [font.name],
+        text: font.name,
+      }
+    });
+  });
+};
+
 fontselectModule.factory(
   'jdFontselect.fonts',
-  ['$http', 'jdFontselectConfig', function($http, config) { return new FontsService($http, config); }]
+  ['$http', '$q', 'jdFontselectConfig', function($http, $q, config) { return new FontsService($http, $q, config); }]
 );

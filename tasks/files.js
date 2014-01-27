@@ -3,13 +3,15 @@ var _ = require('grunt').util._;
 var source = [
   'src/js/module.js',
   'src/js/defaults.js',
+  'src/js/googleFontCategories.js',
   'src/js/helpers.js',
   'src/js/startFrom.filter.js',
   'src/js/fuzzy.filter.js',
   'src/js/fonts.service.js',
   'src/js/fontselect.controller.js',
   'src/js/fontselect.directive.js',
-  'src/js/fontlist.directive.js'
+  'src/js/fontlist.directive.js',
+  'src/js/font.directive.js'
 ];
 var testSource = _.clone(source);
 testSource.splice(1, 0, 'tmp.apikeys.js');
@@ -21,6 +23,7 @@ var files = {
   sourceStyle: [
     'src/less/fontselect.less'
   ],
+  yepnope: 'bower_components/yepnope/yepnope.js',
   distStyle: 'dist/<%= pkg.name %>.css',
   distStyleMin: 'dist/<%= pkg.name %>.min.css',
   dist: 'dist/<%= pkg.name %>.js',

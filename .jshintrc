@@ -67,6 +67,8 @@
         "angular",
         "jasmine",
         "jQuery",
+        "yepnope",
+        "WebFont",
         "describe",
         "ddescribe",
         "xdescribe",
