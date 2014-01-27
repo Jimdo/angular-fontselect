@@ -10,22 +10,84 @@
  */
 fontselectModule.filter('fuzzySearch', function() {
   /** @const */
-  var IGNORE_TYPING_ERRORS_AMOUNT = 1;
+  var DEFAULTS = {
+    teAmount: 0,
+    tePercent: 0.3
+  };
 
-  return function(input, search) {
-    if (!angular.isString(search) || search.length === 0) {
-      return input;
+  return function(inputs, search, options) {
+    if (!angular.isArray(inputs) || angular.isUndefined(search)) {
+      return inputs;
     }
 
-    return input.filter(function(font) {
-      var src = search;
+    var strict = true;
+    var searches = [];
 
-      if (IGNORE_TYPING_ERRORS_AMOUNT) {
-        for (var i = 0; i < IGNORE_TYPING_ERRORS_AMOUNT; i++) {
-          src = src.replace(new RegExp('[^' + font.name + ']', 'i'), '');
+    options = angular.extend(DEFAULTS, options);
+
+    function getRegex(str) {
+      return new RegExp(str.replace(/./g, function(i) {return '([^' + i + ']*?(?:' + i + '))?'; }),'i');
+    }
+
+    var filter = function(input, matcher, length) {
+      var matches = (input.match(matcher)||[]).filter(function(match, i) { return i !== 0 && match; });
+
+      var errorAmountIsOk = (matches.length + options.teAmount) >= length;
+      var errorPercentageIsOk = matches.length / length >= 1 - options.tePercent;
+
+      return errorAmountIsOk || errorPercentageIsOk;
+    };
+
+    if (angular.isString(search)) {
+      var rgx = getRegex(search);
+
+      strict = false;
+
+      angular.forEach(inputs[0], function(val, key) {
+        if (key.substring(0, 1) === '$') {
+          return;
+        }
+        searches.push({
+          key: key,
+          search: rgx,
+          length: search.length
+        });
+      });
+    } else if (angular.isObject(search)) {
+      var valid = false;
+      angular.forEach(search, function(s, k) {
+        if (angular.isUndefined(s)) {
+          return;
+        }
+        valid = true;
+        searches.push({
+          key: k,
+          search: getRegex(s),
+          length: s.length
+        });
+      });
+
+      if (!valid) {
+        return inputs;
+      }
+    }
+
+    inputs = inputs.filter(function(input) {
+      for (var i = 0, l = searches.length; i < l; i++) {
+        var src = searches[i],
+            searchVal = input[src.key] || '',
+            ok = filter(searchVal, src.search, src.length);
+
+        if (strict && !ok) {
+          return false;
+        } else if(ok) {
+          return true;
         }
       }
-      return new RegExp(src.split('').join('.*'), 'i').test(font.name);
+
+      return false;
     });
+
+    return inputs;
   };
 });

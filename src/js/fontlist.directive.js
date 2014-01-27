@@ -61,6 +61,22 @@ fontselectModule.directive('jdFontlist', ['jdFontselect.fonts', function(fontsSe
       };
 
       /**
+       * Apply the current filters to our internal font object.
+       *
+       * @return {Array}
+       */
+      $scope.getFilteredFonts = function() {
+        if (!angular.isArray($scope.fonts)) {
+          _filteredFonts = [];
+        } else {
+          _filteredFonts = $filter('fuzzySearch')($scope.fonts, {name: $scope.current.search});
+          _filteredFonts = $filter('filter')(_filteredFonts, {category: $scope.current.category}, true);
+        }
+
+        return _filteredFonts;
+      };
+
+      /**
        * Activate or deactivate the this List.
        *
        * @return {void}
@@ -85,26 +101,9 @@ fontselectModule.directive('jdFontlist', ['jdFontselect.fonts', function(fontsSe
           return 0;
         }
 
-        if (_updateFilteredFonts()) {
+        if (_filteredFonts.length) {
           $scope.page.count = Math.ceil(_filteredFonts.length / $scope.page.size);
         }
-      }
-
-      /**
-       * Apply the current filters to our internal font object.
-       *
-       * @return {Boolean}
-       */
-      function _updateFilteredFonts() {
-        if (!angular.isArray($scope.fonts)) {
-          _filteredFonts = 0;
-          return false;
-        }
-
-        _filteredFonts = $filter('fuzzySearch')($scope.fonts, $scope.current.search);
-        _filteredFonts = $filter('filter')(_filteredFonts, {category: $scope.current.category}, true);
-
-        return true;
       }
 
       /**
