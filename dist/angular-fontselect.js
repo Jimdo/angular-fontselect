@@ -596,31 +596,41 @@
       name: 'Arial',
       key: 'arial',
       category: 'sansserif',
-      stack: 'Arial, "Helvetica Neue", Helvetica, sans-serif'
+      stack: 'Arial, "Helvetica Neue", Helvetica, sans-serif',
+      popularity: 3,
+      lastModified: '2014-01-28'
     },
     {
       name: 'Courier New',
       key: 'couriernew',
       category: 'other',
-      stack: '"Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace'
+      stack: '"Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace',
+      popularity: 1,
+      lastModified: '2014-01-28'
     },
     {
       name: 'Verdana',
       key: 'verdana',
       category: 'sansserif',
-      stack: 'Verdana, Geneva, sans-serif'
+      stack: 'Verdana, Geneva, sans-serif',
+      popularity: 6,
+      lastModified: '2014-01-28'
     },
     {
       name: 'Times New Roman',
       key: 'timesnewroman',
       category: 'serif',
-      stack: 'TimesNewRoman, "Times New Roman", Times, Baskerville, Georgia, serif'
+      stack: 'TimesNewRoman, "Times New Roman", Times, Baskerville, Georgia, serif',
+      popularity: 2,
+      lastModified: '2014-01-28'
     },
     {
       name: 'Brush Script',
       key: 'brushscript',
       category: 'handwriting',
-      stack: '"Brush Script MT", cursive'
+      stack: '"Brush Script MT", cursive',
+      popularity: 5,
+      lastModified: '2014-01-29'
     }
   ];
   
@@ -1750,7 +1760,9 @@
           key: self.config.googleApiKey
         }
       }).success(function(response) {
-        angular.forEach(response.items, function(font) {
+        var amount = response.items.length;
+  
+        angular.forEach(response.items, function(font, i) {
           var category = self._getGoogleFontCat(font.family);
   
           if (SUPPORT_KHMER || font.subsets.length === 1 && font.subsets[0] === 'khmer') {
@@ -1761,7 +1773,9 @@
             subsets: font.subsets,
             variants: font.variants,
             name: font.family,
+            popularity: amount - i,
             key: _createKey(font.family),
+            lastModified: font.lastModified,
             stack: '"' + font.family + '" ' + category.fallback,
             category: category.key
           }, PROVIDER_GOOGLE);
@@ -1825,6 +1839,9 @@
   // src/js/fontselect.controller.js
   var id = 1;
   
+  /** @const */
+  var SORT_DESC = 'desc';
+  
   var FontselectController = function($scope, fontsService) {
     var self = this;
   
@@ -1844,12 +1861,35 @@
       $scope.providers = PROVIDERS;
       $scope.active = false;
       $scope.categories = self.fontsService.getCategories();
+      $scope.searchAttrs = [
+        {
+          name: 'Popularity',
+          key: 'popularity',
+          dir: true
+        },
+        {
+          name: 'Alphabet',
+          key: 'name',
+          dir: false
+        },
+        {
+          name: 'Latest',
+          key: 'lastModified',
+          dir: true
+        }
+      ];
+  
       $scope.current = {
+        sort: {
+          attr: $scope.searchAttrs[0],
+          direction: SORT_DESC
+        },
         provider: PROVIDER_WEBSAFE,
         category: undefined,
         font: undefined,
         search: undefined
       };
+  
   
       $scope.setCategoryFilter = _bind(self.setCategoryFilter, self);
       $scope.toggle = _bind(self.toggle, self);
@@ -1966,6 +2006,12 @@
           } else {
             _filteredFonts = $filter('fuzzySearch')($scope.fonts, {name: $scope.current.search});
             _filteredFonts = $filter('filter')(_filteredFonts, {category: $scope.current.category}, true);
+            _filteredFonts = $filter('orderBy')(
+              _filteredFonts,
+              $scope.current.sort.attr.key,
+              $scope.current.sort.attr.dir
+            );
+  
           }
   
           return _filteredFonts;
@@ -2075,7 +2121,7 @@
   
   
     $templateCache.put('fontselect.html',
-      "<div class=fs-main id=fontselect-{{id}}><button ng-click=toggle() class=jd-fontselect-toggle>Select Font</button><input type=hidden value={{current.font}}><div class=fs-window ng-show=active><input name=fs-{{id}}-search ng-model=current.search><div><button ng-repeat=\"category in categories\" ng-class=\"{active: category.key == current.category}\" ng-click=setCategoryFilter(category.key) ng-model=current.category>{{category.name}}</button></div><jd-fontlist fsid=id current=current fonts=fonts[provider] provider={{provider}} ng-repeat=\"provider in providers\"></div></div>"
+      "<div class=fs-main id=fontselect-{{id}}><button ng-click=toggle() class=jd-fontselect-toggle>Select Font</button><input type=hidden value={{current.font}}><div class=fs-window ng-show=active><input name=fs-{{id}}-search ng-model=current.search><select ng-model=current.sort.attr ng-options=\"a.name for a in searchAttrs\"></select><div><button ng-repeat=\"category in categories\" ng-class=\"{active: category.key == current.category}\" ng-click=setCategoryFilter(category.key) ng-model=current.category>{{category.name}}</button></div><jd-fontlist fsid=id current=current fonts=fonts[provider] provider={{provider}} ng-repeat=\"provider in providers\"></div></div>"
     );
   
   }]);

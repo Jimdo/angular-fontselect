@@ -41,6 +41,14 @@ module.exports = {
     return li;
   },
 
+  getSortOption: function(n) {
+    var sorters = element.all(by.tagName('option'));
+    if(typeof n === 'number') {
+      return sorters.get(n);
+    }
+    return sorters;
+  },
+
   searchFor: function(string, reset) {
     var search = element(by.model('current.search'));
     if (reset !== false) {

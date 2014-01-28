@@ -3,6 +3,7 @@
 	<input type="hidden" value="{{current.font}}"/>
 	<div class="fs-window" ng-show="active">
 		<input type="text" name="fs-{{id}}-search" ng-model="current.search" />
+		<select ng-model="current.sort.attr" ng-options="a.name for a in searchAttrs"></select>
 		<div>
 			<button
 				ng-repeat="category in categories"

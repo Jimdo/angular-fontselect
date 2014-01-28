@@ -1,6 +1,9 @@
 /* global PROVIDERS, PROVIDER_WEBSAFE */
 var id = 1;
 
+/** @const */
+var SORT_DESC = 'desc';
+
 var FontselectController = function($scope, fontsService) {
   var self = this;
 
@@ -20,12 +23,35 @@ FontselectController.prototype = {
     $scope.providers = PROVIDERS;
     $scope.active = false;
     $scope.categories = self.fontsService.getCategories();
+    $scope.searchAttrs = [
+      {
+        name: 'Popularity',
+        key: 'popularity',
+        dir: true
+      },
+      {
+        name: 'Alphabet',
+        key: 'name',
+        dir: false
+      },
+      {
+        name: 'Latest',
+        key: 'lastModified',
+        dir: true
+      }
+    ];
+
     $scope.current = {
+      sort: {
+        attr: $scope.searchAttrs[0],
+        direction: SORT_DESC
+      },
       provider: PROVIDER_WEBSAFE,
       category: undefined,
       font: undefined,
       search: undefined
     };
+
 
     $scope.setCategoryFilter = _bind(self.setCategoryFilter, self);
     $scope.toggle = _bind(self.toggle, self);

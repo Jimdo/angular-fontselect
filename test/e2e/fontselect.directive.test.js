@@ -65,4 +65,33 @@ describe('fontselect directive', function() {
     });
   });
 
+  describe('sorting', function() {
+
+    beforeEach(function() {
+      Helpers.toggle();
+    });
+
+    it('should have a sort by field', function() {
+      expect(element.all(by.model('current.sort.attr')).count()).toBe(1);
+    });
+
+    it('should have some options', function() {
+      element(by.model('current.sort.attr')).findElements(by.tagName('option')).then(function(arr) {
+        expect(arr.length).toBe(3);
+      });
+    });
+
+    it('should change the order of the list when we change the option', function() {
+      var firstLi = Helpers.getLi(0).getText();
+      Helpers.getSortOption(1).click();
+      expect(firstLi).not.toBe(Helpers.getLi(0).getText());
+    });
+
+    it('should have a difference between popularity and latest', function() {
+      var firstLi = Helpers.getLi(1).getText();
+      Helpers.getSortOption(2).click();
+      expect(firstLi).not.toBe(Helpers.getLi(1).getText());
+    });
+  });
+
 });

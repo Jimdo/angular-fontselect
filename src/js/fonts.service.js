@@ -297,7 +297,9 @@ FontsService.prototype = {
         key: self.config.googleApiKey
       }
     }).success(function(response) {
-      angular.forEach(response.items, function(font) {
+      var amount = response.items.length;
+
+      angular.forEach(response.items, function(font, i) {
         var category = self._getGoogleFontCat(font.family);
 
         if (SUPPORT_KHMER || font.subsets.length === 1 && font.subsets[0] === 'khmer') {
@@ -308,7 +310,9 @@ FontsService.prototype = {
           subsets: font.subsets,
           variants: font.variants,
           name: font.family,
+          popularity: amount - i,
           key: _createKey(font.family),
+          lastModified: font.lastModified,
           stack: '"' + font.family + '" ' + category.fallback,
           category: category.key
         }, PROVIDER_GOOGLE);
