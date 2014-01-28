@@ -85,6 +85,14 @@ Start the build in webserver with `node-dev scripts/web-server.js`
 Execute `grunt test:e2e`
 
 
+About Khmer
+-----------
+
+There are several google web fonts, supporting the khmer subset
+but the Typekit Webfont Loader does not support them, so we're skipping
+them, too.
+
+
 Future Features
 ---------------
 

@@ -4,7 +4,7 @@
 /* jshint undef: false */
 
 /* some globals we might need later on, set in beforeEach */
-var $rootScope, $compile, $injector, $httpBackend, $scope, elm;
+var $rootScope, $compile, $injector, $httpBackend, $scope, $q, elm;
 
 /* Mock the default font set. */
 DEFAULT_WEBSAFE_FONTS = [
@@ -58,12 +58,13 @@ DEFAULT_WEBSAFE_FONTS = [
     /* Initiate the main module */
     module('jdFontselect');
 
-    inject(['$rootScope', '$compile', '$injector', '$httpBackend', function(a, b, c, d) {
+    inject(['$rootScope', '$compile', '$injector', '$httpBackend', '$q', function(a, b, c, d, e) {
       /* Get or globals */
       $rootScope   = a;
       $compile     = b;
       $injector    = c;
       $httpBackend = d;
+      $q           = e;
 
       /* Create the element for our directive */
       elm = angular.element(
