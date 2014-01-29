@@ -1839,9 +1839,6 @@
   // src/js/fontselect.controller.js
   var id = 1;
   
-  /** @const */
-  var SORT_DESC = 'desc';
-  
   var FontselectController = function($scope, fontsService) {
     var self = this;
   
@@ -1882,7 +1879,7 @@
       $scope.current = {
         sort: {
           attr: $scope.searchAttrs[0],
-          direction: SORT_DESC
+          direction: true
         },
         provider: PROVIDER_WEBSAFE,
         category: undefined,
@@ -1893,6 +1890,13 @@
   
       $scope.setCategoryFilter = _bind(self.setCategoryFilter, self);
       $scope.toggle = _bind(self.toggle, self);
+      $scope.reverseSort = _bind(self.reverseSort, self);
+    },
+  
+    reverseSort: function() {
+      var sort = this.$scope.current.sort;
+  
+      sort.direction = !sort.direction;
     },
   
     toggle: function() {
@@ -2004,14 +2008,15 @@
           if (!angular.isArray($scope.fonts)) {
             _filteredFonts = [];
           } else {
+            var direction = $scope.current.sort.attr.dir;
+  
             _filteredFonts = $filter('fuzzySearch')($scope.fonts, {name: $scope.current.search});
             _filteredFonts = $filter('filter')(_filteredFonts, {category: $scope.current.category}, true);
             _filteredFonts = $filter('orderBy')(
               _filteredFonts,
               $scope.current.sort.attr.key,
-              $scope.current.sort.attr.dir
+              $scope.current.sort.direction ? direction : !direction
             );
-  
           }
   
           return _filteredFonts;
@@ -2121,7 +2126,7 @@
   
   
     $templateCache.put('fontselect.html',
-      "<div class=fs-main id=fontselect-{{id}}><button ng-click=toggle() class=jd-fontselect-toggle>Select Font</button><input type=hidden value={{current.font}}><div class=fs-window ng-show=active><input name=fs-{{id}}-search ng-model=current.search><select ng-model=current.sort.attr ng-options=\"a.name for a in searchAttrs\"></select><div><button ng-repeat=\"category in categories\" ng-class=\"{active: category.key == current.category}\" ng-click=setCategoryFilter(category.key) ng-model=current.category>{{category.name}}</button></div><jd-fontlist fsid=id current=current fonts=fonts[provider] provider={{provider}} ng-repeat=\"provider in providers\"></div></div>"
+      "<div class=fs-main id=fontselect-{{id}}><button ng-click=toggle() class=jd-fontselect-toggle>Select Font</button><input type=hidden value={{current.font}}><div class=fs-window ng-show=active><input name=fs-{{id}}-search ng-model=current.search><select ng-model=current.sort.attr ng-options=\"a.name for a in searchAttrs\"></select><button ng-click=reverseSort()>{{current.sort.direction ? '▼' : '▲'}}</button><div><button ng-repeat=\"category in categories\" ng-class=\"{active: category.key == current.category}\" ng-click=setCategoryFilter(category.key) ng-model=current.category>{{category.name}}</button></div><jd-fontlist fsid=id current=current fonts=fonts[provider] provider={{provider}} ng-repeat=\"provider in providers\"></div></div>"
     );
   
   }]);

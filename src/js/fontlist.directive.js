@@ -73,14 +73,15 @@ fontselectModule.directive('jdFontlist', ['jdFontselect.fonts', function(fontsSe
         if (!angular.isArray($scope.fonts)) {
           _filteredFonts = [];
         } else {
+          var direction = $scope.current.sort.attr.dir;
+
           _filteredFonts = $filter('fuzzySearch')($scope.fonts, {name: $scope.current.search});
           _filteredFonts = $filter('filter')(_filteredFonts, {category: $scope.current.category}, true);
           _filteredFonts = $filter('orderBy')(
             _filteredFonts,
             $scope.current.sort.attr.key,
-            $scope.current.sort.attr.dir
+            $scope.current.sort.direction ? direction : !direction
           );
-
         }
 
         return _filteredFonts;

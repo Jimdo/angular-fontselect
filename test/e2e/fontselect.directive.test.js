@@ -1,7 +1,12 @@
-/* global element, by */
+/* global element, by, protractor */
 describe('fontselect directive', function() {
 
   var Helpers = require('./SpecHelper');
+  var prot;
+
+  beforeEach(function() {
+    prot = protractor.getInstance();
+  });
 
   it('should have a button', function() {
     expect(element.all(by.css('.jd-fontselect-toggle')).count()).toBe(1);
@@ -88,10 +93,52 @@ describe('fontselect directive', function() {
     });
 
     it('should have a difference between popularity and latest', function() {
-      var firstLi = Helpers.getLi(1).getText();
+      var testLi = Helpers.getLi(1).getText();
       Helpers.getSortOption(2).click();
-      expect(firstLi).not.toBe(Helpers.getLi(1).getText());
+      expect(testLi).not.toBe(Helpers.getLi(1).getText());
     });
+
+    describe('reverse button', function() {
+
+      var selector = '[ng-click="reverseSort()"]';
+      var sortDirButton;
+
+      beforeEach(function() {
+        sortDirButton = element(by.css(selector));
+      });
+
+      it('should exist', function() {
+        expect(prot.isElementPresent(by.css(selector))).toBe(true);
+      });
+
+      it('should change it\'s label when we click on it', function() {
+        var before = sortDirButton.getText();
+
+        sortDirButton.click();
+        expect(sortDirButton.getText()).not.toBe(before);
+      });
+
+      it('should reverse the order of the list when we click on it (popularity)', function() {
+        var firstLi = Helpers.getLi(0).getText();
+        sortDirButton.click();
+        expect(firstLi).not.toBe(Helpers.getLi(0).getText());
+      });
+
+      it('should reverse the order of the list when we click on it (alphabet)', function() {
+        Helpers.getSortOption(1).click();
+        var firstLi = Helpers.getLi(0).getText();
+        sortDirButton.click();
+        expect(firstLi).not.toBe(Helpers.getLi(0).getText());
+      });
+
+      it('should reverse the order of the list when we click on it (latest)', function() {
+        Helpers.getSortOption(2).click();
+        var firstLi = Helpers.getLi(0).getText();
+        sortDirButton.click();
+        expect(firstLi).not.toBe(Helpers.getLi(0).getText());
+      });
+    });
+
   });
 
 });

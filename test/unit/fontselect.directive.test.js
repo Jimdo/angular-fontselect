@@ -2,6 +2,12 @@
 describe('fontselect directive', function() {
   'use strict';
 
+  var mainToggleButton;
+
+  beforeEach(function() {
+    mainToggleButton = elm.find('button[ng-click="toggle()"]');
+  });
+
   it('s controller should exist', function() {
     expect(FontselectController).toBeDefined();
   });
@@ -19,12 +25,12 @@ describe('fontselect directive', function() {
   });
 
   it('should have a toggle button', function() {
-    expect(elm.find('button[ng-click="toggle()"]').length).toBe(1);
+    expect(mainToggleButton.length).toBe(1);
   });
 
   it('should become active when button is clicked', function() {
     expect($scope.active).toBe(false);
-    elm.find('button').click();
+    mainToggleButton.click();
     expect($scope.active).toBe(true);
   });
 
@@ -56,7 +62,7 @@ describe('fontselect directive', function() {
   });
 
   it('should show the font-select window when active', function() {
-    elm.find('button').click();
+    mainToggleButton.click();
     expect(elm.find('.fs-window.ng-hide').length).toBe(0);
   });
 
@@ -131,6 +137,28 @@ describe('fontselect directive', function() {
   describe('category filter', function() {
     it('should have a list with categories', function() {
       expect(elm.find('button[ng-model="current.category"]').length).toBe(5);
+    });
+
+    it('should be able to change the current category filter with the setCategoryFilter method', function() {
+      expect($scope.current.category).toBeUndefined();
+      $scope.setCategoryFilter('foo');
+      expect($scope.current.category).toBe('foo');
+    });
+  });
+
+  describe('sorting', function() {
+    it('should have a sort select dropdown', function() {
+      expect(elm.find('select[ng-model="current.sort.attr"]').length).toBe(1);
+    });
+
+    it('should have a way to reverse the sorting', function() {
+      expect(elm.find('button[ng-click="reverseSort()"]').length).toBe(1);
+    });
+
+    it('should negotiate the sort direction with the reverseSort method', function() {
+      expect($scope.current.sort.direction).toBe(true);
+      $scope.reverseSort();
+      expect($scope.current.sort.direction).toBe(false);
     });
   });
 

@@ -1,9 +1,6 @@
 /* global PROVIDERS, PROVIDER_WEBSAFE */
 var id = 1;
 
-/** @const */
-var SORT_DESC = 'desc';
-
 var FontselectController = function($scope, fontsService) {
   var self = this;
 
@@ -44,7 +41,7 @@ FontselectController.prototype = {
     $scope.current = {
       sort: {
         attr: $scope.searchAttrs[0],
-        direction: SORT_DESC
+        direction: true
       },
       provider: PROVIDER_WEBSAFE,
       category: undefined,
@@ -55,6 +52,13 @@ FontselectController.prototype = {
 
     $scope.setCategoryFilter = _bind(self.setCategoryFilter, self);
     $scope.toggle = _bind(self.toggle, self);
+    $scope.reverseSort = _bind(self.reverseSort, self);
+  },
+
+  reverseSort: function() {
+    var sort = this.$scope.current.sort;
+
+    sort.direction = !sort.direction;
   },
 
   toggle: function() {
