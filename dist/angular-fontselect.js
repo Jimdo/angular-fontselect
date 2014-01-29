@@ -1,5 +1,5 @@
 /*!
- * angular-fontselect v0.0.8
+ * angular-fontselect v0.0.9
  * https://github.com/Jimdo/angular-fontselect
  *
  * A fontselect directive for AngularJS
@@ -574,10 +574,10 @@
   
   })( this, document );
 
-  // src/js/module.js
+  // src/js/helper.module.js
   var fontselectModule = angular.module('jdFontselect', []);
 
-  // src/js/defaults.js
+  // src/js/helper.defaults.js
   /** @const */
   var PROVIDER_WEBSAFE = 'Websafe Fonts';
   
@@ -638,7 +638,7 @@
     googleApiKey: false
   });
 
-  // src/js/googleFontCategories.js
+  // src/js/helper.google-font-categories.js
   /** @const */
   var GOOGLE_FONT_CATEGORIES = {
     'Handwriting': [
@@ -1344,7 +1344,7 @@
     ]
   };
 
-  // src/js/helpers.js
+  // src/js/helper.functions.js
   function _bind(fn, me) {
     return function() {
       return fn.apply(me, arguments);
@@ -1355,7 +1355,7 @@
     return name.toLowerCase().replace(/[^a-z]+/g, '-');
   }
 
-  // src/js/startFrom.filter.js
+  // src/js/filter.start-from.js
   /* From: http://tech.small-improvements.com/2013/09/10/angularjs-performance-with-large-lists/ */
   fontselectModule.filter('startFrom', function() {
     return function(input, start) {
@@ -1367,7 +1367,7 @@
     };
   });
 
-  // src/js/fuzzy.filter.js
+  // src/js/filter.fuzzy-search.js
   /**
    * Fuzzy search filter for angular.
    * Remove all entries from list that do not contain the
@@ -1462,7 +1462,7 @@
     };
   });
 
-  // src/js/fonts.service.js
+  // src/js/service.fonts.js
   /** @const */
   var REQUIRED_FONT_OBJECT_KEYS = [
     'name',
@@ -1836,104 +1836,74 @@
     ['$http', '$q', 'jdFontselectConfig', function($http, $q, config) { return new FontsService($http, $q, config); }]
   );
 
-  // src/js/fontselect.controller.js
+  // src/js/directive.fontselect.js
   var id = 1;
   
-  var FontselectController = function($scope, fontsService) {
-    var self = this;
-  
-    self.fontsService = fontsService;
-    self.$scope = $scope;
-    self.name = 'FontselectController';
-    self._construct();
-  };
-  
-  FontselectController.prototype = {
-    _construct: function() {
-      var self = this;
-      var $scope = self.$scope;
-  
-      $scope.fonts = self.fontsService.getAllFonts();
-      $scope.id = id++;
-      $scope.providers = PROVIDERS;
-      $scope.active = false;
-      $scope.categories = self.fontsService.getCategories();
-      $scope.searchAttrs = [
-        {
-          name: 'Popularity',
-          key: 'popularity',
-          dir: true
-        },
-        {
-          name: 'Alphabet',
-          key: 'name',
-          dir: false
-        },
-        {
-          name: 'Latest',
-          key: 'lastModified',
-          dir: true
-        }
-      ];
-  
-      $scope.current = {
-        sort: {
-          attr: $scope.searchAttrs[0],
-          direction: true
-        },
-        provider: PROVIDER_WEBSAFE,
-        category: undefined,
-        font: undefined,
-        search: undefined
-      };
-  
-  
-      $scope.setCategoryFilter = _bind(self.setCategoryFilter, self);
-      $scope.toggle = _bind(self.toggle, self);
-      $scope.reverseSort = _bind(self.reverseSort, self);
-    },
-  
-    reverseSort: function() {
-      var sort = this.$scope.current.sort;
-  
-      sort.direction = !sort.direction;
-    },
-  
-    toggle: function() {
-      var $scope = this.$scope;
-  
-      $scope.active = !$scope.active;
-    },
-  
-    setCategoryFilter: function(category) {
-      var current = this.$scope.current;
-  
-      if (current.category === category) {
-        current.category = undefined;
-      } else {
-        current.category = category;
-      }
-    },
-  
-    _resetIDs: function() {
-      id = 1;
-    }
-  };
-  
-  FontselectController.$inject = ['$scope', 'jdFontselect.fonts'];
-
-  // src/js/fontselect.directive.js
   fontselectModule.directive('jdFontselect', [function() {
     return {
       scope: {},
       restrict: 'E',
       templateUrl: 'fontselect.html',
       replace: true,
-      controller: FontselectController
+      controller: ['$scope', 'jdFontselect.fonts', function($scope, fontsService) {
+        $scope.fonts = fontsService.getAllFonts();
+        $scope.id = id++;
+        $scope.providers = PROVIDERS;
+        $scope.active = false;
+        $scope.categories = fontsService.getCategories();
+        $scope.searchAttrs = [
+          {
+            name: 'Popularity',
+            key: 'popularity',
+            dir: true
+          },
+          {
+            name: 'Alphabet',
+            key: 'name',
+            dir: false
+          },
+          {
+            name: 'Latest',
+            key: 'lastModified',
+            dir: true
+          }
+        ];
+  
+        $scope.current = {
+          sort: {
+            attr: $scope.searchAttrs[0],
+            direction: true
+          },
+          provider: PROVIDER_WEBSAFE,
+          category: undefined,
+          font: undefined,
+          search: undefined
+        };
+  
+        $scope.reverseSort = function() {
+          var sort = $scope.current.sort;
+  
+          sort.direction = !sort.direction;
+        };
+  
+        $scope.toggle = function() {
+          $scope.active = !$scope.active;
+        };
+  
+        $scope.setCategoryFilter = function(category) {
+          var current = $scope.current;
+  
+          if (current.category === category) {
+            current.category = undefined;
+          } else {
+            current.category = category;
+          }
+        };
+      }]
     };
   }]);
 
-  // src/js/fontlist.directive.js
+  // src/js/directive.fontlist.js
   fontselectModule.directive('jdFontlist', ['jdFontselect.fonts', function(fontsService) {
     return {
       scope: {
@@ -2099,7 +2069,7 @@
     };
   }]);
 
-  // src/js/font.directive.js
+  // src/js/directive.font.js
   fontselectModule.directive('jdFont', ['jdFontselect.fonts', function(fontsService) {
     return {
       templateUrl: 'font.html',
@@ -2116,17 +2086,17 @@
     'use strict';
   
     $templateCache.put('font.html',
-      "<li><input type=radio ng-model=current.font value={{font.key}} name=fs-{{id}}-font id=fs-{{id}}-font-{{font.key}}><label for=fs-{{id}}-font-{{font.key}} style=\"font-family: {{font.stack}}\">{{font.name}}</label></li>"
+      "<li><input type=radio ng-model=current.font value={{font.key}} name=jdfs-{{id}}-font id=jdfs-{{id}}-font-{{font.key}}><label for=jdfs-{{id}}-font-{{font.key}} style=\"font-family: {{font.stack}}\">{{font.name}}</label></li>"
     );
   
   
     $templateCache.put('fontlist.html',
-      "<div class=\"jd-fontselect-provider jd-fontselect-provider-{{providerKey}}\" ng-class=\"{active: isActive()}\"><h3 ng-click=toggle()>{{providerName}}</h3><div ng-if=isActive()><ul><jd-font ng-repeat=\"font in getFilteredFonts() | startFrom: page.current * page.size | limitTo: page.size\"></ul><button ng-repeat=\"i in getPages() track by $index\" ng-class=\"{active: page.current == $index}\" ng-click=setCurrentPage($index)>{{$index + 1}}</button></div></div>"
+      "<div class=\"jdfs-provider jdfs-provider-{{providerKey}}\" ng-class=\"{'jdfs-active': isActive()}\"><h3 ng-click=toggle()>{{providerName}}</h3><div ng-if=isActive()><ul><jd-font ng-repeat=\"font in getFilteredFonts() | startFrom: page.current * page.size | limitTo: page.size\"></ul><button ng-repeat=\"i in getPages() track by $index\" ng-class=\"{'jdfs-active': page.current == $index}\" ng-click=setCurrentPage($index)>{{$index + 1}}</button></div></div>"
     );
   
   
     $templateCache.put('fontselect.html',
-      "<div class=fs-main id=fontselect-{{id}}><button ng-click=toggle() class=jd-fontselect-toggle>Select Font</button><input type=hidden value={{current.font}}><div class=fs-window ng-show=active><input name=fs-{{id}}-search ng-model=current.search><select ng-model=current.sort.attr ng-options=\"a.name for a in searchAttrs\"></select><button ng-click=reverseSort()>{{current.sort.direction ? '▼' : '▲'}}</button><div><button ng-repeat=\"category in categories\" ng-class=\"{active: category.key == current.category}\" ng-click=setCategoryFilter(category.key) ng-model=current.category>{{category.name}}</button></div><jd-fontlist fsid=id current=current fonts=fonts[provider] provider={{provider}} ng-repeat=\"provider in providers\"></div></div>"
+      "<div class=jdfs-main id=jd-fontselect-{{id}}><button ng-click=toggle() class=jdfs-toggle>Select Font</button><div class=jdfs-window ng-show=active><input name=jdfs-{{id}}-search ng-model=current.search><select ng-model=current.sort.attr ng-options=\"a.name for a in searchAttrs\"></select><button ng-click=reverseSort()>{{current.sort.direction ? '▼' : '▲'}}</button><div><button ng-repeat=\"category in categories\" ng-class=\"{'jdfs-active': category.key == current.category}\" ng-click=setCategoryFilter(category.key) ng-model=current.category>{{category.name}}</button></div><jd-fontlist fsid=id current=current fonts=fonts[provider] provider={{provider}} ng-repeat=\"provider in providers\"></div></div>"
     );
   
   }]);
