@@ -1,4 +1,4 @@
-/* global FontselectController, DEFAULT_WEBSAFE_FONTS, $rootScope, $compile, $injector, $scope, elm  */
+/* global DEFAULT_WEBSAFE_FONTS, $rootScope, $compile, $injector, $scope, elm  */
 describe('fontselect directive', function() {
   'use strict';
 
@@ -6,14 +6,6 @@ describe('fontselect directive', function() {
 
   beforeEach(function() {
     mainToggleButton = elm.find('button[ng-click="toggle()"]');
-  });
-
-  it('s controller should exist', function() {
-    expect(FontselectController).toBeDefined();
-  });
-
-  it('should be able to get itself', function() {
-    expect($scope.getSelf()).toBeInstanceOf(FontselectController);
   });
 
   it('should add an wrapper element with fs-main class.', inject(function() {

@@ -109,6 +109,7 @@ describe('fontsService', function() {
   });
 
   describe('google fonts', function() {
+    /* Request Regex for catching Google Font API calls. */
     var googleApiRx = /http(s)?:\/\/www.googleapis.com\/webfonts\/v1\/.*/;
     var $subScope;
     beforeEach(function() {

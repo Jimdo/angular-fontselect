@@ -42,18 +42,7 @@ DEFAULT_WEBSAFE_FONTS = [
 
 
 (function() {
-  /* Teach the FontselectController to reference himself on the scope */
-  var originalConstruct = FontselectController.prototype._construct;
-  FontselectController.prototype._construct = function() {
-    var self = this;
-    originalConstruct.apply(self, arguments);
-    self.$scope.getSelf = function() {
-      return self;
-    };
-  };
   
-  /* Request Regex for catching Google Font API calls. */
-
   beforeEach(function() {
     /* Initiate the main module */
     module('jdFontselect');
@@ -83,7 +72,7 @@ DEFAULT_WEBSAFE_FONTS = [
 
   afterEach(function() {
     /* Each directive gets it's own id, we want to test only on id 1 */
-    $scope.getSelf()._resetIDs();
+    id = 1;
 
     /* Make sure, there are no unexpected request */
     $httpBackend.verifyNoOutstandingExpectation();
