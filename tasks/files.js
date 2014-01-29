@@ -37,7 +37,7 @@ var files = {
     'bower_components/angular/angular.js',
     'bower_components/angular-mocks/angular-mocks.js'
   ],
-  
+
   package: ['package.json', 'bower.json']
 };
 
@@ -50,7 +50,7 @@ files.testEnvKarma.push(files.allPartialsCombined);
 files.testEnv = JSON.parse(JSON.stringify(files.testEnvKarma));
 files.testEnv.splice(0, 0, 'bower_components/less/dist/less-1.6.1.js');
 
-files.testEnvKarma.splice(0, 0, 'bower_components/jQuery/jQuery.js');
+files.testEnvKarma.splice(0, 0, 'bower_components/jquery/jquery.js');
 if (typeof module === 'object') {
   module.exports = files;
 }
