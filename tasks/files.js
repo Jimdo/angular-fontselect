@@ -1,46 +1,56 @@
-var _ = require('grunt').util._;
-
-var source = [
-  'src/js/module.js',
-  'src/js/defaults.js',
-  'src/js/googleFontCategories.js',
-  'src/js/helpers.js',
-  'src/js/startFrom.filter.js',
-  'src/js/fuzzy.filter.js',
-  'src/js/fonts.service.js',
-  'src/js/fontselect.controller.js',
-  'src/js/fontselect.directive.js',
-  'src/js/fontlist.directive.js',
-  'src/js/font.directive.js'
-];
-var testSource = _.clone(source);
-testSource.splice(1, 0, 'tmp.apikeys.js');
-
 var files = {
   grunt: 'Gruntfile.js',
-  source: source,
-  testSource: testSource,
+  yepnope: 'bower_components/yepnope/yepnope.js',
+
+  source: [
+    'src/js/helper.module.js',
+    'src/js/helper.defaults.js',
+    'src/js/helper.google-font-categories.js',
+    'src/js/helper.functions.js',
+    'src/js/filter.start-from.js',
+    'src/js/filter.fuzzy-search.js',
+    'src/js/service.fonts.js',
+    'src/js/directive.fontselect.js',
+    'src/js/directive.fontlist.js',
+    'src/js/directive.font.js'
+  ],
   sourceStyle: [
     'src/less/fontselect.less'
   ],
-  yepnope: 'bower_components/yepnope/yepnope.js',
+
   distStyle: 'dist/<%= pkg.name %>.css',
   distStyleMin: 'dist/<%= pkg.name %>.min.css',
   dist: 'dist/<%= pkg.name %>.js',
   distMin: 'dist/<%= pkg.name %>.min.js',
   dists: 'dist/*',
+
+  partialsDir: 'src/partials',
+  allHTML: '*.html',
+  allPartials: 'src/partials/*.html',
+  allPartialsCombined: 'src/partials/all.js',
+
+  unitTests: 'test/unit/**/*.js',
+  e2eTests: ['test/e2e/SpecHelper.js', 'test/e2e/test.*.js'],
   apiKeys: 'tmp.apikeys.js',
-  testEnv: [
-    'bower_components/jquery/jquery.js',
+  testEnvKarma: [
+    'bower_components/yepnope/yepnope.js',
     'bower_components/angular/angular.js',
     'bower_components/angular-mocks/angular-mocks.js'
   ],
-  package: ['package.json', 'bower.json'],
-  allPartials: 'src/partials/*.html',
-  allPartialsCombined: 'src/partials/all.js',
-  unitTests: 'test/unit/**/*.js',
-  partialsDir: 'src/partials',
-  allHTML: '*.html'
+  
+  package: ['package.json', 'bower.json']
 };
 
-module.exports = files;
+var apiKeysPos = files.testEnvKarma.length + 1;
+
+files.testEnvKarma = files.testEnvKarma.concat(files.source);
+files.testEnvKarma.splice(apiKeysPos, 0, 'tmp.apikeys.js');
+files.testEnvKarma.push(files.allPartialsCombined);
+
+files.testEnv = JSON.parse(JSON.stringify(files.testEnvKarma));
+files.testEnv.splice(0, 0, 'bower_components/less/dist/less-1.6.1.js');
+
+files.testEnvKarma.splice(0, 0, 'bower_components/jQuery/jQuery.js');
+if (typeof module === 'object') {
+  module.exports = files;
+}

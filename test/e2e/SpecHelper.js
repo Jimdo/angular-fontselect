@@ -1,5 +1,4 @@
 /* global browser, element, by */
-/* jshint unused: false */
 var sandboxUrl = 'http://localhost:8000/test/e2e/index.html';
 
 beforeEach(function() {

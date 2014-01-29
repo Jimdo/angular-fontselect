@@ -1,3 +1,5 @@
+var files = require('../files');
+
 module.exports = {
   options: {
     args: {
@@ -6,7 +8,7 @@ module.exports = {
       capabilities: {
         'browserName': 'chrome'
       },
-      specs: ['test/e2e/*.js'],
+      specs: [files.e2eTests],
       jasmineNodeOpts: {
         showColors: true,
         defaultTimeoutInterval: 30000

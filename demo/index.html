@@ -6,39 +6,20 @@
   <link rel="stylesheet/less" type="text/css" href="styles.less" />
   <link rel="stylesheet/css" type="text/css" href="/dist/angular-fontselect.css" />
 </head>
-<body ng-app="myApp">
+<body>
   <my-app>
   </my-app>
 
-  <script src="/bower_components/yepnope/yepnope.js"></script>
   <script src="/bower_components/jquery/jquery.js"></script>
-  <script src="/bower_components/angular/angular.js"></script>
-  <script src="/bower_components/less/dist/less-1.6.1.js"></script>
-  <script src="/src/js/module.js"></script>
-  <script src="/tmp.apikeys.js"></script>
-  <script src="/src/js/defaults.js"></script>
-  <script src="/src/js/googleFontCategories.js"></script>
-  <script src="/src/js/helpers.js"></script>
-  <script src="/src/js/startFrom.filter.js"></script>
-  <script src="/src/js/fuzzy.filter.js"></script>
-  <script src="/src/js/fonts.service.js"></script>
-  <script src="/src/js/fontselect.controller.js"></script>
-  <script src="/src/js/fontselect.directive.js"></script>
-  <script src="/src/js/fontlist.directive.js"></script>
-  <script src="/src/js/font.directive.js"></script>
-  <script src="/src/partials/all.js"></script>
-  <script type="text/javascript">
-angular.module('myApp', ['jdFontselect']).directive('myApp', function() {
-  return {
-    restrict: 'E',
-    replace: false,
-    template: '<jd-fontselect />',
-    controller: ['$scope', 'jdFontselect.fonts', function($scope, fontsService) {
-      /* do something with $scope or the fontsService (for example, add a font) */
-      fontsService.add({name: 'Foo', key: 'foo', stack: 'Foo, "Comic Sans", serif'});
-    }]
-  };
-});
+  <script>
+    /* jshint indent: false */
+    /* global files, $ */
+    $.get('/tasks/files.js', function() {
+      files.testEnv.push('demo/app.js');
+      $.each(files.testEnv, function(i, url) {
+        $('body').append($('<script>').attr('src', '/' + url));
+      });
+    });
   </script>
 </body>
 </html>

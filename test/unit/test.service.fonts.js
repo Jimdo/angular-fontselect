@@ -5,7 +5,6 @@ describe('fontsService', function() {
 
   var fontsService, customFont;
 
-
   customFont = {
     name: 'Foo',
     key: 'foo',
@@ -108,10 +107,16 @@ describe('fontsService', function() {
     });
   });
 
+  it('should have yepnope defined', function() {
+    expect(yepnope).toBeDefined();
+  });
+
   describe('google fonts', function() {
     /* Request Regex for catching Google Font API calls. */
     var googleApiRx = /http(s)?:\/\/www.googleapis.com\/webfonts\/v1\/.*/;
     var $subScope;
+
+
     beforeEach(function() {
       $httpBackend.when('GET', googleApiRx).respond(GOOGLE_FONTS_RESPONSE);
       $httpBackend.expectGET(googleApiRx);
@@ -129,6 +134,8 @@ describe('fontsService', function() {
       _webFontLoaderInitiated = false;
       /* jshint +W020 */
     });
+
+    it('should succeed on on all the beforeEach tests', function() {});
 
     it('should not call the fontService initiator twice.', function() {
       spyOn(fontsService, '_initGoogleFonts');

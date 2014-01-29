@@ -5,29 +5,20 @@
   <title>Angular Fontselect Sandbox</title>
   <link rel="stylesheet/less" type="text/css" href="/src/less/fontselect.less" />
 </head>
-<body ng-app="jdFontselectTest">
+<body>
   <!--       THIS IS NOT A SANDBOX, IT'S FOR E2E TESTING!      -->
   <!-- PLEASE USE demo/index.html IF YOU'D LIKE TO PLAY AROUND -->
   <jd-fontselect></jd-fontselect>
-  <script src="/bower_components/yepnope/yepnope.js"></script>
   <script src="/bower_components/jquery/jquery.js"></script>
-  <script src="/bower_components/angular/angular.js"></script>
-  <script src="/bower_components/less/dist/less-1.6.1.js"></script>
-  <script src="/src/js/module.js"></script>
-  <script src="/tmp.apikeys.js"></script>
-  <script src="/src/js/defaults.js"></script>
-  <script src="/src/js/googleFontCategories.js"></script>
-  <script src="/src/js/helpers.js"></script>
-  <script src="/src/js/startFrom.filter.js"></script>
-  <script src="/src/js/fuzzy.filter.js"></script>
-  <script src="/src/js/fonts.service.js"></script>
-  <script src="/src/js/fontselect.controller.js"></script>
-  <script src="/src/js/fontselect.directive.js"></script>
-  <script src="/src/js/fontlist.directive.js"></script>
-  <script src="/src/js/font.directive.js"></script>
-  <script src="/src/partials/all.js"></script>
-  <script type="text/javascript">
-angular.module('jdFontselectTest', ['jdFontselect']);
-</script>
+  <script>
+    /* jshint indent: false */
+    /* global files, $ */
+    $.get('/tasks/files.js', function() {
+      files.testEnv.push('test/e2e/app.js');
+      $.each(files.testEnv, function(i, url) {
+        $('body').append($('<script>').attr('src', '/' + url));
+      });
+    });
+  </script>
 </body>
 </html>
