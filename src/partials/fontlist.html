@@ -1,4 +1,4 @@
-<div class="jd-fontselect-provider jd-fontselect-provider-{{providerKey}}" ng-class="{active: isActive()}">
+<div class="jdfs-provider jdfs-provider-{{providerKey}}" ng-class="{'jdfs-active': isActive()}">
 	<h3 ng-click="toggle()">{{providerName}}</h3>
 	<div ng-if="isActive()">
 		<ul>
@@ -6,7 +6,7 @@
 		</ul>
 		<button
 			ng-repeat="i in getPages() track by $index"
-			ng-class="{active: page.current == $index}"
+			ng-class="{'jdfs-active': page.current == $index}"
 			ng-click="setCurrentPage($index)">{{$index + 1}}</button>
 	</div>
 </div>

@@ -1,14 +1,13 @@
-<div class="fs-main" id="fontselect-{{id}}">
-	<button ng-click="toggle()" class="jd-fontselect-toggle">Select Font</button>
-	<input type="hidden" value="{{current.font}}"/>
-	<div class="fs-window" ng-show="active">
-		<input type="text" name="fs-{{id}}-search" ng-model="current.search" />
+<div class="jdfs-main" id="jd-fontselect-{{id}}">
+	<button ng-click="toggle()" class="jdfs-toggle">Select Font</button>
+	<div class="jdfs-window" ng-show="active">
+		<input type="text" name="jdfs-{{id}}-search" ng-model="current.search" />
 		<select ng-model="current.sort.attr" ng-options="a.name for a in searchAttrs"></select>
 		<button ng-click="reverseSort()">{{current.sort.direction ? '▼' : '▲'}}</button>
 		<div>
 			<button
 				ng-repeat="category in categories"
-				ng-class="{active: category.key == current.category}"
+				ng-class="{'jdfs-active': category.key == current.category}"
 				ng-click="setCategoryFilter(category.key)"
 				ng-model="current.category">{{category.name}}</button>
 		</div>

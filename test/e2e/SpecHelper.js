@@ -8,7 +8,7 @@ beforeEach(function() {
 module.exports = {
 
   toggle: function() {
-    element(by.css('.jd-fontselect-toggle')).click();
+    element(by.css('.jdfs-toggle')).click();
   },
 
   openProviderListNo: function(n) {

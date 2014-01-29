@@ -122,7 +122,7 @@ describe('fontsService', function() {
       $httpBackend.expectGET(googleApiRx);
       spyOn(window, 'yepnope');
 
-      $subScope = elm.find('.jd-fontselect-provider-google-fonts h3').scope();
+      $subScope = elm.find('.jdfs-provider-google-fonts h3').scope();
       $subScope.toggle();
       $httpBackend.flush(1);
     });

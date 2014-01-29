@@ -9,16 +9,16 @@ describe('fontselect directive', function() {
   });
 
   it('should have a button', function() {
-    expect(element.all(by.css('.jd-fontselect-toggle')).count()).toBe(1);
+    expect(element.all(by.css('.jdfs-toggle')).count()).toBe(1);
   });
 
   it('should be invisible before toggle click', function() {
-    expect(element(by.className('fs-window')).isDisplayed()).toBe(false);
+    expect(element(by.className('jdfs-window')).isDisplayed()).toBe(false);
   });
 
   it('should become visible after toggle click', function() {
     Helpers.toggle();
-    expect(element(by.className('fs-window')).isDisplayed()).toBe(true);
+    expect(element(by.className('jdfs-window')).isDisplayed()).toBe(true);
   });
 
   it('should have a list of checkboxes', function() {

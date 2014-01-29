@@ -66,7 +66,7 @@ DEFAULT_WEBSAFE_FONTS = [
       $rootScope.$digest();
 
       /* Save a reference to the directive scope */
-      $scope = elm.find('.fs-main div').scope();
+      $scope = elm.find('.jdfs-main div').scope();
     }]);
   });
 

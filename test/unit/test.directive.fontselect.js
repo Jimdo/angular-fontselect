@@ -9,11 +9,11 @@ describe('fontselect directive', function() {
   });
 
   it('should add an wrapper element with fs-main class.', inject(function() {
-    expect(elm.find('.fs-main').length).toBe(1);
+    expect(elm.find('.jdfs-main').length).toBe(1);
   }));
 
   it('should replace the fontselect element.', function() {
-    expect(elm.find('fontselect').length).toBe(0);
+    expect(elm.find('jd-fontselect').length).toBe(0);
   });
 
   it('should have a toggle button', function() {
@@ -30,32 +30,17 @@ describe('fontselect directive', function() {
     expect($scope.currentFont).not.toBeDefined();
   });
 
-  describe('direct out', function() {
-    var hiddeninput;
-    beforeEach(function() {
-      hiddeninput = elm.find('input[type="hidden"]');
-    });
-
-    it('should have a hidden input element', function() {
-      expect(hiddeninput.length).toBe(1);
-    });
-
-    it('\'s hidden input should have the active font as a value', function() {
-      expect(hiddeninput.val()).toBe('');
-    });
-  });
-
   it('should provide a list with some fonts', function() {
     expect(elm.find('li').length).toBe(5);
   });
 
   it('should not show the font-select window when inactive', function() {
-    expect(elm.find('.fs-window.ng-hide').length).toBe(1);
+    expect(elm.find('.jdfs-window.ng-hide').length).toBe(1);
   });
 
   it('should show the font-select window when active', function() {
     mainToggleButton.click();
-    expect(elm.find('.fs-window.ng-hide').length).toBe(0);
+    expect(elm.find('.jdfs-window.ng-hide').length).toBe(0);
   });
 
   it('should expend if we add a new font via the fonts service', function() {
@@ -69,7 +54,7 @@ describe('fontselect directive', function() {
   });
 
   it('should have an id', function() {
-    expect(elm.find('.fs-main').attr('id')).toBe('fontselect-1');
+    expect(elm.find('.jdfs-main').attr('id')).toBe('jd-fontselect-1');
   });
 
   it('should increase the id for every instance', function() {
@@ -81,7 +66,7 @@ describe('fontselect directive', function() {
     $compile(elm2)($rootScope);
     $rootScope.$digest();
 
-    expect(elm2.find('.fs-main').attr('id')).toBe('fontselect-2');
+    expect(elm2.find('.jdfs-main').attr('id')).toBe('jd-fontselect-2');
   });
 
 
@@ -116,13 +101,13 @@ describe('fontselect directive', function() {
     });
 
     it('should create multiple font lists for providers', function() {
-      expect(elm.find('.jd-fontselect-provider').length).toBeGreaterThan(1);
+      expect(elm.find('.jdfs-provider').length).toBeGreaterThan(1);
     });
   });
 
   describe('search', function() {
     it('should have a search input field', function() {
-      expect(elm.find('input[name="fs-1-search"]').length).toBe(1);
+      expect(elm.find('input[name="jdfs-1-search"]').length).toBe(1);
     });
   });
 

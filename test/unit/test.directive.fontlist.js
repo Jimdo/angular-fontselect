@@ -5,7 +5,7 @@ describe('fontlist directive', function() {
   var fontlist, $childScope;
 
   beforeEach(function() {
-    fontlist = elm.find('.jd-fontselect-provider-websafe-fonts').first();
+    fontlist = elm.find('.jdfs-provider-websafe-fonts').first();
     $childScope = fontlist.children().first().scope();
   });
 
@@ -31,9 +31,9 @@ describe('fontlist directive', function() {
   });
 
   it('should have an active class when active', function() {
-    expect(fontlist.hasClass('active')).toBe(true);
+    expect(fontlist.hasClass('jdfs-active')).toBe(true);
     fontlist.find('h3').click();
-    expect(fontlist.hasClass('active')).toBe(false);
+    expect(fontlist.hasClass('jdfs-active')).toBe(false);
   });
 
   it('shouldn\'t have list elements when inactive', function() {
