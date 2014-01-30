@@ -1,5 +1,9 @@
 <div class="jdfs-provider jdfs-provider-{{providerKey}}" ng-class="{'jdfs-active': isActive()}">
-	<h3 ng-click="toggle()">{{providerName}}</h3>
+	<h3 ng-click="toggle()">{{providerName}}
+		<span ng-if="getFilteredFonts().length == fonts.length">({{fonts.length}})</span>
+		<span ng-if="fonts.length && getFilteredFonts().length != fonts.length">({{getFilteredFonts().length}}/{{fonts.length}})</span>
+		<span ng-if="!fonts.length">(…)</span>
+	</h3>
 	<div ng-if="isActive()">
 		<ul>
 			<jd-font ng-repeat="font in getFilteredFonts() | startFrom: page.current * page.size | limitTo: page.size" />

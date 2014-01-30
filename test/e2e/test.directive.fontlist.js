@@ -61,6 +61,21 @@ describe('fontlist directive', function() {
     expect(Helpers.getRadio(1).getAttribute('selected')).toBeTruthy();
   });
 
+  describe('font count', function() {
+    it('should display the amount of font\'s in the header', function() {
+      expect(element(by.tagName('h3')).getText()).toContain('5/5');
+    });
+
+    it('should adjust the first number when we apply filters', function() {
+      Helpers.searchFor('ari');
+      expect(element(by.tagName('h3')).getText()).toContain('1/5');
+    });
+
+    iit('should display a placeholder when the fonts have not been loaded, yet', function() {
+      expect(element.all(by.tagName('h3')).get(1).getText()).toContain('(…)');
+    });
+  });
+
   describe('pagination of google fonts', function() {
 
     beforeEach(function() {
