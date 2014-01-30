@@ -1,5 +1,5 @@
 /*!
- * angular-fontselect v0.0.10
+ * angular-fontselect v0.0.11
  * https://github.com/Jimdo/angular-fontselect
  *
  * A fontselect directive for AngularJS
@@ -1464,7 +1464,45 @@
     };
   });
 
+  // src/js/filter.has-all-subsets.js
+  fontselectModule.filter('hasAllSubsets', function() {
+    return function(input, subsets) {
+      if (!angular.isArray(input)) {
+        return input;
+      }
+  
+      function hasAllSubsets(font) {
+        var allOK = true;
+  
+        angular.forEach(subsets, function(active, key) {
+          if (!active || !allOK) {
+            return;
+          }
+  
+          if (font.subsets.indexOf(key) < 0) {
+            allOK = false;
+          }
+        });
+  
+        return allOK;
+      }
+  
+      return input.filter(function(font) {
+        if (angular.isUndefined(font.subsets)) {
+          // TODO: ERROR
+          // console.error('Font ' + font.name + ' is missing subset information.');
+          return true;
+        }
+  
+        return angular.isObject(font) && hasAllSubsets(font);
+      });
+    };
+  });
+
   // src/js/service.fonts.js
+  /** @const */
+  var NAME_FONTSSERVICE = 'jdFontselect.fonts';
+  
   /** @const */
   var REQUIRED_FONT_OBJECT_KEYS = [
     'name',
@@ -1570,6 +1608,8 @@
       
       self._fonts = self._fonts || {};
       self._map = {};
+      self._subsets = [];
+      self._subsetNames = {};
       self._addDefaultFonts();
     },
   
@@ -1594,6 +1634,10 @@
   
       if (!angular.isObject(self._map[provider])) {
         self._map[provider] = {};
+      }
+  
+      if (angular.isArray(fontObj.subsets)) {
+        self._addSubsets(fontObj.subsets);
       }
   
       var index = self._fonts[provider].push(fontObj)-1;
@@ -1682,6 +1726,14 @@
           fallback: 'sans-serif'
         }
       ];
+    },
+  
+    getSubsets: function() {
+      return this._subsets;
+    },
+  
+    getSubsetNames: function() {
+      return this._subsetNames;
     },
   
     load: function(font, provider) {
@@ -1785,6 +1837,27 @@
       });
     },
   
+    _addSubsets: function(subsets) {
+      for (var i = 0, l = subsets.length; i < l; i++) {
+        this._addSubset(subsets[i]);
+      }
+    },
+  
+    _addSubset: function(subset) {
+      var self = this;
+  
+      if (self._subsets.indexOf(subset) < 0) {
+        var fragments = subset.split('-');
+  
+        for (var i = 0, l = fragments.length; i < l; i++) {
+          fragments[i] = fragments[i].charAt(0).toUpperCase() + fragments[i].slice(1);
+        }
+  
+        self._subsetNames[subset] = fragments.join(' ');
+        self._subsets.push(subset);
+      }
+    },
+  
     _getGoogleFontCat: function(font) {
       var self = this;
   
@@ -1824,6 +1897,7 @@
           google: {
             families: [font.name + ':' + self._getBestVariantOf(font.variants)],
             text: font.name,
+            subsets: font.subsets,
             subset: self._getBestSubsetOf(font.subsets)
           }
         });
@@ -1834,7 +1908,7 @@
   };
   
   fontselectModule.factory(
-    'jdFontselect.fonts',
+    NAME_FONTSSERVICE,
     ['$http', '$q', 'jdFontselectConfig', function($http, $q, config) { return new FontsService($http, $q, config); }]
   );
 
@@ -1853,6 +1927,7 @@
         $scope.providers = PROVIDERS;
         $scope.active = false;
         $scope.categories = fontsService.getCategories();
+        $scope.subsets = fontsService.getSubsetNames();
         $scope.searchAttrs = [
           {
             name: 'Popularity',
@@ -1879,7 +1954,10 @@
           provider: PROVIDER_WEBSAFE,
           category: undefined,
           font: undefined,
-          search: undefined
+          search: undefined,
+          subsets: {
+            latin: true
+          }
         };
   
         $scope.reverseSort = function() {
@@ -1932,6 +2010,7 @@
       var _filteredFonts;
       var _sortedFonts;
       var _categorizedFonts;
+      var _fontsInSubsets;
       var _lastPageCount = 0;
       var _activated = [PROVIDER_WEBSAFE];
       var _initiate = {};
@@ -2002,7 +2081,18 @@
           /* Apply all filters if the source is new. */
           if ($scope.fonts.length !== _sortCache.sourceCache) {
             _sortCache.sourceCache = $scope.fonts.length;
-            _sortCache.sortattr = null;
+            /* ESKALATE! */
+            _sortCache.subsets = null;
+          }
+  
+          if (_sortCache.subsets !== JSON.stringify($scope.current.subsets)) {
+            _sortCache.subsets = JSON.stringify($scope.current.subsets);
+            _sortCache.sortdir = null;
+  
+            _fontsInSubsets = $filter('hasAllSubsets')(
+              $scope.fonts,
+              $scope.current.subsets
+            );
           }
   
   
@@ -2014,7 +2104,7 @@
             _sortCache.category = null;
   
             _sortedFonts = $filter('orderBy')(
-              $scope.fonts,
+              _fontsInSubsets,
               $scope.current.sort.attr.key,
               $scope.current.sort.direction ? direction : !direction
             );
@@ -2142,7 +2232,7 @@
   
   
     $templateCache.put('fontselect.html',
-      "<div class=jdfs-main id=jd-fontselect-{{id}}><button ng-click=toggle() class=jdfs-toggle>Select Font</button><div class=jdfs-window ng-show=active><input name=jdfs-{{id}}-search ng-model=current.search><select ng-model=current.sort.attr ng-options=\"a.name for a in searchAttrs\"></select><button ng-click=reverseSort()>{{current.sort.direction ? '▼' : '▲'}}</button><div><button ng-repeat=\"category in categories\" ng-class=\"{'jdfs-active': category.key == current.category}\" ng-click=setCategoryFilter(category.key) ng-model=current.category>{{category.name}}</button></div><jd-fontlist fsid=id current=current fonts=fonts[provider] provider={{provider}} ng-repeat=\"provider in providers\"></div></div>"
+      "<div class=jdfs-main id=jd-fontselect-{{id}}><button ng-click=toggle() class=jdfs-toggle>Select Font</button><div class=jdfs-window ng-show=active><input name=jdfs-{{id}}-search ng-model=current.search><select ng-model=current.sort.attr ng-options=\"a.name for a in searchAttrs\"></select><button ng-click=reverseSort()>{{current.sort.direction ? '▼' : '▲'}}</button><div ng-repeat=\"(key, name) in subsets\"><input ng-model=current.subsets[key] type=checkbox id=jdfs-{{id}}-subset-{{key}}><label for=jdfs-{{id}}-subset-{{key}}>{{name}}</label></div><div><button ng-repeat=\"category in categories\" ng-class=\"{'jdfs-active': category.key == current.category}\" ng-click=setCategoryFilter(category.key) ng-model=current.category>{{category.name}}</button></div><jd-fontlist fsid=id current=current fonts=fonts[provider] provider={{provider}} ng-repeat=\"provider in providers\"></div></div>"
     );
   
   }]);
