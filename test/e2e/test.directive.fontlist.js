@@ -1,4 +1,4 @@
-/* global element, by */
+/* global element, by, waitsFor */
 describe('fontlist directive', function() {
 
   var Helpers = require('./SpecHelper');
@@ -63,7 +63,7 @@ describe('fontlist directive', function() {
 
   describe('font count', function() {
     it('should display the amount of font\'s in the header', function() {
-      expect(element(by.tagName('h3')).getText()).toContain('5/5');
+      expect(element(by.tagName('h3')).getText()).toContain('(5)');
     });
 
     it('should adjust the first number when we apply filters', function() {
@@ -71,7 +71,7 @@ describe('fontlist directive', function() {
       expect(element(by.tagName('h3')).getText()).toContain('1/5');
     });
 
-    iit('should display a placeholder when the fonts have not been loaded, yet', function() {
+    it('should display a placeholder when the fonts have not been loaded, yet', function() {
       expect(element.all(by.tagName('h3')).get(1).getText()).toContain('(…)');
     });
   });
@@ -99,8 +99,13 @@ describe('fontlist directive', function() {
     it('should keep radios selected over page changes.', function() {
       Helpers.getRadio(5).click();
       Helpers.getPaginator(1).click();
-      Helpers.getPaginator(0).click();
-      expect(Helpers.getRadio(5).getAttribute('selected')).toBeTruthy();
+      runs(function() {
+        Helpers.getPaginator(0).click();
+      });
+      /* Need to delay our expectation to make this less flaky. */
+      runs(function() {
+        expect(Helpers.getRadio(5).getAttribute('selected')).toBeTruthy();
+      });
     });
 
     it('should be on the correct page when we close and reopen the list', function() {
