@@ -9,6 +9,7 @@ var files = {
     'src/js/helper.functions.js',
     'src/js/filter.start-from.js',
     'src/js/filter.fuzzy-search.js',
+    'src/js/filter.has-all-subsets.js',
     'src/js/service.fonts.js',
     'src/js/directive.fontselect.js',
     'src/js/directive.fontlist.js',

@@ -1,7 +1,7 @@
 /**
  * Some tasks we need to perform before any test-suite starts.
  */
-/* jshint undef: false */
+/* jshint undef: false, unused: false  */
 
 /* some globals we might need later on, set in beforeEach */
 var $rootScope, $compile, $injector, $httpBackend, $scope, $q, $controller, elm;
@@ -11,35 +11,70 @@ DEFAULT_WEBSAFE_FONTS = [
   {
     name: 'Arial',
     key: 'arial',
-    category: 'sans-serif',
-    stack: 'Arial, "Helvetica Neue", Helvetica, sans-serif'
+    category: 'sansserif',
+    stack: 'Arial, "Helvetica Neue", Helvetica, sans-serif',
+    popularity: 7,
+    lastModified: '2014-01-28',
+    subsets: [SUBSET_LATIN]
   },
   {
     name: 'Courier New',
     key: 'couriernew',
     category: 'other',
-    stack: '"Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace'
+    stack: '"Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace',
+    popularity: 1,
+    lastModified: '2014-01-28',
+    subsets: [SUBSET_LATIN, SUBSET_LATIN_EXT]
   },
   {
     name: 'Verdana',
     key: 'verdana',
-    category: 'sans-serif',
-    stack: 'Verdana, Geneva, sans-serif'
+    category: 'sansserif',
+    stack: 'Verdana, Geneva, sans-serif',
+    popularity: 6,
+    lastModified: '2014-01-28',
+    subsets: [SUBSET_LATIN, SUBSET_GREEK]
   },
   {
     name: 'Times New Roman',
     key: 'timesnewroman',
     category: 'serif',
-    stack: 'TimesNewRoman, "Times New Roman", Times, Baskerville, Georgia, serif'
+    stack: 'TimesNewRoman, "Times New Roman", Times, Baskerville, Georgia, serif',
+    popularity: 2,
+    lastModified: '2014-01-28',
+    subsets: [SUBSET_LATIN, SUBSET_CYRILLIC, SUBSET_GREEK]
   },
   {
     name: 'Brush Script',
     key: 'brushscript',
     category: 'handwriting',
-    stack: '"Brush Script MT", cursive'
+    stack: '"Brush Script MT", cursive',
+    popularity: 5,
+    lastModified: '2014-01-29',
+    subsets: [SUBSET_LATIN]
   }
 ];
 
+/** @const */
+var ANOTHER_FONT = {
+  name: 'Drrrt',
+  key: 'drt',
+  category: 'display',
+  stack: 'Drrrt, cursive',
+  popularity: 10,
+  lastModified: '2014-01-30',
+  subsets: [SUBSET_LATIN, SUBSET_GREEK]
+};
+
+var AND_SOME_FONT_MORE = {
+  name: 'Mooh',
+  key: 'mooh',
+  category: 'handwriting',
+  stack: 'Mooh, cursive',
+  popularity: 7,
+  lastModified: '2014-01-31',
+  subsets: [SUBSET_VIETNAMESE]
+};
 
 (function() {
   

@@ -25,6 +25,7 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
     var _filteredFonts;
     var _sortedFonts;
     var _categorizedFonts;
+    var _fontsInSubsets;
     var _lastPageCount = 0;
     var _activated = [PROVIDER_WEBSAFE];
     var _initiate = {};
@@ -95,7 +96,18 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
         /* Apply all filters if the source is new. */
         if ($scope.fonts.length !== _sortCache.sourceCache) {
           _sortCache.sourceCache = $scope.fonts.length;
-          _sortCache.sortattr = null;
+          /* ESKALATE! */
+          _sortCache.subsets = null;
+        }
+
+        if (_sortCache.subsets !== JSON.stringify($scope.current.subsets)) {
+          _sortCache.subsets = JSON.stringify($scope.current.subsets);
+          _sortCache.sortdir = null;
+
+          _fontsInSubsets = $filter('hasAllSubsets')(
+            $scope.fonts,
+            $scope.current.subsets
+          );
         }
 
 
@@ -107,7 +119,7 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
           _sortCache.category = null;
 
           _sortedFonts = $filter('orderBy')(
-            $scope.fonts,
+            _fontsInSubsets,
             $scope.current.sort.attr.key,
             $scope.current.sort.direction ? direction : !direction
           );

@@ -48,6 +48,14 @@ module.exports = {
     return sorters;
   },
 
+  getSubsetCheckbox: function(n) {
+    var checkboxes = element.all(by.model('current.subsets[key]'));
+    if(typeof n === 'number') {
+      return checkboxes.get(n);
+    }
+    return checkboxes;
+  },
+
   searchFor: function(string, reset) {
     var search = element(by.model('current.search'));
     if (reset !== false) {

@@ -42,9 +42,10 @@ describe('fontlist directive', function() {
   });
 
   it('should get it\'s list elements back when being reactivated', function() {
+    var lis = fontlist.find('li').length;
     fontlist.find('h3').click();
     fontlist.find('h3').click();
-    expect(fontlist.find('li').length).toBe(5);
+    expect(fontlist.find('li').length).toBe(lis);
   });
 
   it('should not have pagination by default', function() {

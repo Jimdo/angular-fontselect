@@ -1,6 +1,9 @@
 /* global DEFAULT_WEBSAFE_FONTS, PROVIDER_WEBSAFE, PROVIDER_GOOGLE, GOOGLE_FONT_CATEGORIES */
 
 /** @const */
+var NAME_FONTSSERVICE = 'jdFontselect.fonts';
+
+/** @const */
 var REQUIRED_FONT_OBJECT_KEYS = [
   'name',
   'key',
@@ -105,6 +108,8 @@ FontsService.prototype = {
     
     self._fonts = self._fonts || {};
     self._map = {};
+    self._subsets = [];
+    self._subsetNames = {};
     self._addDefaultFonts();
   },
 
@@ -129,6 +134,10 @@ FontsService.prototype = {
 
     if (!angular.isObject(self._map[provider])) {
       self._map[provider] = {};
+    }
+
+    if (angular.isArray(fontObj.subsets)) {
+      self._addSubsets(fontObj.subsets);
     }
 
     var index = self._fonts[provider].push(fontObj)-1;
@@ -217,6 +226,14 @@ FontsService.prototype = {
         fallback: 'sans-serif'
       }
     ];
+  },
+
+  getSubsets: function() {
+    return this._subsets;
+  },
+
+  getSubsetNames: function() {
+    return this._subsetNames;
   },
 
   load: function(font, provider) {
@@ -320,6 +337,27 @@ FontsService.prototype = {
     });
   },
 
+  _addSubsets: function(subsets) {
+    for (var i = 0, l = subsets.length; i < l; i++) {
+      this._addSubset(subsets[i]);
+    }
+  },
+
+  _addSubset: function(subset) {
+    var self = this;
+
+    if (self._subsets.indexOf(subset) < 0) {
+      var fragments = subset.split('-');
+
+      for (var i = 0, l = fragments.length; i < l; i++) {
+        fragments[i] = fragments[i].charAt(0).toUpperCase() + fragments[i].slice(1);
+      }
+
+      self._subsetNames[subset] = fragments.join(' ');
+      self._subsets.push(subset);
+    }
+  },
+
   _getGoogleFontCat: function(font) {
     var self = this;
 
@@ -359,6 +397,7 @@ FontsService.prototype['_load' + PROVIDER_GOOGLE] = function(font) {
         google: {
           families: [font.name + ':' + self._getBestVariantOf(font.variants)],
           text: font.name,
+          subsets: font.subsets,
           subset: self._getBestSubsetOf(font.subsets)
         }
       });
@@ -369,6 +408,6 @@ FontsService.prototype['_load' + PROVIDER_GOOGLE] = function(font) {
 };
 
 fontselectModule.factory(
-  'jdFontselect.fonts',
+  NAME_FONTSSERVICE,
   ['$http', '$q', 'jdFontselectConfig', function($http, $q, config) { return new FontsService($http, $q, config); }]
 );

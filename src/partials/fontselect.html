@@ -4,6 +4,10 @@
 		<input type="text" name="jdfs-{{id}}-search" ng-model="current.search" />
 		<select ng-model="current.sort.attr" ng-options="a.name for a in searchAttrs"></select>
 		<button ng-click="reverseSort()">{{current.sort.direction ? '▼' : '▲'}}</button>
+		<div ng-repeat="(key, name) in subsets">
+			<input ng-model="current.subsets[key]" type="checkbox" id="jdfs-{{id}}-subset-{{key}}" />
+			<label for="jdfs-{{id}}-subset-{{key}}">{{name}}</label>
+		</div>
 		<div>
 			<button
 				ng-repeat="category in categories"

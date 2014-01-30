@@ -141,4 +141,45 @@ describe('fontselect directive', function() {
 
   });
 
+  describe('character sets', function() {
+    var latinSelector = 'jdfs-1-subset-latin';
+
+    beforeEach(function() {
+      Helpers.toggle();
+      Helpers.openProviderListNo(1);
+    });
+
+    it('should have some checkboxes for character set filtering', function() {
+      expect(Helpers.getSubsetCheckbox().count()).toBeGreaterThan(0);
+    });
+
+    it('should have the latin box preselected', function() {
+      expect(element(by.css('#' + latinSelector)).isSelected()).toBe(true);
+    });
+
+    it('s checkboxes should be selectable', function() {
+      var textCheckBox = Helpers.getSubsetCheckbox(2);
+      expect(textCheckBox.isSelected()).toBe(false);
+      textCheckBox.click();
+      expect(textCheckBox.isSelected()).toBe(true);
+      textCheckBox.click();
+      expect(textCheckBox.isSelected()).toBe(false);
+    });
+
+    it('should have labels to click on', function() {
+      var latinBox = element(by.css('#' + latinSelector));
+      var latinLabel = element(by.css('[for="' + latinSelector + '"]'));
+      latinLabel.click();
+      expect(latinBox.isSelected()).toBe(false);
+      latinLabel.click();
+      expect(latinBox.isSelected()).toBe(true);
+    });
+
+    it('should reduce the amount of pages when we click a checkbox', function() {
+      var pagesCount = Helpers.getPaginator().count();
+      Helpers.getSubsetCheckbox(2).click();
+      expect(Helpers.getPaginator().count()).not.toBe(pagesCount);
+    });
+  });
+
 });

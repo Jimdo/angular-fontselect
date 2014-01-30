@@ -13,6 +13,7 @@ fontselectModule.directive('jdFontselect', [function() {
       $scope.providers = PROVIDERS;
       $scope.active = false;
       $scope.categories = fontsService.getCategories();
+      $scope.subsets = fontsService.getSubsetNames();
       $scope.searchAttrs = [
         {
           name: 'Popularity',
@@ -39,7 +40,10 @@ fontselectModule.directive('jdFontselect', [function() {
         provider: PROVIDER_WEBSAFE,
         category: undefined,
         font: undefined,
-        search: undefined
+        search: undefined,
+        subsets: {
+          latin: true
+        }
       };
 
       $scope.reverseSort = function() {

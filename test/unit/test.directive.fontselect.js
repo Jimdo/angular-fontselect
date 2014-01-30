@@ -1,5 +1,5 @@
 /* global DEFAULT_WEBSAFE_FONTS, $rootScope, $compile, $injector, $scope, elm, $rootScope,
-          NAME_JDFONTLIST_CONTROLLER, $controller */
+          NAME_JDFONTLIST_CONTROLLER, $controller, NAME_FONTSSERVICE, ANOTHER_FONT, AND_SOME_FONT_MORE */
 describe('fontselect directive', function() {
   'use strict';
 
@@ -47,8 +47,7 @@ describe('fontselect directive', function() {
   it('should expend if we add a new font via the fonts service', function() {
     var length = elm.find('li').length;
 
-    $injector.get('jdFontselect.fonts')
-      .add({name: 'Drrrt', key: 'drt', stack: 'Bar, sans-serif'});
+    $injector.get('jdFontselect.fonts').add(ANOTHER_FONT);
 
     $scope.$digest();
     expect(elm.find('li').length).toBe(length + 1);
@@ -91,12 +90,12 @@ describe('fontselect directive', function() {
     });
 
     it('should link the labels to the radio buttons', function() {
-      expect(elm.find('input[type="radio"]').attr('id'))
-        .toBe(elm.find('label').attr('for'));
+      var radio = elm.find('input[type="radio"]');
+      expect(radio.attr('id'))
+        .toBe(radio.siblings('label').first().attr('for'));
     });
 
     it('should be able to provide a preview of the font', function() {
-
       expect(normalizeFontStack(elm.find('li label').eq(0).css('font-family')))
         .toBe(normalizeFontStack(DEFAULT_WEBSAFE_FONTS[0].stack));
     });
@@ -140,6 +139,44 @@ describe('fontselect directive', function() {
     });
   });
 
+  describe('character sets', function() {
+    var fontsService;
+
+    beforeEach(function() {
+      fontsService = $injector.get(NAME_FONTSSERVICE);
+    });
+
+    it('should have a list of subsets', function() {
+      expect(fontsService.getSubsets()).toBeInstanceOf(Array);
+    });
+
+    it('should try to add new subsets when we add a new font', function() {
+      spyOn(fontsService, '_addSubsets');
+      fontsService.add(ANOTHER_FONT);
+      expect(fontsService._addSubsets).toHaveBeenCalled();
+    });
+
+    it('should expand the list of subsets if new are present', function() {
+      var listBefore = fontsService._subsets.length;
+      fontsService.add(AND_SOME_FONT_MORE);
+      expect(fontsService._subsets.length).toBe(listBefore + 1);
+    });
+
+    it('should not add existing subsets', function() {
+      var listBefore = fontsService._subsets.length;
+      fontsService.add(ANOTHER_FONT);
+      expect(fontsService._subsets.length).toBe(listBefore);
+    });
+
+    it('should generate a name from given subset key', function() {
+      expect(fontsService._subsetNames['latin-ext']).toBe('Latin Ext');
+    });
+
+    it('should have checkboxes for all subsets', function() {
+      expect(elm.find('input[type="checkbox"]').length).toBe(fontsService._subsets.length);
+    });
+  });
+
   describe('filter caching', function() {
 
     var spies = {}, $listScope;
@@ -148,6 +185,7 @@ describe('fontselect directive', function() {
       filterCalled('filter', times);
       filterCalled('orderBy', times);
       filterCalled('fuzzySearch', times);
+      filterCalled('hasAllSubsets', times);
     }
 
     function filterCalled(name, times) {
@@ -160,6 +198,7 @@ describe('fontselect directive', function() {
       spies.orderBy = jasmine.createSpy('orderBy');
       spies.filter = jasmine.createSpy('filter');
       spies.fuzzySearch = jasmine.createSpy('fuzzySearch');
+      spies.hasAllSubsets = jasmine.createSpy('hasAllSubsets');
 
       var $filter = $injector.get('$filter');
 
@@ -182,19 +221,27 @@ describe('fontselect directive', function() {
     });
 
     it('should call all filters when we change the source', function() {
-      $injector.get('jdFontselect.fonts')
-        .add({name: 'Drrrt', key: 'drt', stack: 'Bar, sans-serif'});
+      $injector.get('jdFontselect.fonts').add(ANOTHER_FONT);
       $listScope.getFilteredFonts();
       expectAllSpiesCalled(2);
     });
 
-    it('should call all filters when we resort', function() {
-      $listScope.current.sort.direction = false;
+    it('should call all filters when we change the subset', function() {
+      expectAllSpiesCalled(1);
+      $listScope.current.subsets = {foo: true};
       $listScope.getFilteredFonts();
       expectAllSpiesCalled(2);
+    });
+
+    it('should call all next filters when we resort', function() {
+      $listScope.current.sort.direction = false;
+      $listScope.getFilteredFonts();
+      filterCalled('filter', 2);
+      filterCalled('fuzzySearch', 2);
       $listScope.current.sort.attr = false;
       $listScope.getFilteredFonts();
-      expectAllSpiesCalled(3);
+      filterCalled('filter', 3);
+      filterCalled('fuzzySearch', 3);
     });
 
     it('should not call orderBy filter when we change the category or search', function() {
