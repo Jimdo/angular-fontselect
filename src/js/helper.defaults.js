@@ -12,6 +12,8 @@ var PROVIDERS = [
   PROVIDER_GOOGLE
 ];
 
+var NAME_CONTROLLER = '.controller';
+
 /** @const */
 var DEFAULT_WEBSAFE_FONTS = [
   {

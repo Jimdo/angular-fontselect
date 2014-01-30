@@ -4,7 +4,7 @@
 /* jshint undef: false */
 
 /* some globals we might need later on, set in beforeEach */
-var $rootScope, $compile, $injector, $httpBackend, $scope, $q, elm;
+var $rootScope, $compile, $injector, $httpBackend, $scope, $q, $controller, elm;
 
 /* Mock the default font set. */
 DEFAULT_WEBSAFE_FONTS = [
@@ -47,27 +47,29 @@ DEFAULT_WEBSAFE_FONTS = [
     /* Initiate the main module */
     module('jdFontselect');
 
-    inject(['$rootScope', '$compile', '$injector', '$httpBackend', '$q', function(a, b, c, d, e) {
-      /* Get or globals */
-      $rootScope   = a;
-      $compile     = b;
-      $injector    = c;
-      $httpBackend = d;
-      $q           = e;
+    /* jshint maxparams: 10 */
+    inject(function(_$rootScope_, _$compile_, _$injector_, _$httpBackend_, _$q_, _$controller_) {
+    /* jshint maxparams: 3 */
+      $rootScope   = _$rootScope_;
+      $compile     = _$compile_;
+      $injector    = _$injector_;
+      $httpBackend = _$httpBackend_;
+      $q           = _$q_;
+      $controller  = _$controller_;
+    });
 
-      /* Create the element for our directive */
-      elm = angular.element(
-        '<div>' +
-          '<jd-fontselect />' +
-        '</div>');
+    /* Create the element for our directive */
+    elm = angular.element(
+      '<div>' +
+        '<jd-fontselect />' +
+      '</div>');
 
-      /* Apply the directive */
-      $compile(elm)($rootScope);
-      $rootScope.$digest();
+    /* Apply the directive */
+    $compile(elm)($rootScope);
+    $rootScope.$digest();
 
-      /* Save a reference to the directive scope */
-      $scope = elm.find('.jdfs-main div').scope();
-    }]);
+    /* Save a reference to the directive scope */
+    $scope = elm.find('.jdfs-main div').scope();
   });
 
   afterEach(function() {

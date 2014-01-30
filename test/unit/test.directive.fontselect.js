@@ -1,4 +1,5 @@
-/* global DEFAULT_WEBSAFE_FONTS, $rootScope, $compile, $injector, $scope, elm  */
+/* global DEFAULT_WEBSAFE_FONTS, $rootScope, $compile, $injector, $scope, elm, $rootScope,
+          NAME_JDFONTLIST_CONTROLLER, $controller */
 describe('fontselect directive', function() {
   'use strict';
 
@@ -8,9 +9,9 @@ describe('fontselect directive', function() {
     mainToggleButton = elm.find('button[ng-click="toggle()"]');
   });
 
-  it('should add an wrapper element with fs-main class.', inject(function() {
+  it('should add an wrapper element with fs-main class.', function() {
     expect(elm.find('.jdfs-main').length).toBe(1);
-  }));
+  });
 
   it('should replace the fontselect element.', function() {
     expect(elm.find('jd-fontselect').length).toBe(0);
@@ -136,6 +137,97 @@ describe('fontselect directive', function() {
       expect($scope.current.sort.direction).toBe(true);
       $scope.reverseSort();
       expect($scope.current.sort.direction).toBe(false);
+    });
+  });
+
+  describe('filter caching', function() {
+
+    var spies = {}, $listScope;
+
+    function expectAllSpiesCalled(times) {
+      filterCalled('filter', times);
+      filterCalled('orderBy', times);
+      filterCalled('fuzzySearch', times);
+    }
+
+    function filterCalled(name, times) {
+      expect(spies[name].calls.length).toBe(times);
+    }
+
+    beforeEach(function() {
+      $listScope = elm.find('h3').scope();
+
+      spies.orderBy = jasmine.createSpy('orderBy');
+      spies.filter = jasmine.createSpy('filter');
+      spies.fuzzySearch = jasmine.createSpy('fuzzySearch');
+
+      var $filter = $injector.get('$filter');
+
+      $controller(NAME_JDFONTLIST_CONTROLLER, {
+        $scope: $listScope,
+        $filter: function(name) {
+          return spies[name].andCallFake($filter(name));
+        },
+        fontsService: $injector.get('jdFontselect.fonts')
+      });
+
+      expectAllSpiesCalled(0);
+      $listScope.getFilteredFonts();
+      expectAllSpiesCalled(1);
+    });
+
+    it('should not execute the filters twice if the filters have not changed', function() {
+      $listScope.getFilteredFonts();
+      expectAllSpiesCalled(1);
+    });
+
+    it('should call all filters when we change the source', function() {
+      $injector.get('jdFontselect.fonts')
+        .add({name: 'Drrrt', key: 'drt', stack: 'Bar, sans-serif'});
+      $listScope.getFilteredFonts();
+      expectAllSpiesCalled(2);
+    });
+
+    it('should call all filters when we resort', function() {
+      $listScope.current.sort.direction = false;
+      $listScope.getFilteredFonts();
+      expectAllSpiesCalled(2);
+      $listScope.current.sort.attr = false;
+      $listScope.getFilteredFonts();
+      expectAllSpiesCalled(3);
+    });
+
+    it('should not call orderBy filter when we change the category or search', function() {
+      filterCalled('orderBy', 1);
+      $listScope.current.category = 'olive';
+      $listScope.getFilteredFonts();
+      filterCalled('orderBy', 1);
+      $listScope.current.search = 'foob';
+      $listScope.getFilteredFonts();
+      filterCalled('orderBy', 1);
+    });
+
+    it('should call filter filter when we change the category', function() {
+      filterCalled('filter', 1);
+      $listScope.current.category = 'olive';
+      $listScope.getFilteredFonts();
+      filterCalled('filter', 2);
+    });
+
+    it('should not call orderBy and filter filter when search', function() {
+      filterCalled('orderBy', 1);
+      filterCalled('filter', 1);
+      $listScope.current.search = 'foob';
+      $listScope.getFilteredFonts();
+      filterCalled('orderBy', 1);
+      filterCalled('filter', 1);
+    });
+
+    it('should call the fuzzySearch filter when we search', function() {
+      filterCalled('fuzzySearch', 1);
+      $listScope.current.search = 'olive';
+      $listScope.getFilteredFonts();
+      filterCalled('fuzzySearch', 2);
     });
   });
 
