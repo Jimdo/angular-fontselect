@@ -6,6 +6,10 @@
 /* some globals we might need later on, set in beforeEach */
 var $rootScope, $compile, $injector, $httpBackend, $scope, $q, $controller, elm;
 
+/* Request Regex for catching Google Font API calls. */
+/** @const */
+var GOOGLE_FONT_API_RGX = /http(s)?:\/\/www\.googleapis\.com\/webfonts\/v1\/.*/;
+
 /* Mock the default font set. */
 DEFAULT_WEBSAFE_FONTS = [
   {
@@ -76,43 +80,44 @@ var AND_SOME_FONT_MORE = {
   subsets: [SUBSET_VIETNAMESE]
 };
 
-(function() {
-  
-  beforeEach(function() {
-    /* Initiate the main module */
-    module('jdFontselect');
 
-    /* jshint maxparams: 10 */
-    inject(function(_$rootScope_, _$compile_, _$injector_, _$httpBackend_, _$q_, _$controller_) {
-    /* jshint maxparams: 3 */
-      $rootScope   = _$rootScope_;
-      $compile     = _$compile_;
-      $injector    = _$injector_;
-      $httpBackend = _$httpBackend_;
-      $q           = _$q_;
-      $controller  = _$controller_;
-    });
+beforeEach(function() {
+  /* Initiate the main module */
+  module('jdFontselect');
 
-    /* Create the element for our directive */
-    elm = angular.element(
-      '<div>' +
-        '<jd-fontselect />' +
-      '</div>');
-
-    /* Apply the directive */
-    $compile(elm)($rootScope);
-    $rootScope.$digest();
-
-    /* Save a reference to the directive scope */
-    $scope = elm.find('.jdfs-main div').scope();
+  /* jshint maxparams: 10 */
+  inject(function(_$rootScope_, _$compile_, _$injector_, _$httpBackend_, _$q_, _$controller_) {
+  /* jshint maxparams: 3 */
+    $rootScope   = _$rootScope_;
+    $compile     = _$compile_;
+    $injector    = _$injector_;
+    $httpBackend = _$httpBackend_;
+    $q           = _$q_;
+    $controller  = _$controller_;
   });
 
-  afterEach(function() {
-    /* Each directive gets it's own id, we want to test only on id 1 */
-    id = 1;
+  spyOn(window, 'yepnope');
 
-    /* Make sure, there are no unexpected request */
-    $httpBackend.verifyNoOutstandingExpectation();
-    $httpBackend.verifyNoOutstandingRequest();
-  });
-})();
+  /* Create the element for our directive */
+  elm = angular.element(
+    '<div>' +
+      '<jd-fontselect />' +
+    '</div>');
+
+  /* Apply the directive */
+  $compile(elm)($rootScope);
+  $rootScope.$digest();
+
+  /* Save a reference to the directive scope */
+  $scope = elm.find('.jdfs-main div').scope();
+});
+
+afterEach(function() {
+  /* Each directive gets it's own id, we want to test only on id 1 */
+  id = 1;
+  _webFontLoaderInitiated = false;
+
+  /* Make sure, there are no unexpected request */
+  $httpBackend.verifyNoOutstandingExpectation();
+  $httpBackend.verifyNoOutstandingRequest();
+});

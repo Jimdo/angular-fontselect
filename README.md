@@ -93,6 +93,12 @@ but the Typekit Webfont Loader does not support them, so we're skipping
 them, too.
 
 
+Todo
+----
+
+* Move subset selection into own global service and provide a special directive for it.
+
+
 Future Features
 ---------------
 

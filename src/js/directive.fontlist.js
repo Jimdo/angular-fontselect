@@ -192,8 +192,8 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
         return;
       }
 
-      /* try to get the complete current font object */
-      var currentFont = fontsService.getFontByKey($scope.current.font, $scope.providerName);
+      var currentFont = $scope.current.font;
+
       /* check if the current font is anywhere on our current pages */
       var index = _filteredFonts.indexOf(currentFont);
 

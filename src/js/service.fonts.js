@@ -121,8 +121,10 @@ FontsService.prototype = {
     var self = this;
 
     if (!angular.isString(provider)) {
-      provider = PROVIDER_WEBSAFE;
+      provider = angular.isString(fontObj.provider) ? fontObj.provider : PROVIDER_WEBSAFE;
     }
+
+    fontObj.provider = provider;
 
     if (!self.isValidFontObject(fontObj)) {
       throw 'Invalid font object.';
@@ -330,7 +332,7 @@ FontsService.prototype = {
           popularity: amount - i,
           key: _createKey(font.family),
           lastModified: font.lastModified,
-          stack: '"' + font.family + '" ' + category.fallback,
+          stack: '"' + font.family + '", ' + category.fallback,
           category: category.key
         }, PROVIDER_GOOGLE);
       });

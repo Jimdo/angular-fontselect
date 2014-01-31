@@ -91,9 +91,9 @@ describe('fontlist directive', function() {
     });
 
     it('should change the displayed fonts on click', function() {
-      var currentFirstVal = Helpers.getRadio(0).getAttribute('value');
+      var currentFirstID = Helpers.getRadio(0).getAttribute('id');
       Helpers.getPaginator(1).click();
-      expect(Helpers.getRadio(0).getAttribute('value')).not.toBe(currentFirstVal);
+      expect(Helpers.getRadio(0).getAttribute('id')).not.toBe(currentFirstID);
     });
 
     it('should keep radios selected over page changes.', function() {

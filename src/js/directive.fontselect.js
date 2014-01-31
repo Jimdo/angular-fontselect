@@ -1,13 +1,16 @@
-/* global PROVIDERS, PROVIDER_WEBSAFE */
+/* global PROVIDERS, PROVIDER_WEBSAFE, NAME_FONTSSERVICE */
 var id = 1;
 
-fontselectModule.directive('jdFontselect', [function() {
+fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsService) {
   return {
-    scope: {},
+    scope: {
+      current: '=?state',
+      selected: '=?'
+    },
     restrict: 'E',
     templateUrl: 'fontselect.html',
     replace: true,
-    controller: ['$scope', 'jdFontselect.fonts', function($scope, fontsService) {
+    controller: ['$scope', function($scope) {
       $scope.fonts = fontsService.getAllFonts();
       $scope.id = id++;
       $scope.providers = PROVIDERS;
@@ -32,7 +35,9 @@ fontselectModule.directive('jdFontselect', [function() {
         }
       ];
 
-      $scope.current = {
+      $scope.selected = $scope.selected || {};
+
+      $scope.current = angular.extend({
         sort: {
           attr: $scope.searchAttrs[0],
           direction: true
@@ -44,7 +49,7 @@ fontselectModule.directive('jdFontselect', [function() {
         subsets: {
           latin: true
         }
-      };
+      }, $scope.current || {});
 
       $scope.reverseSort = function() {
         var sort = $scope.current.sort;
@@ -65,6 +70,17 @@ fontselectModule.directive('jdFontselect', [function() {
           current.category = category;
         }
       };
-    }]
+    }],
+    link: function(scope) {
+
+      scope.$watch('current.font', function(newFont, oldFont) {
+        if (oldFont !== newFont && angular.isObject(scope.current.font)) {
+          newFont = scope.current.font;
+
+          scope.selected.name = newFont.name;
+          scope.selected.stack = newFont.stack;
+        }
+      });
+    }
   };
 }]);

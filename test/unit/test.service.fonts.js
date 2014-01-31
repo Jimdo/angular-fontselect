@@ -1,5 +1,6 @@
 /* global PROVIDER_WEBSAFE, GOOGLE_FONTS_RESPONSE, $httpBackend, elm, $q,
-          _webFontLoaderDeferred, _webFontLoaderInitiated, _webFontLoaderPromise */
+          _webFontLoaderDeferred, _webFontLoaderInitiated, _webFontLoaderPromise,
+          GOOGLE_FONT_API_RGX */
 describe('fontsService', function() {
   'use strict';
 
@@ -112,15 +113,12 @@ describe('fontsService', function() {
   });
 
   describe('google fonts', function() {
-    /* Request Regex for catching Google Font API calls. */
-    var googleApiRx = /http(s)?:\/\/www.googleapis.com\/webfonts\/v1\/.*/;
     var $subScope;
 
 
     beforeEach(function() {
-      $httpBackend.when('GET', googleApiRx).respond(GOOGLE_FONTS_RESPONSE);
-      $httpBackend.expectGET(googleApiRx);
-      spyOn(window, 'yepnope');
+      $httpBackend.when('GET', GOOGLE_FONT_API_RGX).respond(GOOGLE_FONTS_RESPONSE);
+      $httpBackend.expectGET(GOOGLE_FONT_API_RGX);
 
       $subScope = elm.find('.jdfs-provider-google-fonts h3').scope();
       $subScope.toggle();
