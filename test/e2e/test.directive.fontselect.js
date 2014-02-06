@@ -93,9 +93,9 @@ describe('fontselect directive', function() {
     });
 
     it('should have a difference between popularity and latest', function() {
-      var testLi = Helpers.getLi(1).getText();
+      var testLi = Helpers.getLi(0).getText();
       Helpers.getSortOption(2).click();
-      expect(testLi).not.toBe(Helpers.getLi(1).getText());
+      expect(Helpers.getLi(0).getText()).not.toBe(testLi);
     });
 
     describe('reverse button', function() {

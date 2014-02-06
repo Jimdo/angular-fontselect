@@ -44,14 +44,19 @@ var files = {
 
 var apiKeysPos = files.testEnvKarma.length + 1;
 
+/* Prepare environments */
 files.testEnvKarma = files.testEnvKarma.concat(files.source);
 files.testEnvKarma.splice(apiKeysPos, 0, 'tmp.apikeys.js');
 files.testEnvKarma.push(files.allPartialsCombined);
 
 files.testEnv = JSON.parse(JSON.stringify(files.testEnvKarma));
 files.testEnv.splice(0, 0, 'bower_components/less/dist/less-1.6.1.js');
+files.demoEnv = JSON.parse(JSON.stringify(files.testEnv));
 
+files.testEnv.push('test/default-websafe-fonts.js');
+files.testEnvKarma.push('test/default-websafe-fonts.js');
 files.testEnvKarma.splice(0, 0, 'bower_components/jquery/jquery.js');
+
 if (typeof module === 'object') {
   module.exports = files;
 }

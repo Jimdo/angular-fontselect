@@ -15,8 +15,8 @@
     /* jshint indent: false */
     /* global files, $ */
     $.get('/tasks/files.js', function() {
-      files.testEnv.push('demo/app.js');
-      $.each(files.testEnv, function(i, url) {
+      files.demoEnv.push('demo/app.js');
+      $.each(files.demoEnv, function(i, url) {
         $('body').append($('<script>').attr('src', '/' + url));
       });
     });

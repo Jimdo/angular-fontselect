@@ -97,7 +97,7 @@ describe('fontselect directive', function() {
 
     it('should be able to provide a preview of the font', function() {
       expect(normalizeFontStack(elm.find('li label').eq(0).css('font-family')))
-        .toBe(normalizeFontStack(DEFAULT_WEBSAFE_FONTS[0].stack));
+        .toBe(normalizeFontStack(DEFAULT_WEBSAFE_FONTS[2].stack));
     });
 
     it('should create multiple font lists for providers', function() {
