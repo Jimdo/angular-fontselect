@@ -1,6 +1,8 @@
 Angular Font-Selector
 =====================
 
+[![Build Status](https://magnum.travis-ci.com/Jimdo/angular-fontselect.png?token=QVKuqZGwRrn1qkuX6PH1&branch=v0.0.12)](https://magnum.travis-ci.com/Jimdo/angular-fontselect)
+
 A fontselect directive for AngularJS
 
 Directive:
