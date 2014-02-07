@@ -8,5 +8,9 @@
  * Released under the MIT license
  */
 .jdfs-main {
-  max-height: 300px;
+  max-height: 6em;
+}
+
+.jdfs-window{
+  background: white;
 }

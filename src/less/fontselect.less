@@ -1,3 +1,98 @@
 .jdfs-main {
 	max-height: 300px;
 }
+
+@tabBg: #eee;
+@activeTab: #939393;
+
+@selectedFontBg: #4696b0;
+@selectedFontColor: white;
+
+
+
+.jdfs-window{
+  position: absolute;
+  
+  padding: 1em 0;
+  border-radius: 4px;
+
+  background: white;
+  max-width: 20em;
+
+  box-shadow: 0 0 2px 2px rgba(0,0,0,.5);
+
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  flex-direction: column;
+}
+.jdfs-topbar{
+
+}
+
+.jdfs-toggle{
+  padding: 1em;
+  background: white;
+  border: 1px solid #ddd;
+  &.jdfs-active,&:focus,&:active{
+    outline: none;
+  }
+}
+.jdfs-filter{
+  margin: 1em 0;
+  justify-content: space-between;
+
+}
+
+.jdfs-filterbtn{
+  padding: .5em;
+  margin: 0;
+  display: inline-block;
+
+  background: white;
+  background: white;
+  border: 1px solid #e8e8e8;
+  &.jdfs-active{
+    background: @activeTab;
+    color: white;
+  }
+  &:focus, &:active{
+    outline: none;
+  }
+}
+
+.jdfs-fontlist{
+  padding: 0;
+  margin: 0;
+  li{
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
+  }
+  label{
+    padding: .5em;
+    display: block;
+    width: 100%;
+  }
+  input{
+    display: none;
+    &:checked{
+      ~ label{
+        color: @selectedFontColor;
+        background: @selectedFontBg;
+      }
+    }
+  }
+}
+
+.jdfs-category-title{
+  background: @tabBg;
+  margin: 0;
+  font-size: .8em;
+  padding: .2em 1em;
+  &.jdfs-active{
+    background: @activeTab;
+  }
+}

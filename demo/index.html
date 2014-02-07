@@ -4,22 +4,31 @@
   <meta charset="utf-8">
   <title>Angular Fontselect Sandbox</title>
   <link rel="stylesheet/less" type="text/css" href="styles.less" />
-  <link rel="stylesheet/css" type="text/css" href="/dist/angular-fontselect.css" />
+  <link rel="stylesheet/less" type="text/css" href="/src/less/fontselect.less" />
 </head>
 <body>
-  <my-app>
-  </my-app>
+    <div class="wrap">
+      <div class="fontselect">
+        <my-app>
+        </my-app>
+      </div>
 
-  <script src="/bower_components/jquery/jquery.js"></script>
-  <script>
-    /* jshint indent: false */
-    /* global files, $ */
-    $.get('/tasks/files.js', function() {
-      files.demoEnv.push('demo/app.js');
-      $.each(files.demoEnv, function(i, url) {
-        $('body').append($('<script>').attr('src', '/' + url));
+
+    </div>
+
+
+    <script src="/bower_components/jquery/jquery.js"></script>
+    <script>
+      /* jshint indent: false */
+      /* global files, $ */
+      $.get('/tasks/files.js', function() {
+        files.demoEnv.push('demo/app.js');
+        $.each(files.demoEnv, function(i, url) {
+          $('body').append($('<script>').attr('src', '/' + url));
+        });
       });
-    });
-  </script>
+    </script>
+
+  </div>
 </body>
 </html>
