@@ -1,5 +1,5 @@
 /*!
- * angular-fontselect v0.0.11
+ * angular-fontselect v0.0.12
  * https://github.com/Jimdo/angular-fontselect
  *
  * A fontselect directive for AngularJS
@@ -603,12 +603,76 @@
       lastModified: '2014-01-28'
     },
     {
+      name: 'Consolas',
+      key: 'consolas',
+      category: 'other',
+      stack: 'Consolas, "Lucida Console", Monaco, monospace',
+      popularity: 1,
+      lastModified: '2014-02-04'
+    },
+    {
       name: 'Courier New',
       key: 'couriernew',
       category: 'other',
       stack: '"Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace',
       popularity: 1,
       lastModified: '2014-01-28'
+    },
+    {
+      name: 'Georgia',
+      key: 'georgia',
+      category: 'serif',
+      stack: 'Georgia, Palatino, "Palatino Linotype", Times, "Times New Roman", serif',
+      popularity: 2,
+      lastModified: '2014-02-04'
+    },
+    {
+      name: 'Helvetica',
+      key: 'helvetica',
+      category: 'sansserif',
+      stack: 'Helvetica, "Helvetica Neue", Arial, sans-serif',
+      popularity: 3,
+      lastModified: '2014-02-04'
+    },
+    {
+      name: 'Impact',
+      key: 'impact',
+      category: 'other',
+      stack: 'Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif',
+      popularity: 3,
+      lastModified: '2014-02-04'
+    },
+    {
+      name: 'Lucida Sans',
+      key: 'lucidasans',
+      category: 'sansserif',
+      stack: '"Lucida Sans", "Lucida Grande", "Lucida Sans Unicode", sans-serif',
+      popularity: 3,
+      lastModified: '2014-02-04'
+    },
+    {
+      name: 'Palatino',
+      key: 'palatino',
+      category: 'serif',
+      stack: 'Palatino, "Palatino Linotype", Georgia, Times, "Times New Roman", serif',
+      popularity: 2,
+      lastModified: '2014-02-04'
+    },
+    {
+      name: 'Tahoma',
+      key: 'tahoma',
+      category: 'sansserif',
+      stack: 'Tahoma, Verdana, Geneva, sans-serif',
+      popularity: 6,
+      lastModified: '2014-02-04'
+    },
+    {
+      name: 'Trebuchet',
+      key: 'trebuchet',
+      category: 'sansserif',
+      stack: '"Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande", "Lucida Sans", Arial, sans-serif',
+      popularity: 6,
+      lastModified: '2014-02-04'
     },
     {
       name: 'Verdana',
@@ -1621,8 +1685,10 @@
       var self = this;
   
       if (!angular.isString(provider)) {
-        provider = PROVIDER_WEBSAFE;
+        provider = angular.isString(fontObj.provider) ? fontObj.provider : PROVIDER_WEBSAFE;
       }
+  
+      fontObj.provider = provider;
   
       if (!self.isValidFontObject(fontObj)) {
         throw 'Invalid font object.';
@@ -1830,7 +1896,7 @@
             popularity: amount - i,
             key: _createKey(font.family),
             lastModified: font.lastModified,
-            stack: '"' + font.family + '" ' + category.fallback,
+            stack: '"' + font.family + '", ' + category.fallback,
             category: category.key
           }, PROVIDER_GOOGLE);
         });
@@ -1915,13 +1981,16 @@
   // src/js/directive.fontselect.js
   var id = 1;
   
-  fontselectModule.directive('jdFontselect', [function() {
+  fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsService) {
     return {
-      scope: {},
+      scope: {
+        current: '=?state',
+        selected: '=?'
+      },
       restrict: 'E',
       templateUrl: 'fontselect.html',
       replace: true,
-      controller: ['$scope', 'jdFontselect.fonts', function($scope, fontsService) {
+      controller: ['$scope', function($scope) {
         $scope.fonts = fontsService.getAllFonts();
         $scope.id = id++;
         $scope.providers = PROVIDERS;
@@ -1946,7 +2015,9 @@
           }
         ];
   
-        $scope.current = {
+        $scope.selected = $scope.selected || {};
+  
+        $scope.current = angular.extend({
           sort: {
             attr: $scope.searchAttrs[0],
             direction: true
@@ -1958,7 +2029,7 @@
           subsets: {
             latin: true
           }
-        };
+        }, $scope.current || {});
   
         $scope.reverseSort = function() {
           var sort = $scope.current.sort;
@@ -1979,7 +2050,18 @@
             current.category = category;
           }
         };
-      }]
+      }],
+      link: function(scope) {
+  
+        scope.$watch('current.font', function(newFont, oldFont) {
+          if (oldFont !== newFont && angular.isObject(scope.current.font)) {
+            newFont = scope.current.font;
+  
+            scope.selected.name = newFont.name;
+            scope.selected.stack = newFont.stack;
+          }
+        });
+      }
     };
   }]);
 
@@ -2177,8 +2259,8 @@
           return;
         }
   
-        /* try to get the complete current font object */
-        var currentFont = fontsService.getFontByKey($scope.current.font, $scope.providerName);
+        var currentFont = $scope.current.font;
+  
         /* check if the current font is anywhere on our current pages */
         var index = _filteredFonts.indexOf(currentFont);
   
@@ -2222,17 +2304,17 @@
     'use strict';
   
     $templateCache.put('font.html',
-      "<li><input type=radio ng-model=current.font value={{font.key}} name=jdfs-{{id}}-font id=jdfs-{{id}}-font-{{font.key}}><label for=jdfs-{{id}}-font-{{font.key}} style=\"font-family: {{font.stack}}\">{{font.name}}</label></li>"
+      "<li><input type=radio ng-model=current.font ng-value=font name=jdfs-{{id}}-font id=jdfs-{{id}}-font-{{font.key}}><label ng-class=\"{'jdfs-active': current.font == font}\" for=jdfs-{{id}}-font-{{font.key}} style=\"font-family: {{font.stack}}\">{{font.name}}</label></li>"
     );
   
   
     $templateCache.put('fontlist.html',
-      "<div class=\"jdfs-provider jdfs-provider-{{providerKey}}\" ng-class=\"{'jdfs-active': isActive()}\"><h3 ng-click=toggle()>{{providerName}} <span ng-if=\"getFilteredFonts().length == fonts.length\">({{fonts.length}})</span> <span ng-if=\"fonts.length && getFilteredFonts().length != fonts.length\">({{getFilteredFonts().length}}/{{fonts.length}})</span> <span ng-if=!fonts.length>(…)</span></h3><div ng-if=isActive()><ul><jd-font ng-repeat=\"font in getFilteredFonts() | startFrom: page.current * page.size | limitTo: page.size\"></ul><button ng-repeat=\"i in getPages() track by $index\" ng-class=\"{'jdfs-active': page.current == $index}\" ng-click=setCurrentPage($index)>{{$index + 1}}</button></div></div>"
+      "<div class=\"jdfs-provider jdfs-provider-{{providerKey}}\" ng-class=\"{'jdfs-active': isActive()}\"><p class=jdfs-provider-title ng-class=\"{'jdfs-active': isActive()}\" ng-click=toggle()>{{providerName}} <span ng-if=\"getFilteredFonts().length == fonts.length\">({{fonts.length}})</span> <span ng-if=\"fonts.length && getFilteredFonts().length != fonts.length\">({{getFilteredFonts().length}}/{{fonts.length}})</span> <span ng-if=!fonts.length>(…)</span></p><div ng-if=isActive()><ul class=jdfs-fontlist><jd-font ng-repeat=\"font in getFilteredFonts() | startFrom: page.current * page.size | limitTo: page.size\"></ul><button ng-repeat=\"i in getPages() track by $index\" ng-class=\"{'jdfs-active': page.current == $index}\" ng-click=setCurrentPage($index)>{{$index + 1}}</button></div></div>"
     );
   
   
     $templateCache.put('fontselect.html',
-      "<div class=jdfs-main id=jd-fontselect-{{id}}><button ng-click=toggle() class=jdfs-toggle>Select Font</button><div class=jdfs-window ng-show=active><input name=jdfs-{{id}}-search ng-model=current.search><select ng-model=current.sort.attr ng-options=\"a.name for a in searchAttrs\"></select><button ng-click=reverseSort()>{{current.sort.direction ? '▼' : '▲'}}</button><div ng-repeat=\"(key, name) in subsets\"><input ng-model=current.subsets[key] type=checkbox id=jdfs-{{id}}-subset-{{key}}><label for=jdfs-{{id}}-subset-{{key}}>{{name}}</label></div><div><button ng-repeat=\"category in categories\" ng-class=\"{'jdfs-active': category.key == current.category}\" ng-click=setCategoryFilter(category.key) ng-model=current.category>{{category.name}}</button></div><jd-fontlist fsid=id current=current fonts=fonts[provider] provider={{provider}} ng-repeat=\"provider in providers\"></div></div>"
+      "<div class=jdfs-main id=jd-fontselect-{{id}}><button ng-click=toggle() class=jdfs-toggle>Select Font</button><div class=jdfs-window ng-show=active><div class=jdfs-topbar><input placeholder=\"Search by Fontname\" name=jdfs-{{id}}-search ng-model=current.search><select ng-model=current.sort.attr ng-options=\"a.name for a in searchAttrs\"></select><button ng-click=reverseSort()>{{current.sort.direction ? '▼' : '▲'}}</button><div ng-repeat=\"(key, name) in subsets\"><input ng-model=current.subsets[key] type=checkbox id=jdfs-{{id}}-subset-{{key}}><label for=jdfs-{{id}}-subset-{{key}}>{{name}}</label></div></div><div class=jdfs-filter><button class=jdfs-filterbtn ng-repeat=\"category in categories\" ng-class=\"{'jdfs-active': category.key == current.category}\" ng-click=setCategoryFilter(category.key) ng-model=current.category>{{category.name}}</button></div><jd-fontlist fsid=id current=current fonts=fonts[provider] provider={{provider}} ng-repeat=\"provider in providers\"></div></div>"
     );
   
   }]);
