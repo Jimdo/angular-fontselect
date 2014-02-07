@@ -77,8 +77,18 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsSer
         if (oldFont !== newFont && angular.isObject(scope.current.font)) {
           newFont = scope.current.font;
 
+          if (angular.isObject(oldFont) && oldFont.used) {
+            oldFont.used--;
+          }
+          if (!angular.isObject(newFont) || !newFont.used) {
+            newFont.used = 1;
+          } else {
+            newFont.used++;
+          }
+
           scope.selected.name = newFont.name;
           scope.selected.stack = newFont.stack;
+          scope.$broadcast('jdfs.change', scope.selected);
         }
       });
     }

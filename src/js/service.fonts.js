@@ -23,6 +23,9 @@ var URL_GOOGLE_FONTS_API = 'https://www.googleapis.com/webfonts/v1/webfonts';
 var URL_WEBFONTLOADER = '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js';
 
 /** @const */
+var URL_GOOGLE_FONTS_CSS = 'http://fonts.googleapis.com/css?';
+
+/** @const */
 var SUBSET_CYRILLIC = 'cyrillic';
 
 /** @const */
@@ -81,26 +84,27 @@ var VARIANT_PRIORITY = VARIANTS_REGULAR.concat(
   VARIANTS_BOLD_ITALIC
 );
 
-
+var _fontsServiceDeps = ['$http', '$q', 'jdFontselectConfig', '$filter'];
 var _webFontLoaderInitiated = false;
 
 var _webFontLoaderDeferred, _webFontLoaderPromise;
 
-
-function FontsService($http, $q, config) {
+function FontsService() {
   var self = this;
 
-  self.config = config;
-  self.$http = $http;
-  self.$q = $q;
+  for (var i = 0, l = _fontsServiceDeps.length; i <l; i++) {
+    self[_fontsServiceDeps[i]] = arguments[i];
+  }
 
-  _webFontLoaderDeferred = $q.defer();
+  _webFontLoaderDeferred = self.$q.defer();
   _webFontLoaderPromise = _webFontLoaderDeferred.promise;
   
   self._init();
 
   return self;
 }
+
+FontsService.$inject = _fontsServiceDeps;
 
 FontsService.prototype = {
   _init: function() {
@@ -252,6 +256,48 @@ FontsService.prototype = {
     this['_load' + provider](font);
   },
 
+  getUrls: function() {
+    var self = this;
+    var googleUrl = self.getGoogleUrl();
+    var urls = {};
+    
+    if (googleUrl) {
+      urls.google = googleUrl;
+    }
+
+    return urls;
+  },
+
+  getUsedFonts: function() {
+    var self = this;
+    var usedFonts = [];
+
+    angular.forEach(self._fonts, function(fonts) {
+      usedFonts = usedFonts.concat(self.$filter('filter')(fonts, {used: true}, function(used) {
+        return !!used;
+      }));
+    });
+    
+    return usedFonts;
+  },
+
+  getGoogleUrl: function() {
+    var self = this;
+    var googleFonts = self.$filter('filter')(self.getUsedFonts(), {provider: PROVIDER_GOOGLE});
+
+    if (googleFonts.length) {
+      var googleNames = [];
+
+      for (var i = 0, l = googleFonts.length; i < l; i++) {
+        googleNames.push(googleFonts[i].name);
+      }
+
+      return URL_GOOGLE_FONTS_CSS + 'family=' + window.escape(googleNames.join('|'));
+    } else {
+      return false;
+    }
+  },
+
   _remap: function(provider, from) {
     var self = this;
     var fonts = self._fonts[provider];
@@ -302,7 +348,7 @@ FontsService.prototype = {
   _initGoogleFonts: function() {
     var self = this;
 
-    if (!self.config.googleApiKey) {
+    if (!self.jdFontselectConfig.googleApiKey) {
       return;
     }
 
@@ -313,14 +359,13 @@ FontsService.prototype = {
       url: URL_GOOGLE_FONTS_API,
       params: {
         sort: 'popularity',
-        key: self.config.googleApiKey
+        key: self.jdFontselectConfig.googleApiKey
       }
     }).success(function(response) {
       var amount = response.items.length;
 
       angular.forEach(response.items, function(font, i) {
         var category = self._getGoogleFontCat(font.family);
-
         if (SUPPORT_KHMER || font.subsets.length === 1 && font.subsets[0] === 'khmer') {
           return;
         }
@@ -409,7 +454,6 @@ FontsService.prototype['_load' + PROVIDER_GOOGLE] = function(font) {
   });
 };
 
-fontselectModule.factory(
-  NAME_FONTSSERVICE,
-  ['$http', '$q', 'jdFontselectConfig', function($http, $q, config) { return new FontsService($http, $q, config); }]
-);
+fontselectModule.factory(NAME_FONTSSERVICE, ['$injector', function($injector) {
+  return $injector.instantiate(FontsService);
+}]);

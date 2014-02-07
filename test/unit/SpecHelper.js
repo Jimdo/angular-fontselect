@@ -34,7 +34,12 @@ var AND_SOME_FONT_MORE = {
   subsets: [SUBSET_VIETNAMESE]
 };
 
+var DEFAULT_WEBSAFE_FONTS_BACKUP;
+
 beforeEach(function() {
+
+  DEFAULT_WEBSAFE_FONTS_BACKUP = angular.copy(DEFAULT_WEBSAFE_FONTS);
+
   /* Initiate the main module */
   module('jdFontselect');
 
@@ -68,8 +73,8 @@ beforeEach(function() {
 afterEach(function() {
   /* Each directive gets it's own id, we want to test only on id 1 */
   id = 1;
+  DEFAULT_WEBSAFE_FONTS = DEFAULT_WEBSAFE_FONTS_BACKUP;
   _webFontLoaderInitiated = false;
-
   /* Make sure, there are no unexpected request */
   $httpBackend.verifyNoOutstandingExpectation();
   $httpBackend.verifyNoOutstandingRequest();

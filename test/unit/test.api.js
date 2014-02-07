@@ -1,7 +1,7 @@
 /* global $compile, $rootScope, DEFAULT_WEBSAFE_FONTS, PROVIDER_GOOGLE, $httpBackend,
           GOOGLE_FONT_API_RGX, GOOGLE_FONTS_RESPONSE, PROVIDER_TITLE_CLASS */
 describe('api', function() {
-  var elm, $scope;
+  var elm, $scope, $subScope;
   function setupWithState(defaults) {
 
     if (!angular.isObject(defaults)) {
@@ -23,6 +23,18 @@ describe('api', function() {
 
     /* Save a reference to the directive scope */
     $scope = elm.find('.jdfs-main div').scope();
+  }
+
+  function activateGoogle() {
+    $httpBackend.when('GET', GOOGLE_FONT_API_RGX).respond(GOOGLE_FONTS_RESPONSE);
+    $httpBackend.expectGET(GOOGLE_FONT_API_RGX);
+
+    $subScope = elm.find('.jdfs-provider-google-fonts ' + PROVIDER_TITLE_CLASS).scope();
+    $subScope.toggle();
+    $httpBackend.flush(1);
+
+    $scope.current.font = $scope.fonts[PROVIDER_GOOGLE][0];
+    $scope.$digest();
   }
 
   it('should expand api data into current', function() {
@@ -56,19 +68,7 @@ describe('api', function() {
 
     describe('google fonts', function() {
       
-      var $subScope;
-
-      beforeEach(function() {
-        $httpBackend.when('GET', GOOGLE_FONT_API_RGX).respond(GOOGLE_FONTS_RESPONSE);
-        $httpBackend.expectGET(GOOGLE_FONT_API_RGX);
-
-        $subScope = elm.find('.jdfs-provider-google-fonts ' + PROVIDER_TITLE_CLASS).scope();
-        $subScope.toggle();
-        $httpBackend.flush(1);
-
-        $scope.current.font = $scope.fonts[PROVIDER_GOOGLE][0];
-        $scope.$digest();
-      });
+      beforeEach(activateGoogle);
 
       it('should switch to google fonts', function() {
         expect($rootScope.state.provider).toBe(PROVIDER_GOOGLE);
@@ -79,8 +79,41 @@ describe('api', function() {
         expect($rootScope.selected.stack).toBe('"Open Sans", sans-serif');
       });
 
-      xit('should be able to get multiple font styles (bold, regular, italic ...)', function() {
-        expect('implement here').toBe(true);
+      it('should call the change event on change', function() {
+        var spy = jasmine.createSpy('jdfs.change event');
+        var font = $scope.fonts[PROVIDER_GOOGLE][2];
+        $subScope.$on('jdfs.change', spy);
+
+        $scope.current.font = font;
+        $scope.$digest();
+
+        expect(spy).toHaveBeenCalled();
+        expect(spy.mostRecentCall.args[1]).toEqual({name: font.name, stack: font.stack});
+      });
+
+    });
+
+    describe('font service', function() {
+      var fontsService;
+
+      beforeEach(function() {
+        inject(function($injector) {
+          fontsService = $injector.get('jdFontselect.fonts');
+        });
+      });
+
+      it('should have a blank list of urls when only one webfont ist selected', function() {
+        expect(fontsService.getUrls()).toEqual({});
+      });
+
+      describe('google', function() {
+
+        it('should provide an url of the selected google font from the fontsService', function() {
+          activateGoogle();
+          expect(fontsService.getUrls()).toEqual({
+            google: 'http://fonts.googleapis.com/css?family=Open%20Sans'
+          });
+        });
       });
     });
   });

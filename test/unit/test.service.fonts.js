@@ -1,6 +1,8 @@
-/* global PROVIDER_WEBSAFE, GOOGLE_FONTS_RESPONSE, $httpBackend, elm, $q,
+/* global PROVIDER_WEBSAFE, GOOGLE_FONTS_RESPONSE, $httpBackend, elm, $q, $scope,
+          $compile, $rootScope,
           _webFontLoaderDeferred, _webFontLoaderInitiated, _webFontLoaderPromise,
           GOOGLE_FONT_API_RGX, PROVIDER_TITLE_CLASS */
+
 describe('fontsService', function() {
   'use strict';
 
@@ -150,6 +152,45 @@ describe('fontsService', function() {
       });
 
       _webFontLoaderDeferred.resolve(spy);
+    });
+  });
+
+  describe('current fonts', function() {
+    it('should return an empty list when no fonts are selected', function() {
+      expect(fontsService.getUsedFonts().length).toBe(0);
+    });
+
+    it('should know which fonts are active', function() {
+      $scope.current.font = $scope.fonts[PROVIDER_WEBSAFE][2];
+      $scope.$digest();
+
+      expect($scope.current.font).toBeDefined();
+      expect(fontsService.getUsedFonts()[0]).toBe([$scope.current.font][0]);
+      expect(fontsService.getUsedFonts().length).toBe(1);
+    });
+
+    it('should keep track of used fonts for all directives', function() {
+      var anotherElm = angular.element(
+        '<div>' +
+          '<jd-fontselect />' +
+        '</div>');
+
+      $compile(anotherElm)($rootScope);
+      $rootScope.$digest();
+      var $anotherScope = anotherElm.find('.jdfs-main div').scope();
+      $anotherScope.current.font = $scope.fonts[PROVIDER_WEBSAFE][1];
+      $scope.current.font = $scope.fonts[PROVIDER_WEBSAFE][2];
+      $rootScope.$digest();
+
+      expect(fontsService.getUsedFonts().length).toBe(2);
+      expect($scope.fonts[PROVIDER_WEBSAFE][1].used).toBe(1);
+
+      $anotherScope.current.font = $scope.fonts[PROVIDER_WEBSAFE][2];
+      $anotherScope.$digest();
+
+      expect(fontsService.getUsedFonts().length).toBe(1);
+      expect(fontsService.getUsedFonts()[0].used).toBe(2);
+      expect($scope.fonts[PROVIDER_WEBSAFE][1].used).toBe(0);
     });
   });
 });
