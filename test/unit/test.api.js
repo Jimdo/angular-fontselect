@@ -1,5 +1,5 @@
 /* global $compile, $rootScope, DEFAULT_WEBSAFE_FONTS, PROVIDER_GOOGLE, $httpBackend,
-          GOOGLE_FONT_API_RGX, GOOGLE_FONTS_RESPONSE */
+          GOOGLE_FONT_API_RGX, GOOGLE_FONTS_RESPONSE, PROVIDER_TITLE_CLASS */
 describe('api', function() {
   var elm, $scope;
   function setupWithState(defaults) {
@@ -62,7 +62,7 @@ describe('api', function() {
         $httpBackend.when('GET', GOOGLE_FONT_API_RGX).respond(GOOGLE_FONTS_RESPONSE);
         $httpBackend.expectGET(GOOGLE_FONT_API_RGX);
 
-        $subScope = elm.find('.jdfs-provider-google-fonts h3').scope();
+        $subScope = elm.find('.jdfs-provider-google-fonts ' + PROVIDER_TITLE_CLASS).scope();
         $subScope.toggle();
         $httpBackend.flush(1);
 

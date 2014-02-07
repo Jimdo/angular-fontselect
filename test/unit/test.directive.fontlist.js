@@ -1,4 +1,4 @@
-/* global elm, $scope */
+/* global elm, $scope, PROVIDER_TITLE_CLASS */
 describe('fontlist directive', function() {
   'use strict';
 
@@ -13,8 +13,8 @@ describe('fontlist directive', function() {
     expect(fontlist.length).toBe(1);
   });
 
-  it('should have a headline', function() {
-    expect(fontlist.find('h3').length).toBe(1);
+  it('should have a title', function() {
+    expect(fontlist.find(PROVIDER_TITLE_CLASS).length).toBe(1);
   });
 
   it('should be the current provider', function() {
@@ -26,25 +26,25 @@ describe('fontlist directive', function() {
   });
 
   it('should become inactive when we click on the headline', function() {
-    fontlist.find('h3').click();
+    fontlist.find(PROVIDER_TITLE_CLASS).click();
     expect($childScope.isActive()).toBe(false);
   });
 
   it('should have an active class when active', function() {
     expect(fontlist.hasClass('jdfs-active')).toBe(true);
-    fontlist.find('h3').click();
+    fontlist.find(PROVIDER_TITLE_CLASS).click();
     expect(fontlist.hasClass('jdfs-active')).toBe(false);
   });
 
   it('shouldn\'t have list elements when inactive', function() {
-    fontlist.find('h3').click();
+    fontlist.find(PROVIDER_TITLE_CLASS).click();
     expect(fontlist.find('li').length).toBe(0);
   });
 
   it('should get it\'s list elements back when being reactivated', function() {
     var lis = fontlist.find('li').length;
-    fontlist.find('h3').click();
-    fontlist.find('h3').click();
+    fontlist.find(PROVIDER_TITLE_CLASS).click();
+    fontlist.find(PROVIDER_TITLE_CLASS).click();
     expect(fontlist.find('li').length).toBe(lis);
   });
 

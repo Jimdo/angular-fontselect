@@ -6,6 +6,7 @@
 		name="jdfs-{{id}}-font"
 		id="jdfs-{{id}}-font-{{font.key}}" />
 	<label
+		ng-class="{'jdfs-active': current.font == font}"
 		for="jdfs-{{id}}-font-{{font.key}}"
 		style="font-family: {{font.stack}};">{{font.name}}</label>
 </li>

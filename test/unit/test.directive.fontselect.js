@@ -1,5 +1,6 @@
 /* global DEFAULT_WEBSAFE_FONTS, $rootScope, $compile, $injector, $scope, elm, $rootScope,
-          NAME_JDFONTLIST_CONTROLLER, $controller, NAME_FONTSSERVICE, ANOTHER_FONT, AND_SOME_FONT_MORE */
+          NAME_JDFONTLIST_CONTROLLER, $controller, NAME_FONTSSERVICE, ANOTHER_FONT, AND_SOME_FONT_MORE,
+          PROVIDER_TITLE_CLASS */
 describe('fontselect directive', function() {
   'use strict';
 
@@ -193,7 +194,7 @@ describe('fontselect directive', function() {
     }
 
     beforeEach(function() {
-      $listScope = elm.find('h3').scope();
+      $listScope = elm.find(PROVIDER_TITLE_CLASS).scope();
 
       spies.orderBy = jasmine.createSpy('orderBy');
       spies.filter = jasmine.createSpy('filter');

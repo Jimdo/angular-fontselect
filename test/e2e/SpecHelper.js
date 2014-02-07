@@ -7,21 +7,24 @@ beforeEach(function() {
 
 module.exports = {
 
+  /** @const */
+  PROVIDER_TITLE_CLASS: '.jdfs-provider-title',
+
   toggle: function() {
     element(by.css('.jdfs-toggle')).click();
   },
 
   openProviderListNo: function(n) {
     element.all(by.repeater('provider in providers')).get(n)
-      .findElement(by.tagName('h3')).click();
+      .findElement(by.css(this.PROVIDER_TITLE_CLASS)).click();
   },
 
-  getRadio: function(n) {
-    var radios = element.all(by.model('current.font'));
+  getFontLabel: function(n) {
+    var labels = element.all(by.css('.jdfs-provider label'));
     if(typeof n === 'number') {
-      return radios.get(n);
+      return labels.get(n);
     }
-    return radios;
+    return labels;
   },
 
   getPaginator: function(n) {

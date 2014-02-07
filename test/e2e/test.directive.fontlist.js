@@ -22,57 +22,57 @@ describe('fontlist directive', function() {
   });
 
   it('should have one radio checked after one was clicked', function() {
-    Helpers.getRadio(3).click();
+    Helpers.getFontLabel(3).click();
     expect(element.all(by.css('li input:checked')).count()).toBe(1);
   });
 
   it('should still have one radio checked after a few were clicked', function() {
-    Helpers.getRadio(1).click();
-    Helpers.getRadio(2).click();
-    Helpers.getRadio(3).click();
+    Helpers.getFontLabel(1).click();
+    Helpers.getFontLabel(2).click();
+    Helpers.getFontLabel(3).click();
     expect(element.all(by.css('li input:checked')).count()).toBe(1);
   });
 
   it('should link radio buttons between the single font lists.', function() {
     /* Ensure our test button is not clicked, yet */
-    expect(Helpers.getRadio(1).getAttribute('selected')).toBeFalsy();
+    expect(Helpers.getFontLabel(1).getAttribute('class')).not.toMatch('jdfs-active');
 
     /* Click on a radio button in the first list */
-    Helpers.getRadio(1).click();
-    expect(Helpers.getRadio(1).getAttribute('selected')).toBeTruthy();
+    Helpers.getFontLabel(1).click();
+    expect(Helpers.getFontLabel(1).getAttribute('class')).toMatch('jdfs-active');
 
     Helpers.openProviderListNo(1);
 
     /* Click a radio button in the new list */
-    Helpers.getRadio(4).click();
+    Helpers.getFontLabel(4).click();
 
     Helpers.openProviderListNo(0);
 
     /* Expect our own button to be unchecked */
-    expect(Helpers.getRadio(1).getAttribute('selected')).toBeFalsy();
+    expect(Helpers.getFontLabel(1).getAttribute('class')).not.toMatch('jdfs-active');
   });
 
   it('should keep our selection even if we switch font lists', function() {
-    Helpers.getRadio(1).click();
+    Helpers.getFontLabel(1).click();
     
-    expect(Helpers.getRadio(1).getAttribute('selected')).toBeTruthy();
+    expect(Helpers.getFontLabel(1).getAttribute('class')).toMatch('jdfs-active');
     Helpers.openProviderListNo(1);
     Helpers.openProviderListNo(0);
-    expect(Helpers.getRadio(1).getAttribute('selected')).toBeTruthy();
+    expect(Helpers.getFontLabel(1).getAttribute('class')).toMatch('jdfs-active');
   });
 
   describe('font count', function() {
     it('should display the amount of font\'s in the header', function() {
-      expect(element(by.tagName('h3')).getText()).toContain('(5)');
+      expect(element(by.css(Helpers.PROVIDER_TITLE_CLASS)).getText()).toContain('(5)');
     });
 
     it('should adjust the first number when we apply filters', function() {
       Helpers.searchFor('ari');
-      expect(element(by.tagName('h3')).getText()).toContain('1/5');
+      expect(element(by.css(Helpers.PROVIDER_TITLE_CLASS)).getText()).toContain('1/5');
     });
 
     it('should display a placeholder when the fonts have not been loaded, yet', function() {
-      expect(element.all(by.tagName('h3')).get(1).getText()).toContain('(…)');
+      expect(element.all(by.css(Helpers.PROVIDER_TITLE_CLASS)).get(1).getText()).toContain('(…)');
     });
   });
 
@@ -91,29 +91,29 @@ describe('fontlist directive', function() {
     });
 
     it('should change the displayed fonts on click', function() {
-      var currentFirstID = Helpers.getRadio(0).getAttribute('id');
+      var currentFirstID = Helpers.getFontLabel(0).getAttribute('for');
       Helpers.getPaginator(1).click();
-      expect(Helpers.getRadio(0).getAttribute('id')).not.toBe(currentFirstID);
+      expect(Helpers.getFontLabel(0).getAttribute('for')).not.toBe(currentFirstID);
     });
 
     it('should keep radios selected over page changes.', function() {
-      Helpers.getRadio(5).click();
+      Helpers.getFontLabel(5).click();
       Helpers.getPaginator(1).click();
       runs(function() {
         Helpers.getPaginator(0).click();
       });
       /* Need to delay our expectation to make this less flaky. */
       runs(function() {
-        expect(Helpers.getRadio(5).getAttribute('selected')).toBeTruthy();
+        expect(Helpers.getFontLabel(5).getAttribute('class')).toContain('jdfs-active');
       });
     });
 
     it('should be on the correct page when we close and reopen the list', function() {
-      expect(Helpers.getPaginator(1).getAttribute('class')).not.toContain('active');
+      expect(Helpers.getPaginator(1).getAttribute('class')).not.toContain('jdfs-active');
       Helpers.getPaginator(1).click();
       Helpers.openProviderListNo(0);
       Helpers.openProviderListNo(1);
-      expect(Helpers.getPaginator(1).getAttribute('class')).toContain('active');
+      expect(Helpers.getPaginator(1).getAttribute('class')).toContain('jdfs-active');
     });
 
     describe('with search', function() {
@@ -127,7 +127,7 @@ describe('fontlist directive', function() {
       it('should stay on the page of our selected search when we change filters', function() {
         /* Navigate to a subpage and select a font */
         Helpers.getPaginator(5).click();
-        Helpers.getRadio(6).click();
+        Helpers.getFontLabel(6).click();
 
         function getLabel(fr) {
           return element.all(by.css('[for="' + fr + '"]'));

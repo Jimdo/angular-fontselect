@@ -11,6 +11,9 @@ var $rootScope, $compile, $injector, $httpBackend, $scope, $q, $controller, elm;
 var GOOGLE_FONT_API_RGX = /http(s)?:\/\/www\.googleapis\.com\/webfonts\/v1\/.*/;
 
 /** @const */
+var PROVIDER_TITLE_CLASS = '.jdfs-provider-title';
+
+/** @const */
 var ANOTHER_FONT = {
   name: 'Drrrt',
   key: 'drt',

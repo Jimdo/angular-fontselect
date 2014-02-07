@@ -1,6 +1,6 @@
 /* global PROVIDER_WEBSAFE, GOOGLE_FONTS_RESPONSE, $httpBackend, elm, $q,
           _webFontLoaderDeferred, _webFontLoaderInitiated, _webFontLoaderPromise,
-          GOOGLE_FONT_API_RGX */
+          GOOGLE_FONT_API_RGX, PROVIDER_TITLE_CLASS */
 describe('fontsService', function() {
   'use strict';
 
@@ -120,7 +120,7 @@ describe('fontsService', function() {
       $httpBackend.when('GET', GOOGLE_FONT_API_RGX).respond(GOOGLE_FONTS_RESPONSE);
       $httpBackend.expectGET(GOOGLE_FONT_API_RGX);
 
-      $subScope = elm.find('.jdfs-provider-google-fonts h3').scope();
+      $subScope = elm.find('.jdfs-provider-google-fonts ' + PROVIDER_TITLE_CLASS).scope();
       $subScope.toggle();
       $httpBackend.flush(1);
     });

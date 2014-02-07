@@ -75,19 +75,18 @@
     padding: .5em;
     display: block;
     width: 100%;
+    &.jdfs-active {
+      color: @selectedFontColor;
+      background: @selectedFontBg;
+    }
   }
+
   input{
     display: none;
-    &:checked{
-      ~ label{
-        color: @selectedFontColor;
-        background: @selectedFontBg;
-      }
-    }
   }
 }
 
-.jdfs-category-title{
+.jdfs-provider-title{
   background: @tabBg;
   margin: 0;
   font-size: .8em;
