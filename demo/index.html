@@ -13,18 +13,50 @@
 </head>
 <body ng-cloak>
     <div class="wrap">
-      <div class="fontselect">
-        <h1 style="font-family: {{first.stack}};">Angular Fontselection, by Jimdo</h1>
-        <jd-fontselect selected="first"></jd-fontselect>
-        <p>Lorem Ipsum</p>
+      <div class="headwrap relacon">
 
-        <h1 style="font-family: {{second.stack}};">Foob</h1>
-        <jd-fontselect selected="second"></jd-fontselect>
-        <p>ASDFG</p>
+        <div class="fontselect">
+          <jd-fontselect selected="header"></jd-fontselect>
+        </div>
+        
+        <header style="font-family: {{header.stack}};">
 
+          <h1>Angular Fontselection, by Jimdo</h1>
+          <h2>a Directive written to bring a new expierience to font family choosing
+          </h2>
+        </header>
       </div>
-    </div>
+      <div class="contentwrap relacon">
 
+        <div class="fontselect">
+          <jd-fontselect selected="content"></jd-fontselect>
+        </div>
+        
+        <section class="content mw" style="font-family: {{content.stack}};">
+
+
+          <p>Just implement to your angular App and make choosing a Font family easy. Actually in this State I really don"t know what I should write on this page but we need some text to show what you"re able to do with the interface
+          </p>
+          <br>
+          <p>Just implement to your angular App and make choosing a Font family easy. Actually in this State I really don"t know what I should write on this page but we need some text to show what you"re able to do with the interface
+          </p>
+
+        </section>
+
+      
+    </div>
+      <div class="footerwrap relacon">
+
+        <div class="fontselect">
+          <jd-fontselect selected="footer"></jd-fontselect>
+        </div>
+        <footer class='mw' style="font-family: {{footer.stack}};">
+          <a href="">github repo</a>
+          <a href="">Jimdo</a>
+          
+        </footer>
+      </div>
+  </div>
 
     <script src="/bower_components/jquery/jquery.js"></script>
     <script>
