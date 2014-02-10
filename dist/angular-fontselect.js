@@ -1587,6 +1587,9 @@
   var URL_WEBFONTLOADER = '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js';
   
   /** @const */
+  var URL_GOOGLE_FONTS_CSS = 'http://fonts.googleapis.com/css?';
+  
+  /** @const */
   var SUBSET_CYRILLIC = 'cyrillic';
   
   /** @const */
@@ -1645,26 +1648,27 @@
     VARIANTS_BOLD_ITALIC
   );
   
-  
+  var _fontsServiceDeps = ['$http', '$q', 'jdFontselectConfig', '$filter'];
   var _webFontLoaderInitiated = false;
   
   var _webFontLoaderDeferred, _webFontLoaderPromise;
   
-  
-  function FontsService($http, $q, config) {
+  function FontsService() {
     var self = this;
   
-    self.config = config;
-    self.$http = $http;
-    self.$q = $q;
+    for (var i = 0, l = _fontsServiceDeps.length; i <l; i++) {
+      self[_fontsServiceDeps[i]] = arguments[i];
+    }
   
-    _webFontLoaderDeferred = $q.defer();
+    _webFontLoaderDeferred = self.$q.defer();
     _webFontLoaderPromise = _webFontLoaderDeferred.promise;
     
     self._init();
   
     return self;
   }
+  
+  FontsService.$inject = _fontsServiceDeps;
   
   FontsService.prototype = {
     _init: function() {
@@ -1816,6 +1820,48 @@
       this['_load' + provider](font);
     },
   
+    getUrls: function() {
+      var self = this;
+      var googleUrl = self.getGoogleUrl();
+      var urls = {};
+      
+      if (googleUrl) {
+        urls.google = googleUrl;
+      }
+  
+      return urls;
+    },
+  
+    getUsedFonts: function() {
+      var self = this;
+      var usedFonts = [];
+  
+      angular.forEach(self._fonts, function(fonts) {
+        usedFonts = usedFonts.concat(self.$filter('filter')(fonts, {used: true}, function(used) {
+          return !!used;
+        }));
+      });
+      
+      return usedFonts;
+    },
+  
+    getGoogleUrl: function() {
+      var self = this;
+      var googleFonts = self.$filter('filter')(self.getUsedFonts(), {provider: PROVIDER_GOOGLE});
+  
+      if (googleFonts.length) {
+        var googleNames = [];
+  
+        for (var i = 0, l = googleFonts.length; i < l; i++) {
+          googleNames.push(googleFonts[i].name);
+        }
+  
+        return URL_GOOGLE_FONTS_CSS + 'family=' + window.escape(googleNames.join('|'));
+      } else {
+        return false;
+      }
+    },
+  
     _remap: function(provider, from) {
       var self = this;
       var fonts = self._fonts[provider];
@@ -1866,7 +1912,7 @@
     _initGoogleFonts: function() {
       var self = this;
   
-      if (!self.config.googleApiKey) {
+      if (!self.jdFontselectConfig.googleApiKey) {
         return;
       }
   
@@ -1877,14 +1923,13 @@
         url: URL_GOOGLE_FONTS_API,
         params: {
           sort: 'popularity',
-          key: self.config.googleApiKey
+          key: self.jdFontselectConfig.googleApiKey
         }
       }).success(function(response) {
         var amount = response.items.length;
   
         angular.forEach(response.items, function(font, i) {
           var category = self._getGoogleFontCat(font.family);
-  
           if (SUPPORT_KHMER || font.subsets.length === 1 && font.subsets[0] === 'khmer') {
             return;
           }
@@ -1973,10 +2018,9 @@
     });
   };
   
-  fontselectModule.factory(
-    NAME_FONTSSERVICE,
-    ['$http', '$q', 'jdFontselectConfig', function($http, $q, config) { return new FontsService($http, $q, config); }]
-  );
+  fontselectModule.factory(NAME_FONTSSERVICE, ['$injector', function($injector) {
+    return $injector.instantiate(FontsService);
+  }]);
 
   // src/js/directive.fontselect.js
   var id = 1;
@@ -2057,8 +2101,18 @@
           if (oldFont !== newFont && angular.isObject(scope.current.font)) {
             newFont = scope.current.font;
   
+            if (angular.isObject(oldFont) && oldFont.used) {
+              oldFont.used--;
+            }
+            if (!angular.isObject(newFont) || !newFont.used) {
+              newFont.used = 1;
+            } else {
+              newFont.used++;
+            }
+  
             scope.selected.name = newFont.name;
             scope.selected.stack = newFont.stack;
+            scope.$broadcast('jdfs.change', scope.selected);
           }
         });
       }
@@ -2309,12 +2363,12 @@
   
   
     $templateCache.put('fontlist.html',
-      "<div class=\"jdfs-provider jdfs-provider-{{providerKey}}\" ng-class=\"{'jdfs-active': isActive()}\"><p class=jdfs-provider-title ng-class=\"{'jdfs-active': isActive()}\" ng-click=toggle()>{{providerName}} <span ng-if=\"getFilteredFonts().length == fonts.length\">({{fonts.length}})</span> <span ng-if=\"fonts.length && getFilteredFonts().length != fonts.length\">({{getFilteredFonts().length}}/{{fonts.length}})</span> <span ng-if=!fonts.length>(…)</span></p><div ng-if=isActive()><ul class=jdfs-fontlist><jd-font ng-repeat=\"font in getFilteredFonts() | startFrom: page.current * page.size | limitTo: page.size\"></ul><button ng-repeat=\"i in getPages() track by $index\" ng-class=\"{'jdfs-active': page.current == $index}\" ng-click=setCurrentPage($index)>{{$index + 1}}</button></div></div>"
+      "<div class=\"jdfs-provider jdfs-provider-{{providerKey}}\" ng-class=\"{'jdfs-active': isActive()}\"><p class=jdfs-provider-title ng-class=\"{'jdfs-active': isActive()}\" ng-click=toggle()>{{providerName}}<span ng-if=\"getFilteredFonts().length == fonts.length\">({{fonts.length}})</span><span ng-if=\"fonts.length && getFilteredFonts().length != fonts.length\">({{getFilteredFonts().length}}/{{fonts.length}})</span><span ng-if=!fonts.length>(…)</span></p><div ng-if=isActive()><ul class=jdfs-fontlist><jd-font ng-repeat=\"font in getFilteredFonts() | startFrom: page.current * page.size | limitTo: page.size\"></ul><button ng-repeat=\"i in getPages() track by $index\" ng-class=\"{'jdfs-active': page.current == $index}\" ng-click=setCurrentPage($index)>{{$index + 1}}</button></div></div>"
     );
   
   
     $templateCache.put('fontselect.html',
-      "<div class=jdfs-main id=jd-fontselect-{{id}}><button ng-click=toggle() class=jdfs-toggle>Select Font</button><div class=jdfs-window ng-show=active><div class=jdfs-topbar><input placeholder=\"Search by Fontname\" name=jdfs-{{id}}-search ng-model=current.search><select ng-model=current.sort.attr ng-options=\"a.name for a in searchAttrs\"></select><button ng-click=reverseSort()>{{current.sort.direction ? '▼' : '▲'}}</button><div ng-repeat=\"(key, name) in subsets\"><input ng-model=current.subsets[key] type=checkbox id=jdfs-{{id}}-subset-{{key}}><label for=jdfs-{{id}}-subset-{{key}}>{{name}}</label></div></div><div class=jdfs-filter><button class=jdfs-filterbtn ng-repeat=\"category in categories\" ng-class=\"{'jdfs-active': category.key == current.category}\" ng-click=setCategoryFilter(category.key) ng-model=current.category>{{category.name}}</button></div><jd-fontlist fsid=id current=current fonts=fonts[provider] provider={{provider}} ng-repeat=\"provider in providers\"></div></div>"
+      "<div class=jdfs-main id=jd-fontselect-{{id}}><button ng-click=toggle() class=jdfs-toggle>Current Font</button><input class=jdfs-search placeholder=\"Search by Fontname\" name=jdfs-{{id}}-search ng-model=current.search><div class=jdfs-window ng-show=active><div class=jdfs-fontlistcon><jd-fontlist fsid=id current=current fonts=fonts[provider] provider={{provider}} ng-repeat=\"provider in providers\"></div><div class=jdfs-filter><button class=jdfs-filterbtn ng-repeat=\"category in categories\" ng-class=\"{'jdfs-active': category.key == current.category}\" ng-click=setCategoryFilter(category.key) ng-model=current.category>{{category.name}}</button><div class=jdfs-charsets><div ng-repeat=\"(key, name) in subsets\"><input ng-model=current.subsets[key] type=checkbox id=jdfs-{{id}}-subset-{{key}}><label for=jdfs-{{id}}-subset-{{key}}>{{name}}</label></div></div></div></div></div>"
     );
   
   }]);
