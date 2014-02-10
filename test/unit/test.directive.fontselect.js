@@ -125,11 +125,11 @@ describe('fontselect directive', function() {
   });
 
   describe('sorting', function() {
-    it('should have a sort select dropdown', function() {
+    xit('should have a sort select dropdown', function() {
       expect(elm.find('select[ng-model="current.sort.attr"]').length).toBe(1);
     });
 
-    it('should have a way to reverse the sorting', function() {
+    xit('should have a way to reverse the sorting', function() {
       expect(elm.find('button[ng-click="reverseSort()"]').length).toBe(1);
     });
 
