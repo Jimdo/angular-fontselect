@@ -3,13 +3,15 @@
 @tabBg: #eee;
 @activeTab: #939393;
 
-@highlightcolor: #0099ee;
+@hoverBgColor: #ededed;
+@highlightcolor: #7ec621;
 @selectedFontColor: white;
 
 @filterFontColor: white;
-@filterBg: gray;
+@filterBg: #464646;
 
 @outerBorderRadius: 4px;
+@innerBorderRadius: 2px;
 
 .jdfs-main{
   *, *:after, *:before{
@@ -25,7 +27,7 @@
   padding: 1em;
   border-radius: 4px;
 
-  width: 600px;
+  width: 500px;
 
 
   display: -webkit-box;
@@ -36,15 +38,28 @@
   flex-direction: row;
   align-items: flex-start;
 }
-.jdfs-fontlistcon{
+
+.jdfs-toggle,.jdfs-search{
+
   padding: 1em;
+  border: 1px solid #eee;
   background: white;
-  width: 50%;
+  width: 15em;
+
+}
+.jdfs-fontlistcon{
+  padding: .5em .5em .5em .5em;
+  overflow: hidden;
+  border-radius: @outerBorderRadius 0 0 @outerBorderRadius;
+  background: @filterBg;
+  width: 60%;
   flex: 1 0;
 
 }
 
 .jdfs-fontlist{
+  border-radius: @innerBorderRadius;
+  background: white;
   padding: 0;
   margin: 0;
   li{
@@ -53,13 +68,17 @@
     list-style-type: none;
   }
   label{
-    padding: .5em;
+    padding: .5em 1em;
     display: block;
     width: 100%;
+    &:hover{
+      background: @hoverBgColor;
+    }
     &.jdfs-active {
       color: @selectedFontColor;
       background: @highlightcolor;
     }
+
   }
 
   input{
@@ -70,8 +89,8 @@
 
 .jdfs-filter{
   border-radius: 0  @outerBorderRadius @outerBorderRadius 0;
-  padding: 1em;
-  width: 50%;
+  padding: .5em .5em .5em 0;
+  width: 40%;
 
   display: -webkit-box;
   display: -moz-box;
@@ -89,7 +108,7 @@
 
 .jdfs-filterbtn{
 
-  
+  border-radius: @innerBorderRadius;
   margin-bottom: .3em;
   flex: 1 1 33%;
 
@@ -107,8 +126,11 @@
   &:focus, &:active{
     outline: none;
   }
+  &:last-child{
+    margin-bottom: 0;
+  }
 }
-.jdfs-charset{
+.jdfs-charsets{
   flex: 0 0 100%;
 }
 .jdfs-provider-title{

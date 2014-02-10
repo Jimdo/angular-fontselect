@@ -104,6 +104,9 @@ Todo
 
 * the directive should always generate the seach for fonts input field with the placeholder ="current font"
 
+* toggle button will hide .jdfs-toggle and show .jdfs-search and put focus inside .jdfs-search
+
+
 
 
 
