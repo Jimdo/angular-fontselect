@@ -26,6 +26,7 @@ module.exports = function(grunt) {
   grunt.registerTask('test:beforeEach', ['jshint', 'ngtemplates', 'build:apikeys']);
   grunt.registerTask('test', ['test:beforeEach', 'karma:all', 'protractor']);
   grunt.registerTask('test:travis', ['test:beforeEach', 'karma:travis']);
+  grunt.registerTask('test:unit', ['test:beforeEach', 'karma:all']);
   grunt.registerTask('test:e2e', ['test:beforeEach', 'protractor']);
 
   grunt.registerTask('build:less', [
@@ -35,7 +36,14 @@ module.exports = function(grunt) {
     'concat:bannerToDistStyleMin'
   ]);
   grunt.registerTask('build:apikeys', function() { Helpers.setUpApiKeyFile(); });
-  grunt.registerTask('build', ['ngtemplates', 'build:apikeys', 'build:less', 'concat:dist', 'uglify']);
+  grunt.registerTask('build', [
+    'ngtemplates',
+    'build:apikeys',
+    'shell:buildWFL',
+    'build:less',
+    'concat:dist',
+    'uglify'
+  ]);
 
   grunt.registerTask('git:dist', ['gitcommit:dist', 'gittag:dist', 'gitpush:dist', 'gitpush:disttags']);
   grunt.registerTask('dist', ['test', 'bump', 'build', 'git:dist']);

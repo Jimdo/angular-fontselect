@@ -54,8 +54,6 @@ beforeEach(function() {
     $controller  = _$controller_;
   });
 
-  spyOn(window, 'yepnope');
-
   /* Create the element for our directive */
   elm = angular.element(
     '<div>' +

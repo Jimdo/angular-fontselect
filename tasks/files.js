@@ -1,6 +1,7 @@
+var libsDistDir = 'dist/libs/';
+
 var files = {
   grunt: 'Gruntfile.js',
-  yepnope: 'bower_components/yepnope/yepnope.js',
 
   source: [
     'src/js/helper.module.js',
@@ -31,12 +32,16 @@ var files = {
   allPartials: 'src/partials/*.html',
   allPartialsCombined: 'src/partials/all.js',
 
+  wflDir: 'bower_components/webfontloader/',
+  libsDir: libsDistDir,
+
   unitTests: 'test/unit/**/*.js',
   e2eTests: ['test/e2e/SpecHelper.js', 'test/e2e/test.*.js'],
   apiKeys: 'tmp.apikeys.js',
   testEnvKarma: [
-    'bower_components/yepnope/yepnope.js',
+    'bower_components/jquery/jquery.js',
     'bower_components/angular/angular.js',
+    libsDistDir + 'webfontloader.js',
     'bower_components/angular-mocks/angular-mocks.js'
   ],
 
@@ -56,7 +61,6 @@ files.demoEnv = JSON.parse(JSON.stringify(files.testEnv));
 
 files.testEnv.push('test/default-websafe-fonts.js');
 files.testEnvKarma.push('test/default-websafe-fonts.js');
-files.testEnvKarma.splice(0, 0, 'bower_components/jquery/jquery.js');
 
 if (typeof module === 'object') {
   module.exports = files;

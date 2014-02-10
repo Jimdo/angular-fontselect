@@ -1,4 +1,5 @@
 /* global NAME_FONTSSERVICE */
+
 fontselectModule.directive('jdFontselectCurrentHref', [NAME_FONTSSERVICE, function(fontsService) {
   return {
     templateUrl: 'current-href.html',

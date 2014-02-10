@@ -1,5 +1,4 @@
-/* global DEFAULT_WEBSAFE_FONTS, PROVIDER_WEBSAFE, PROVIDER_GOOGLE, GOOGLE_FONT_CATEGORIES,
-          NAME_FONTSSERVICE */
+/* global DEFAULT_WEBSAFE_FONTS, PROVIDER_WEBSAFE, PROVIDER_GOOGLE, GOOGLE_FONT_CATEGORIES, NAME_FONTSSERVICE */
 
 /** @const */
 var REQUIRED_FONT_OBJECT_KEYS = [
@@ -16,9 +15,6 @@ var METHOD_GET = 'get';
 
 /** @const */
 var URL_GOOGLE_FONTS_API = 'https://www.googleapis.com/webfonts/v1/webfonts';
-
-/** @const */
-var URL_WEBFONTLOADER = '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js';
 
 /** @const */
 var URL_GOOGLE_FONTS_CSS = 'http://fonts.googleapis.com/css?';
@@ -83,9 +79,6 @@ var VARIANT_PRIORITY = VARIANTS_REGULAR.concat(
 );
 
 var _fontsServiceDeps = ['$http', '$q', 'jdFontselectConfig', '$filter'];
-var _webFontLoaderInitiated = false;
-
-var _webFontLoaderDeferred, _webFontLoaderPromise;
 
 function FontsService() {
   var self = this;
@@ -93,9 +86,6 @@ function FontsService() {
   for (var i = 0, l = _fontsServiceDeps.length; i <l; i++) {
     self[_fontsServiceDeps[i]] = arguments[i];
   }
-
-  _webFontLoaderDeferred = self.$q.defer();
-  _webFontLoaderPromise = _webFontLoaderDeferred.promise;
   
   self._init();
 
@@ -327,30 +317,12 @@ FontsService.prototype = {
     return this._getBestOf(subsets, SUBSET_PRIORITY);
   },
 
-  _initWebFontLoader: function() {
-    if (_webFontLoaderInitiated) {
-      return;
-    }
-
-    _webFontLoaderInitiated = true;
-
-    yepnope({
-      test: typeof WebFont !== 'undefined',
-      nope: URL_WEBFONTLOADER,
-      complete: function() {
-        _webFontLoaderDeferred.resolve(WebFont);
-      }
-    });
-  },
-
   _initGoogleFonts: function() {
     var self = this;
 
     if (!self.jdFontselectConfig.googleApiKey) {
       return;
     }
-
-    self._initWebFontLoader();
 
     self.$http({
       method: METHOD_GET,
@@ -436,20 +408,18 @@ FontsService.prototype = {
 FontsService.prototype['_load' + PROVIDER_GOOGLE] = function(font) {
   var self = this;
 
-  _webFontLoaderPromise.then(function(WebFont) {
-    try {
-      WebFont.load({
-        google: {
-          families: [font.name + ':' + self._getBestVariantOf(font.variants)],
-          text: font.name,
-          subsets: font.subsets,
-          subset: self._getBestSubsetOf(font.subsets)
-        }
-      });
-    } catch (e) {
-      self.removeFont(font, PROVIDER_GOOGLE);
-    }
-  });
+  try {
+    WebFont.load({
+      google: {
+        families: [font.name + ':' + self._getBestVariantOf(font.variants)],
+        text: font.name,
+        subsets: font.subsets,
+        subset: self._getBestSubsetOf(font.subsets)
+      }
+    });
+  } catch (e) {
+    self.removeFont(font, PROVIDER_GOOGLE);
+  }
 };
 
 fontselectModule.factory(NAME_FONTSSERVICE, ['$injector', function($injector) {
