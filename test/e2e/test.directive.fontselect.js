@@ -70,7 +70,7 @@ describe('fontselect directive', function() {
     });
   });
 
-  describe('sorting', function() {
+  xdescribe('sorting', function() {
 
     beforeEach(function() {
       Helpers.toggle();
