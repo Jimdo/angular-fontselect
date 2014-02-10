@@ -3,65 +3,45 @@
 @tabBg: #eee;
 @activeTab: #939393;
 
-@selectedFontBg: #4696b0;
+@highlightcolor: #0099ee;
 @selectedFontColor: white;
 
+@filterFontColor: white;
+@filterBg: gray;
+
+@outerBorderRadius: 4px;
+
+.jdfs-main{
+  *, *:after, *:before{
+    box-sizing: border-box;
+  }
+}
 
 
 .jdfs-window{
   z-index: 3000;
   position: absolute;
   
-  padding: 1em 0;
+  padding: 1em;
   border-radius: 4px;
 
-  background: white;
-	max-height: 500px;
-  width: 300px;
-  max-width: 20em;
+  width: 600px;
 
-  box-shadow: 0 0 2px 2px rgba(0,0,0,.5);
 
   display: -webkit-box;
   display: -moz-box;
   display: -ms-flexbox;
   display: -webkit-flex;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  align-items: flex-start;
 }
-.jdfs-topbar{
-
-}
-
-.jdfs-toggle{
+.jdfs-fontlistcon{
   padding: 1em;
   background: white;
-  border: 1px solid #ddd;
-  &.jdfs-active,&:focus,&:active{
-    outline: none;
-  }
-}
-.jdfs-filter{
-  margin: 1em 0;
-  justify-content: space-between;
+  width: 50%;
+  flex: 1 0;
 
-}
-
-.jdfs-filterbtn{
-  padding: .5em;
-  margin: 0;
-  display: inline-block;
-
-  background: white;
-  background: white;
-  border: 1px solid #e8e8e8;
-  &.jdfs-active{
-    background: @activeTab;
-    color: white;
-  }
-  &:focus, &:active{
-    outline: none;
-  }
 }
 
 .jdfs-fontlist{
@@ -78,7 +58,7 @@
     width: 100%;
     &.jdfs-active {
       color: @selectedFontColor;
-      background: @selectedFontBg;
+      background: @highlightcolor;
     }
   }
 
@@ -87,6 +67,50 @@
   }
 }
 
+
+.jdfs-filter{
+  border-radius: 0  @outerBorderRadius @outerBorderRadius 0;
+  padding: 1em;
+  width: 50%;
+
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+
+  justify-content: space-between;
+  flex-wrap: wrap;
+
+  color: @filterFontColor;
+  background: @filterBg;
+
+}
+
+.jdfs-filterbtn{
+
+  
+  margin-bottom: .3em;
+  flex: 1 1 33%;
+
+  height: 5em;
+  padding: .5em;
+  display: inline-block;
+
+  background: white;
+  background: white;
+  border: none;
+  &.jdfs-active{
+    background: @highlightcolor;
+    color: white;
+  }
+  &:focus, &:active{
+    outline: none;
+  }
+}
+.jdfs-charset{
+  flex: 0 0 100%;
+}
 .jdfs-provider-title{
   background: @tabBg;
   margin: 0;

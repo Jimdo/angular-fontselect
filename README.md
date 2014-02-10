@@ -100,6 +100,12 @@ Todo
 
 * Move subset selection into own global service and provide a special directive for it.
 
+* Make the font sources (google fonts, websafe, evetually typekit someday) checkboxes which you can activated or deactivate
+
+* the directive should always generate the seach for fonts input field with the placeholder ="current font"
+
+
+
 
 Future Features
 ---------------
