@@ -1,17 +1,19 @@
 
 
-@tabBg: #eee;
-@activeTab: #939393;
+@tabBg:                  #eee;
+@activeTab:           #939393;
 
-@hoverBgColor: #ededed;
-@highlightcolor: #7ec621;
-@selectedFontColor: white;
+@fontColor:           #282828;
+@hoverBgColor:        #828282;
+@highlightcolor:      #7ec621;
+@selectedFontColor:     white;
 
-@filterFontColor: white;
-@filterBg: #464646;
+@filterBtnBg:         #2E2E2E;
+@filterFontColor:       white;
+@containerBg:         #464646;
 
-@outerBorderRadius: 4px;
-@innerBorderRadius: 2px;
+@outerBorderRadius:       4px;
+@innerBorderRadius:       2px;
 
 .jdfs-main{
   *, *:after, *:before{
@@ -23,7 +25,6 @@
 .jdfs-window{
   z-index: 3000;
   position: absolute;
-  
   padding: 1em;
   border-radius: 4px;
 
@@ -48,12 +49,13 @@
 
 }
 .jdfs-fontlistcon{
-  padding: .5em .5em .5em .5em;
+  padding: .5em;
   overflow: hidden;
   border-radius: @outerBorderRadius 0 0 @outerBorderRadius;
-  background: @filterBg;
+  background: @containerBg;
   width: 60%;
   flex: 1 0;
+  min-height: 200px;
 
 }
 
@@ -62,6 +64,8 @@
   background: white;
   padding: 0;
   margin: 0;
+  overflow: scroll;
+  max-height: 500px;
   li{
     padding: 0;
     margin: 0;
@@ -102,7 +106,7 @@
   flex-wrap: wrap;
 
   color: @filterFontColor;
-  background: @filterBg;
+  background: @containerBg;
 
 }
 
@@ -116,9 +120,13 @@
   padding: .5em;
   display: inline-block;
 
-  background: white;
-  background: white;
+  color: white;
+  background: @filterBtnBg;
   border: none;
+
+  &:hover{
+    background: @hoverBgColor;
+  }
   &.jdfs-active{
     background: @highlightcolor;
     color: white;
