@@ -18,7 +18,4 @@ describe('Setup', function() {
     expect(elm.find('.foo').length).toBe(1);
   });
 
-  it('should have yepnope available', function() {
-    expect(yepnope).toBeInstanceOf(Function);
-  });
 });

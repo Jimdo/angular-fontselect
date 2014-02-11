@@ -1,7 +1,5 @@
-/* global PROVIDER_WEBSAFE, GOOGLE_FONTS_RESPONSE, $httpBackend, elm, $q, $scope,
-          $compile, $rootScope,
-          _webFontLoaderDeferred, _webFontLoaderInitiated, _webFontLoaderPromise,
-          GOOGLE_FONT_API_RGX, PROVIDER_TITLE_CLASS */
+/* global PROVIDER_WEBSAFE, GOOGLE_FONTS_RESPONSE, $httpBackend, elm, $scope,
+          $compile, $rootScope,  GOOGLE_FONT_API_RGX, PROVIDER_TITLE_CLASS */
 
 describe('fontsService', function() {
   'use strict';
@@ -110,10 +108,6 @@ describe('fontsService', function() {
     });
   });
 
-  it('should have yepnope defined', function() {
-    expect(yepnope).toBeDefined();
-  });
-
   describe('google fonts', function() {
     var $subScope;
 
@@ -127,14 +121,6 @@ describe('fontsService', function() {
       $httpBackend.flush(1);
     });
 
-    afterEach(function() {
-      expect(yepnope).toHaveBeenCalled();
-      expect(yepnope.calls[0].args[0].test).toBe(false);
-      /* jshint -W020 */
-      _webFontLoaderInitiated = false;
-      /* jshint +W020 */
-    });
-
     it('should succeed on on all the beforeEach tests', function() {});
 
     it('should not call the fontService initiator twice.', function() {
@@ -142,16 +128,6 @@ describe('fontsService', function() {
       $subScope.toggle();
       $subScope.toggle();
       expect(fontsService._initGoogleFonts).not.toHaveBeenCalled();
-    });
-
-    it('should load the fonts with webFontLoader when we resolve the promise', function() {
-      var spy = jasmine.createSpyObj('WebFont', ['load']);
-
-      $q.all([_webFontLoaderPromise]).then(function() {
-        expect(spy.load.callCount).toBe(4);
-      });
-
-      _webFontLoaderDeferred.resolve(spy);
     });
   });
 

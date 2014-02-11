@@ -20,30 +20,56 @@ Provider Name
 Building
 --------
 
-We use [Grunt](http://gruntjs.com/) for building and
+We assume you have [node.js](http://nodejs.org/) installed.  
+We recommend a global installation of [grunt-cli](https://github.com/gruntjs/grunt-cli)
+if you want to test, build and distribute with grunt.  
+For building, [ruby](https://www.ruby-lang.org/) and [bundler](http://bundler.io/) are required
+since the typekit webfontloader needs to be compiled before we can ship it. 
+
+Once this dependencies are met, you can simply run:
+
+```sh
+npm install
+```
+
+
+If you want to rebuild the dist-files to add your changes, run:
+
+```sh
+grunt       #with tests
+grunt build #without tests
+```
+
+
+Testing
+-------
+
 [Karma](http://karma-runner.github.io/) and
 [Protractor](https://github.com/angular/protractor) for testing.  
-Before you can use the `grunt` command you need to install our
-npm package dependencies and bower components by executing
 
-	npm install
-	bower install
+Karma should work, once the build task is working.  
+```sh
+grunt test:unit
+```
 
+Protractor needs a webdriver-server and a web-server to run.
+```sh
+./servers.sh   # Start servers
+grunt test:e2e # Execute protractor tests
+```
 
-Then you should be able to execute the following commands:
+Other testing commands
+```sh
+grunt test # Execute karma and protractor
+```
 
-__Complete build:__ `grunt`
-
-__All tests without build:__ `grunt test`
-
-__Watch and test on every file change:__ `grunt watch:start`
-
-__Run e2e tests:__ `grunt test:e2e`
+```sh
+grunt watch:start # Execute karma on every file change.
+```
 
 
 API KEYS
 --------
-
 
 #### For Development / Testing
 
@@ -65,26 +91,14 @@ angular.module('myApp', ['jdFontselect']).constant('jdFontselectConfig', {
 });
 ```
 
+
 Demo
 ----
 
 There is a Sandbox for building castles playing around.  
-In the projects root folder execute `node scripts/web-server.js`
 
-Then go to [http://localhost:8000/demo/index.html](http://localhost:8000/demo/index.html)
-in your favorite browser.
-
-
-End to End Testing
-------------------
-
-Make sure you have a silenium standalone server running at port 4444  
-See [protractor README](https://github.com/angular/protractor/blob/master/README.md) 
-for details.
-
-Start the build in webserver with `node-dev scripts/web-server.js`
-
-Execute `grunt test:e2e`
+You need to [build this project successfully](#building)
+Then you can execute `./servers.sh` and enjoy the magique.
 
 
 About Khmer
@@ -105,8 +119,6 @@ Todo
 * the directive should always generate the seach for fonts input field with the placeholder ="current font"
 
 * toggle button will hide .jdfs-toggle and show .jdfs-search and put focus inside .jdfs-search
-
-
 
 
 

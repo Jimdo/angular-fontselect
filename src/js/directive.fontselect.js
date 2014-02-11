@@ -1,7 +1,7 @@
 /* global PROVIDERS, PROVIDER_WEBSAFE, NAME_FONTSSERVICE */
 var id = 1;
 
-fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsService) {
+fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, '$rootScope', function(fontsService, $rootScope) {
   return {
     scope: {
       current: '=?state',
@@ -88,7 +88,7 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsSer
 
           scope.selected.name = newFont.name;
           scope.selected.stack = newFont.stack;
-          scope.$broadcast('jdfs.change', scope.selected);
+          $rootScope.$broadcast('jdfs.change', scope.selected);
         }
       });
     }

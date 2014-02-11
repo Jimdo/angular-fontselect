@@ -12,7 +12,11 @@ var PROVIDERS = [
   PROVIDER_GOOGLE
 ];
 
+/** @const */
 var NAME_CONTROLLER = '.controller';
+
+/** @const */
+var NAME_FONTSSERVICE = 'jdFontselect.fonts';
 
 /** @const */
 var DEFAULT_WEBSAFE_FONTS = [
