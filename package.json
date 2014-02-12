@@ -1,6 +1,6 @@
 {
   "name": "angular-fontselect",
-  "version": "0.0.13",
+  "version": "0.1.0",
   "description": "A fontselect directive for AngularJS",
   "homepage": "https://github.com/Jimdo/angular-fontselect",
   "author": "Jimdo, Hannes Diercks <hannes.diercks@jimdo.com>",
@@ -13,7 +13,7 @@
   ],
   "scripts": {
     "test": "grunt test",
-    "install": "./node_modules/bower/bin/bower install; ./node_modules/grunt-cli/bin/grunt build"
+    "install": "./node_modules/bower/bin/bower install; ln -s ./node_modules/grunt-cli/bin/grunt ./grunt; ./node_modules/protractor/bin/webdriver-manager update; ./grunt build"
   },
   "repository": {
     "type": "git",
@@ -47,6 +47,7 @@
     "grunt-protractor-runner": "~0.2.1",
     "protractor": "~0.16.1",
     "grunt-contrib-less": "~0.9.0",
-    "grunt-shell": "~0.6.4"
+    "grunt-shell": "~0.6.4",
+    "grunt-http-server": "0.0.4"
   }
 }

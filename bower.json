@@ -1,6 +1,6 @@
 {
   "name": "angular-fontselect",
-  "version": "0.0.13",
+  "version": "0.1.0",
   "authors": [
     "Hannes Diercks <hannes.diercks@jimdo.com>"
   ],
@@ -25,7 +25,11 @@
     "node_modules",
     "bower_components",
     "test",
-    "tests"
+    "tasks",
+    "demo",
+    "src",
+    "Gruntfile.js",
+    "package.json"
   ],
   "dependencies": {
     "angular": "~1.2.8"

@@ -1,5 +1,5 @@
 /* global browser, element, by */
-var sandboxUrl = 'http://localhost:8000/test/e2e/index.html';
+var sandboxUrl = 'http://localhost:8765/test/e2e/';
 
 beforeEach(function() {
   browser.get(sandboxUrl);

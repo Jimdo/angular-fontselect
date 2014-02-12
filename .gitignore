@@ -4,3 +4,4 @@ npm-debug.log
 src/partials/all.js
 tmp.apikeys.js
 .DS_Store
+grunt

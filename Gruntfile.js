@@ -20,33 +20,52 @@ module.exports = function(grunt) {
   require('load-grunt-tasks')(grunt);
   grunt.loadTasks('tasks');
 
-  /* Aditional Tasks */
-  grunt.registerTask('watch:start', ['karma:watch:start', 'watch:andtest']);
+  /* "Helper" Tasks */
 
-  grunt.registerTask('test:beforeEach', ['jshint', 'ngtemplates', 'build:apikeys']);
-  grunt.registerTask('test', ['test:beforeEach', 'karma:all', 'protractor']);
-  grunt.registerTask('test:travis', ['test:beforeEach', 'karma:travis']);
-  grunt.registerTask('test:unit', ['test:beforeEach', 'karma:all']);
-  grunt.registerTask('test:e2e', ['test:beforeEach', 'protractor']);
-
-  grunt.registerTask('build:less', [
+  grunt.registerTask('_test:beforeEach', ['jshint', 'ngtemplates', '_build:apikeys']);
+  grunt.registerTask('_build:less', [
     'less:dist',
     'less:distmin',
     'concat:bannerToDistStyle',
     'concat:bannerToDistStyleMin'
   ]);
-  grunt.registerTask('build:apikeys', function() { Helpers.setUpApiKeyFile(); });
+  grunt.registerTask('_git:dist', ['gitcommit:dist', 'gittag:dist', 'gitpush:dist', 'gitpush:disttags']);
+  grunt.registerTask('_protractor:start', ['http-server:test', 'protractor']);
+  grunt.registerTask('_build:apikeys', function() { Helpers.setUpApiKeyFile(); });
+
+  /* "Public" Tasks */
+
+  /* Watch source and test files and execute karma unit tests on change. */
+  grunt.registerTask('watch:start', ['karma:watch:start', 'watch:andtest']);
+
+  /* Alias for starting the demo server */
+  grunt.registerTask('demo', ['http-server:demo']);
+
+  /* Execute all tests. */
+  grunt.registerTask('test', ['_test:beforeEach', 'karma:all', '_protractor:start']);
+  /* Execute e2e tests. */
+  grunt.registerTask('test:e2e', ['_test:beforeEach', '_protractor:start']);
+  /* Execute unit tests. */
+  grunt.registerTask('test:unit', ['test:beforeEach', 'karma:all']);
+  /* Execute karma tests with Firefox and PhantomJS. */
+  grunt.registerTask('test:travis', ['test:beforeEach', 'karma:travis']);
+
+  /* Build dist files. */
   grunt.registerTask('build', [
     'ngtemplates',
-    'build:apikeys',
+    '_build:apikeys',
     'shell:buildWFL',
-    'build:less',
+    '_build:less',
     'concat:dist',
     'uglify'
   ]);
 
-  grunt.registerTask('git:dist', ['gitcommit:dist', 'gittag:dist', 'gitpush:dist', 'gitpush:disttags']);
-  grunt.registerTask('dist', ['test', 'bump', 'build', 'git:dist']);
+  /* Distribute a new patch version. */
+  grunt.registerTask('dist', ['test', 'bump', 'build', '_git:dist']);
+  /* Distribute a new minor version. */
+  grunt.registerTask('dist:minor', ['test', 'bump:minor', 'build', '_git:dist']);
+  /* Distribute a new major version. */
+  grunt.registerTask('dist:major', ['test', 'bump:major', 'build', '_git:dist']);
 
   grunt.registerTask('default', ['test', 'build']);
 
