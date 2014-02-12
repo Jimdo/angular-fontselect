@@ -25,7 +25,11 @@
     "node_modules",
     "bower_components",
     "test",
-    "tests"
+    "tasks",
+    "demo",
+    "src",
+    "Gruntfile.js",
+    "package.json"
   ],
   "dependencies": {
     "angular": "~1.2.8"
