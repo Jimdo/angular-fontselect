@@ -7,6 +7,24 @@
  * Copyright 2014, Jimdo, Hannes Diercks <hannes.diercks@jimdo.com>
  * Released under the MIT license
  */
+@import url("/src/jdfs-iconfont/style.css");
+.iconfont,
+[class^="icon-"],
+[class*=" icon-"] {
+  font-family: 'jdfs-iconfont';
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.jdfs-main {
+  font-size: 16px;
+}
 .jdfs-main *,
 .jdfs-main *:after,
 .jdfs-main *:before {
@@ -32,20 +50,23 @@
   border: 1px solid #eee;
   background: white;
   width: 15em;
+  height: 3rem;
 }
 .jdfs-fontlistcon {
-  padding: .5em .5em .5em .5em;
+  padding: .5em;
   overflow: hidden;
-  border-radius: 4px 0 0 4px;
+  border-radius: 0 0 0 0;
   background: #464646;
   width: 60%;
   flex: 1 0;
 }
 .jdfs-fontlist {
-  border-radius: 2px;
+  border-radius: 0;
   background: white;
   padding: 0;
   margin: 0;
+  overflow: scroll;
+  max-height: 500px;
 }
 .jdfs-fontlist li {
   padding: 0;
@@ -58,7 +79,7 @@
   width: 100%;
 }
 .jdfs-fontlist label:hover {
-  background: #ededed;
+  background: #f1f1f1;
 }
 .jdfs-fontlist label.jdfs-active {
   color: #ffffff;
@@ -67,10 +88,17 @@
 .jdfs-fontlist input {
   display: none;
 }
+.jdfs-fontpagination {
+  border: none;
+  background: white;
+}
+.jdfs-fontpagination.jdfs-active {
+  background: #7ec621;
+}
 .jdfs-filter {
-  border-radius: 0 4px 4px 0;
+  border-radius: 0 0 0 0;
   padding: .5em .5em .5em 0;
-  width: 40%;
+  width: 14em;
   display: -webkit-box;
   display: -moz-box;
   display: -ms-flexbox;
@@ -82,14 +110,21 @@
   background: #464646;
 }
 .jdfs-filterbtn {
-  border-radius: 2px;
-  margin-bottom: .3em;
-  flex: 1 1 33%;
-  height: 5em;
-  padding: .5em;
+  border-radius: 0;
+  margin: 0 .3rem .3rem 0;
+  width: 5em;
+  padding: 0;
+  flex: 1 1 45%;
+  font-size: 66px;
+  line-height: 1.2;
   display: inline-block;
-  background: white;
+  color: gray;
+  background: #2e2e2e;
   border: none;
+}
+.jdfs-filterbtn:hover {
+  color: white;
+  background: #828282;
 }
 .jdfs-filterbtn.jdfs-active {
   background: #7ec621;
@@ -102,7 +137,62 @@
 .jdfs-filterbtn:last-child {
   margin-bottom: 0;
 }
-.jdfs-charsets {
+.jdfs-fontstyle-serif:after {
+  font-family: 'jdfs-iconfont';
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  content: "\e600";
+}
+.jdfs-fontstyle-handwriting:after {
+  font-family: 'jdfs-iconfont';
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  content: "\e602";
+}
+.jdfs-fontstyle-sansserif:after {
+  font-family: 'jdfs-iconfont';
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  content: "\e601";
+}
+.jdfs-fontstyle-display:after {
+  font-family: 'jdfs-iconfont';
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  content: "\e603";
+}
+.jdfs-fontstyle-Other {
+  display: none;
+}
+.jdfs-searchoptions {
   flex: 0 0 100%;
 }
 .jdfs-provider-title {

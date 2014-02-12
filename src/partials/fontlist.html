@@ -9,6 +9,7 @@
 			<jd-font ng-repeat="font in getFilteredFonts() | startFrom: page.current * page.size | limitTo: page.size" />
 		</ul>
 		<button
+			class="jdfs-fontpagination"
 			ng-repeat="i in getPages() track by $index"
 			ng-class="{'jdfs-active': page.current == $index}"
 			ng-click="setCurrentPage($index)">{{$index + 1}}</button>

@@ -1,7 +1,11 @@
 
 
+@import url("/src/jdfs-iconfont/style.css");
+
 @tabBg:                  #eee;
 @activeTab:           #939393;
+
+
 
 @fontColor:           #282828;
 @hoverBgColor:        #828282;
@@ -12,13 +16,28 @@
 @filterFontColor:       white;
 @containerBg:         #464646;
 
-@outerBorderRadius:       4px;
-@innerBorderRadius:       2px;
+@outerBorderRadius:       0;
+@innerBorderRadius:       0;
+
+.iconfont,[class^="icon-"], [class*=" icon-"] {
+  font-family: 'jdfs-iconfont';
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
 
 .jdfs-main{
   *, *:after, *:before{
     box-sizing: border-box;
   }
+  font-size: 16px;
 }
 
 
@@ -46,6 +65,7 @@
   border: 1px solid #eee;
   background: white;
   width: 15em;
+  height: 3rem;
 
 }
 .jdfs-fontlistcon{
@@ -55,7 +75,6 @@
   background: @containerBg;
   width: 60%;
   flex: 1 0;
-  min-height: 200px;
 
 }
 
@@ -76,7 +95,7 @@
     display: block;
     width: 100%;
     &:hover{
-      background: @hoverBgColor;
+      background: #f1f1f1;
     }
     &.jdfs-active {
       color: @selectedFontColor;
@@ -89,12 +108,18 @@
     display: none;
   }
 }
-
+.jdfs-fontpagination{
+  border: none;
+  background: white;
+  &.jdfs-active{
+    background: @highlightcolor;
+  }
+}
 
 .jdfs-filter{
   border-radius: 0  @outerBorderRadius @outerBorderRadius 0;
   padding: .5em .5em .5em 0;
-  width: 40%;
+  width: 14em;
 
   display: -webkit-box;
   display: -moz-box;
@@ -111,20 +136,22 @@
 }
 
 .jdfs-filterbtn{
-
+  
   border-radius: @innerBorderRadius;
-  margin-bottom: .3em;
-  flex: 1 1 33%;
-
-  height: 5em;
-  padding: .5em;
+  margin: 0 .3rem .3rem 0;
+  width: 5em;
+  padding: 0;
+  flex: 1 1 45%;
+  font-size: 66px;
+  line-height: 1.2;
   display: inline-block;
 
-  color: white;
+  color: gray;
   background: @filterBtnBg;
   border: none;
 
   &:hover{
+    color: white;
     background: @hoverBgColor;
   }
   &.jdfs-active{
@@ -138,7 +165,29 @@
     margin-bottom: 0;
   }
 }
-.jdfs-charsets{
+
+.jdfs-fontstyle-serif:after{
+  .iconfont;
+  content: "\e600";
+}
+.jdfs-fontstyle-handwriting:after{
+  .iconfont;
+    content: "\e602";
+}
+.jdfs-fontstyle-sansserif:after{
+  .iconfont;
+    content: "\e601";
+}
+.jdfs-fontstyle-display:after{
+  .iconfont;
+    content: "\e603";
+}
+.jdfs-fontstyle-Other{
+  display: none;
+}
+
+
+.jdfs-searchoptions{
   flex: 0 0 100%;
 }
 .jdfs-provider-title{
