@@ -90,7 +90,7 @@ The tests expect a valid API Key for Google Web fonts.
 [Get one](https://developers.google.com/fonts/docs/developer_api#Auth)
 
 You should set your key into the environment Variable
-`JD_FONTSELECT_GOOGLE_FONTS_API_KEY="__yourKeyHere__"`
+`export JD_FONTSELECT_GOOGLE_FONTS_API_KEY="__yourKeyHere__"`
 The build and test tasks will then create a file named `tmp.apikeys.js` in the
 project root and include it in the demos and tests.
 
