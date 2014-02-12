@@ -42,9 +42,9 @@ DEMO
 
 There is a Sandbox for building castles playing around.  
 
-You need to [build this project successfully](#building) once.
+You need to [build this project successfully](#build) once.
 If you want to see google fonts in the demo, you need to setup an 
-[Google API KEY](#API-KEYS)
+[Google API KEY](#api-keys)
 
 Then you can execute `grunt demo` and go to 
 [http://localhost:8000/demo](http://localhost:8000/demo).
@@ -56,9 +56,9 @@ TEST
 We use [Karma](http://karma-runner.github.io/) and
 [Protractor](https://github.com/angular/protractor) for testing.  
 
-Before the tests, the `npm install` task should have completed once.
+Before the tests, you need to [build this project successfully](#build) once.
 
-Note that the End to End tests require an [Google API KEY](#API-KEYS)
+Note that the End to End tests require an [Google API KEY](#api-keys)
 
 #### Unit Tests 
 ```sh
