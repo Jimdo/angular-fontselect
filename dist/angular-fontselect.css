@@ -46,11 +46,12 @@
 }
 .jdfs-toggle,
 .jdfs-search {
-  padding: 1em;
-  border: 1px solid #eee;
+  padding: 5px;
+  border: none;
   background: white;
-  width: 15em;
-  height: 3rem;
+  width: 200px;
+  height: 50px;
+  margin: 0;
 }
 .jdfs-fontlistcon {
   padding: .5em;

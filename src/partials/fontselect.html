@@ -4,7 +4,9 @@
 		class="jdfs-toggle"
 		style="font-family: {{current.font.key}};"
 		>
-		{{current.font.name || "Current Font"}}
+		<span>
+			{{current.font.name || "Current Font"}}
+		</span>
 	</button>
 	<input type="text" class="jdfs-search" placeholder="Search by Fontname" name="jdfs-{{id}}-search" ng-model="current.search" />
 	<div class="jdfs-window" ng-show="active">

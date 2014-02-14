@@ -1,10 +1,10 @@
 @font-face {
 	font-family: 'jdfs-iconfont';
-	src:url('fonts/jdfs-iconfont.eot?-kxea5d');
-	src:url('fonts/jdfs-iconfont.eot?#iefix-kxea5d') format('embedded-opentype'),
-		url('fonts/jdfs-iconfont.woff?-kxea5d') format('woff'),
-		url('fonts/jdfs-iconfont.ttf?-kxea5d') format('truetype'),
-		url('fonts/jdfs-iconfont.svg?-kxea5d#jdfs-iconfont') format('svg');
+	src:url('fonts/jdfs-iconfont.eot?wmy5vx');
+	src:url('fonts/jdfs-iconfont.eot?#iefixwmy5vx') format('embedded-opentype'),
+		url('fonts/jdfs-iconfont.woff?wmy5vx') format('woff'),
+		url('fonts/jdfs-iconfont.ttf?wmy5vx') format('truetype'),
+		url('fonts/jdfs-iconfont.svg?wmy5vx#jdfs-iconfont') format('svg');
 	font-weight: normal;
 	font-style: normal;
 }
@@ -29,7 +29,7 @@
 .icon-fontstyle_sans-serif:before {
 	content: "\e601";
 }
-.icon-fontstyle_handwriting:before {
+.icon-fontstyle_Handwriting:before {
 	content: "\e602";
 }
 .icon-fontstyle_display:before {

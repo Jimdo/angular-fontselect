@@ -34,6 +34,8 @@
 }
 
 .jdfs-main{
+  position: relative;
+  display: inline-flex;
   *, *:after, *:before{
     box-sizing: border-box;
   }
@@ -42,9 +44,11 @@
 
 
 .jdfs-window{
+  top: 100%;
+  left: 0;
   z-index: 3000;
   position: absolute;
-  padding: 1em;
+  padding: .5em 0;
   border-radius: 4px;
 
   width: 500px;
@@ -55,19 +59,30 @@
   display: -ms-flexbox;
   display: -webkit-flex;
   display: flex;
+
   flex-direction: row;
   align-items: flex-start;
 }
 
 .jdfs-toggle,.jdfs-search{
+  display: flex;
 
-  padding: 1em;
-  border: 1px solid #eee;
+  justify-content: center;
+  align-items: center;
+
+  border: none;
   background: white;
-  width: 15em;
-  height: 3rem;
 
+  padding: 1rem;
+  width: 15rem;
+  height: 3rem;
+  line-height: 1;
+  margin: 0;
+  & > *{
+    flex: 1 auto;
+  }
 }
+
 .jdfs-fontlistcon{
   padding: .5em;
   overflow: hidden;
@@ -118,7 +133,7 @@
 
 .jdfs-filter{
   border-radius: 0  @outerBorderRadius @outerBorderRadius 0;
-  padding: .5em .5em .5em 0;
+  padding: .5em;
   width: 14em;
 
   display: -webkit-box;
