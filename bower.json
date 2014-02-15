@@ -13,7 +13,6 @@
     "webfonts"
   ],
   "license": "MIT",
-  "private": true,
   "devDependencies": {
     "angular-mocks": "~1.2.9",
     "webfontloader": "~1.5.2",

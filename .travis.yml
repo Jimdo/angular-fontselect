@@ -1,20 +1,14 @@
 language: node_js
 node_js:
-  - "0.11"
-
-install:
-  - npm install
-
+- '0.10'
+- '0.11'
 env:
   global:
-    - secure: "SNOWHArQYU/zvLyr5uA72QUskkTkOPYtV07h0rWYe0Pnw6pnFLIqiKfLkfnp7wkDthP43IMD33ftvJBrHHZCbUZPCCKHzI8MYEGKCgX6eUCrFmkGZ+qljykZCGFB0YA3VGlL2rGH2P1b73gYpjVeH/so8maYHJA3tUCopU9wtQk="
-
+  - JD_FONTSELECT_GOOGLE_FONTS_API_KEY="FooBar"
+install:
+- npm install
 before_script:
-  - export DISPLAY=:99.0
-  - sh -e /etc/init.d/xvfb start
-  # - ./node_modules/protractor/bin/webdriver-manager update --standalone
-  # - node scripts/web-server.js &
-  # - ./node_modules/protractor/bin/webdriver-manager start &
-
+- export DISPLAY=:99.0
+- sh -e /etc/init.d/xvfb start
 script:
-  - grunt test:travis
+- grunt test:travis
