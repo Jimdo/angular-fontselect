@@ -1,5 +1,5 @@
 /*!
- * angular-fontselect v0.1.0
+ * angular-fontselect v0.1.1
  * https://github.com/Jimdo/angular-fontselect
  *
  * A fontselect directive for AngularJS
@@ -25,6 +25,9 @@
     PROVIDER_WEBSAFE,
     PROVIDER_GOOGLE
   ];
+  
+  /** @const */
+  var DIR_PARTIALS = 'src/partials/';
   
   /** @const */
   var NAME_CONTROLLER = '.controller';
@@ -1434,7 +1437,7 @@
         selected: '=?'
       },
       restrict: 'E',
-      templateUrl: 'fontselect.html',
+      templateUrl: DIR_PARTIALS + 'fontselect.html',
       replace: true,
       controller: ['$scope', function($scope) {
         $scope.fonts = fontsService.getAllFonts();
@@ -1534,7 +1537,7 @@
         providerName: '@provider'
       },
       restrict: 'E',
-      templateUrl: 'fontlist.html',
+      templateUrl: DIR_PARTIALS + 'fontlist.html',
       replace: true,
       controller: NAME_JDFONTLIST_CONTROLLER
     };
@@ -1746,7 +1749,7 @@
   // src/js/directive.font.js
   fontselectModule.directive('jdFont', ['jdFontselect.fonts', function(fontsService) {
     return {
-      templateUrl: 'font.html',
+      templateUrl: DIR_PARTIALS + 'font.html',
       restrict: 'E',
       replace: true,
       controller: ['$scope', function($scope) {
@@ -1758,7 +1761,7 @@
   // src/js/directive.current-href.js
   fontselectModule.directive('jdFontselectCurrentHref', [NAME_FONTSSERVICE, function(fontsService) {
     return {
-      templateUrl: 'current-href.html',
+      templateUrl: DIR_PARTIALS + 'current-href.html',
       restrict: 'A',
       replace: true,
       controller: ['$scope', function($scope) {
@@ -1774,22 +1777,22 @@
   angular.module('jdFontselect').run(['$templateCache', function($templateCache) {
     'use strict';
   
-    $templateCache.put('current-href.html',
+    $templateCache.put('src/partials/current-href.html',
       "<link ng-href={{url}} ng-repeat=\"url in urls\">"
     );
   
   
-    $templateCache.put('font.html',
-      "<li><input type=radio ng-model=current.font ng-value=font name=jdfs-{{id}}-font id=jdfs-{{id}}-font-{{font.key}}><label ng-class=\"{'jdfs-active': current.font == font}\" for=jdfs-{{id}}-font-{{font.key}} style=\"font-family: {{font.stack}}\">{{font.name}}</label></li>"
+    $templateCache.put('src/partials/font.html',
+      "<li><input type=radio ng-model=current.font ng-value=font name=jdfs-{{id}}-font id=jdfs-{{id}}-font-{{font.key}}><label ng-class=\"{'jdfs-active': current.font.name == font.name}\" for=jdfs-{{id}}-font-{{font.key}} style=\"font-family: {{font.stack}}\">{{font.name}}</label></li>"
     );
   
   
-    $templateCache.put('fontlist.html',
-      "<div class=\"jdfs-provider jdfs-provider-{{providerKey}}\" ng-class=\"{'jdfs-active': isActive()}\"><p class=jdfs-provider-title ng-class=\"{'jdfs-active': isActive()}\" ng-click=toggle()>{{providerName}}<span ng-if=\"getFilteredFonts().length == fonts.length\">({{fonts.length}})</span><span ng-if=\"fonts.length && getFilteredFonts().length != fonts.length\">({{getFilteredFonts().length}}/{{fonts.length}})</span><span ng-if=!fonts.length>(…)</span></p><div ng-if=isActive()><ul class=jdfs-fontlist><jd-font ng-repeat=\"font in getFilteredFonts() | startFrom: page.current * page.size | limitTo: page.size\"></ul><button class=jdfs-fontpagination ng-repeat=\"i in getPages() track by $index\" ng-class=\"{'jdfs-active': page.current == $index}\" ng-click=setCurrentPage($index)>{{$index + 1}}</button></div></div>"
+    $templateCache.put('src/partials/fontlist.html',
+      "<div class=\"jdfs-provider jdfs-provider-{{providerKey}}\" ng-class=\"{'jdfs-active': isActive()}\"><p class=jdfs-provider-title ng-class=\"{'jdfs-active': isActive()}\" ng-click=toggle()>{{providerName}} <span ng-if=\"getFilteredFonts().length == fonts.length\">({{fonts.length}})</span> <span ng-if=\"fonts.length && getFilteredFonts().length != fonts.length\">({{getFilteredFonts().length}}/{{fonts.length}})</span> <span ng-if=!fonts.length>(…)</span></p><div ng-if=isActive()><ul class=jdfs-fontlist><jd-font ng-repeat=\"font in getFilteredFonts() | startFrom: page.current * page.size | limitTo: page.size\"></ul><button class=jdfs-fontpagination ng-repeat=\"i in getPages() track by $index\" ng-class=\"{'jdfs-active': page.current == $index}\" ng-click=setCurrentPage($index)>{{$index + 1}}</button></div></div>"
     );
   
   
-    $templateCache.put('fontselect.html',
+    $templateCache.put('src/partials/fontselect.html',
       "<div class=jdfs-main id=jd-fontselect-{{id}}><button ng-click=toggle() class=jdfs-toggle style=\"font-family: {{current.font.key}}\"><span>{{current.font.name || \"Current Font\"}}</span></button><input class=jdfs-search placeholder=\"Search by Fontname\" name=jdfs-{{id}}-search ng-model=current.search><div class=jdfs-window ng-show=active><div class=jdfs-fontlistcon><jd-fontlist fsid=id current=current fonts=fonts[provider] provider={{provider}} ng-repeat=\"provider in providers\"></div><div class=jdfs-filter><button class=\"jdfs-filterbtn jdfs-fontstyle-{{category.key}}\" ng-repeat=\"category in categories\" ng-class=\"{'jdfs-active': category.key == current.category}\" ng-click=setCategoryFilter(category.key) ng-model=current.category></button><div class=jdfs-searchoptions><div class=jdfs-charsets><div ng-repeat=\"(key, name) in subsets\"><input ng-model=current.subsets[key] type=checkbox id=jdfs-{{id}}-subset-{{key}}><label for=jdfs-{{id}}-subset-{{key}}>{{name}}</label></div></div></div></div></div></div>"
     );
   
