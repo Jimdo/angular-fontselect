@@ -113,24 +113,6 @@ but the Typekit Webfont Loader does not support them, so we're skipping
 them, too.
 
 
-TODO
-----
-
-* Move subset selection into own global service and provide a special directive for it.
-
-* Make the font sources (google fonts, websafe, evetually typekit someday) checkboxes which you can activated or deactivate
-
-* the directive should always generate the seach for fonts input field with the placeholder ="current font"
-
-* toggle button will hide .jdfs-toggle and show .jdfs-search and put focus inside .jdfs-search
-
-
-FUTURE FEATURES
----------------
-
-* We'd like to have the ability to filter/extend the font collection per directive.
-
-
 LICENSE
 -------
 
