@@ -1,4 +1,4 @@
-/* global  PROVIDER_GOOGLE, PROVIDER_WEBSAFE, NAME_CONTROLLER */
+/* global  PROVIDER_GOOGLE, PROVIDER_WEBSAFE, NAME_CONTROLLER, DIR_PARTIALS */
 var NAME_JDFONTLIST = 'jdFontlist';
 var NAME_JDFONTLIST_CONTROLLER = NAME_JDFONTLIST + NAME_CONTROLLER;
 
@@ -11,7 +11,7 @@ fontselectModule.directive(NAME_JDFONTLIST, function() {
       providerName: '@provider'
     },
     restrict: 'E',
-    templateUrl: 'fontlist.html',
+    templateUrl: DIR_PARTIALS + 'fontlist.html',
     replace: true,
     controller: NAME_JDFONTLIST_CONTROLLER
   };

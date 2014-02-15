@@ -1,4 +1,4 @@
-/* global PROVIDERS, PROVIDER_WEBSAFE, NAME_FONTSSERVICE */
+/* global PROVIDERS, PROVIDER_WEBSAFE, NAME_FONTSSERVICE, DIR_PARTIALS */
 var id = 1;
 
 fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, '$rootScope', function(fontsService, $rootScope) {
@@ -8,7 +8,7 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, '$rootScope', fun
       selected: '=?'
     },
     restrict: 'E',
-    templateUrl: 'fontselect.html',
+    templateUrl: DIR_PARTIALS + 'fontselect.html',
     replace: true,
     controller: ['$scope', function($scope) {
       $scope.fonts = fontsService.getAllFonts();

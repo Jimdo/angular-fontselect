@@ -14,8 +14,7 @@ module.exports = {
     }
   },
   'jdFontselect': {
-    cwd: files.partialsDir,
-    src: files.allHTML,
+    src: files.allPartials,
     dest: files.allPartialsCombined,
   }
 };

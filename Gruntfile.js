@@ -46,9 +46,9 @@ module.exports = function(grunt) {
   /* Execute e2e tests. */
   grunt.registerTask('test:e2e', ['_test:beforeEach', '_protractor:start']);
   /* Execute unit tests. */
-  grunt.registerTask('test:unit', ['test:beforeEach', 'karma:all']);
+  grunt.registerTask('test:unit', ['_test:beforeEach', 'karma:all']);
   /* Execute karma tests with Firefox and PhantomJS. */
-  grunt.registerTask('test:travis', ['test:beforeEach', 'karma:travis']);
+  grunt.registerTask('test:travis', ['_test:beforeEach', 'karma:travis']);
 
   /* Build dist files. */
   grunt.registerTask('build', [

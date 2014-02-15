@@ -13,6 +13,9 @@ var PROVIDERS = [
 ];
 
 /** @const */
+var DIR_PARTIALS = 'src/partials/';
+
+/** @const */
 var NAME_CONTROLLER = '.controller';
 
 /** @const */
