@@ -80,6 +80,8 @@ var VARIANT_PRIORITY = VARIANTS_REGULAR.concat(
 
 var _fontsServiceDeps = ['$http', '$q', 'jdFontselectConfig', '$filter'];
 
+var _googleFontsInitiated = false;
+
 function FontsService() {
   var self = this;
 
@@ -320,9 +322,11 @@ FontsService.prototype = {
   _initGoogleFonts: function() {
     var self = this;
 
-    if (!self.jdFontselectConfig.googleApiKey) {
+    if (!self.jdFontselectConfig.googleApiKey || _googleFontsInitiated) {
       return;
     }
+
+    _googleFontsInitiated = true;
 
     self.$http({
       method: METHOD_GET,

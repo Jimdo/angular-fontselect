@@ -1,6 +1,5 @@
-/* global DEFAULT_WEBSAFE_FONTS, $rootScope, $compile, $injector, $scope, elm, $rootScope,
-          NAME_JDFONTLIST_CONTROLLER, $controller, NAME_FONTSSERVICE, ANOTHER_FONT, AND_SOME_FONT_MORE,
-          PROVIDER_TITLE_CLASS */
+/* global DEFAULT_WEBSAFE_FONTS, $injector, $scope, elm, PROVIDER_TITLE_CLASS, createNewDirective,
+          NAME_JDFONTLIST_CONTROLLER, $controller, NAME_FONTSSERVICE, ANOTHER_FONT, AND_SOME_FONT_MORE */
 describe('fontselect directive', function() {
   'use strict';
 
@@ -59,15 +58,7 @@ describe('fontselect directive', function() {
   });
 
   it('should increase the id for every instance', function() {
-    var elm2 = angular.element(
-      '<div>' +
-        '<jd-fontselect />' +
-      '</div>');
-
-    $compile(elm2)($rootScope);
-    $rootScope.$digest();
-
-    expect(elm2.find('.jdfs-main').attr('id')).toBe('jd-fontselect-2');
+    expect(createNewDirective().elm.find('.jdfs-main').attr('id')).toBe('jd-fontselect-2');
   });
 
 

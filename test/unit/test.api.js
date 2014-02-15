@@ -1,7 +1,7 @@
-/* global $compile, $rootScope, DEFAULT_WEBSAFE_FONTS, PROVIDER_GOOGLE, $httpBackend,
-          GOOGLE_FONT_API_RGX, GOOGLE_FONTS_RESPONSE, PROVIDER_TITLE_CLASS */
+/* global $rootScope, DEFAULT_WEBSAFE_FONTS, PROVIDER_GOOGLE,
+          createNewDirective, activateGoogle, $googleScope */
 describe('api', function() {
-  var elm, $scope, $subScope;
+  var elm, $scope;
   function setupWithState(defaults) {
 
     if (!angular.isObject(defaults)) {
@@ -11,27 +11,13 @@ describe('api', function() {
     $rootScope.state = defaults;
     $rootScope.selected = {};
 
-    /* Create the element for our directive */
-    elm = angular.element(
-      '<div>' +
-        '<jd-fontselect state="state" selected="selected"/>' +
-      '</div>');
-
-    /* Apply the directive */
-    $compile(elm)($rootScope);
-    $rootScope.$digest();
-
-    /* Save a reference to the directive scope */
-    $scope = elm.find('.jdfs-main div').scope();
+    var d = createNewDirective('state="state" selected="selected"');
+    $scope = d.scope;
+    elm = d.elm;
   }
 
-  function activateGoogle() {
-    $httpBackend.when('GET', GOOGLE_FONT_API_RGX).respond(GOOGLE_FONTS_RESPONSE);
-    $httpBackend.expectGET(GOOGLE_FONT_API_RGX);
-
-    $subScope = elm.find('.jdfs-provider-google-fonts ' + PROVIDER_TITLE_CLASS).scope();
-    $subScope.toggle();
-    $httpBackend.flush(1);
+  function useGoogleFont() {
+    activateGoogle(elm);
 
     $scope.current.font = $scope.fonts[PROVIDER_GOOGLE][0];
     $scope.$digest();
@@ -67,8 +53,7 @@ describe('api', function() {
     });
 
     describe('google fonts', function() {
-      
-      beforeEach(activateGoogle);
+      beforeEach(useGoogleFont);
 
       it('should switch to google fonts', function() {
         expect($rootScope.state.provider).toBe(PROVIDER_GOOGLE);
@@ -82,7 +67,7 @@ describe('api', function() {
       it('should call the change event on change', function() {
         var spy = jasmine.createSpy('jdfs.change event');
         var font = $scope.fonts[PROVIDER_GOOGLE][2];
-        $subScope.$on('jdfs.change', spy);
+        $googleScope.$on('jdfs.change', spy);
 
         $scope.current.font = font;
         $scope.$digest();
@@ -109,7 +94,8 @@ describe('api', function() {
       describe('google', function() {
 
         it('should provide an url of the selected google font from the fontsService', function() {
-          activateGoogle();
+          useGoogleFont();
+
           expect(fontsService.getUrls()).toEqual({
             google: 'http://fonts.googleapis.com/css?family=Open%20Sans'
           });

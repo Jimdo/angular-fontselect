@@ -1,5 +1,5 @@
-/* global PROVIDER_WEBSAFE, GOOGLE_FONTS_RESPONSE, $httpBackend, elm, $scope,
-          $compile, $rootScope,  GOOGLE_FONT_API_RGX, PROVIDER_TITLE_CLASS */
+/* global PROVIDER_WEBSAFE, $scope, $rootScope, activateGoogle,
+          PROVIDER_TITLE_CLASS, createNewDirective, $googleScope */
 
 describe('fontsService', function() {
   'use strict';
@@ -109,25 +109,21 @@ describe('fontsService', function() {
   });
 
   describe('google fonts', function() {
-    var $subScope;
 
-
-    beforeEach(function() {
-      $httpBackend.when('GET', GOOGLE_FONT_API_RGX).respond(GOOGLE_FONTS_RESPONSE);
-      $httpBackend.expectGET(GOOGLE_FONT_API_RGX);
-
-      $subScope = elm.find('.jdfs-provider-google-fonts ' + PROVIDER_TITLE_CLASS).scope();
-      $subScope.toggle();
-      $httpBackend.flush(1);
-    });
+    beforeEach(activateGoogle);
 
     it('should succeed on on all the beforeEach tests', function() {});
 
     it('should not call the fontService initiator twice.', function() {
       spyOn(fontsService, '_initGoogleFonts');
-      $subScope.toggle();
-      $subScope.toggle();
+      $googleScope.toggle();
+      $googleScope.toggle();
       expect(fontsService._initGoogleFonts).not.toHaveBeenCalled();
+    });
+
+    it('should not load google fonts twice, when we open two directives', function() {
+      var d = createNewDirective();
+      d.elm.find('.jdfs-provider-google-fonts ' + PROVIDER_TITLE_CLASS).scope().toggle();
     });
   });
 
@@ -146,23 +142,17 @@ describe('fontsService', function() {
     });
 
     it('should keep track of used fonts for all directives', function() {
-      var anotherElm = angular.element(
-        '<div>' +
-          '<jd-fontselect />' +
-        '</div>');
+      var d = createNewDirective();
 
-      $compile(anotherElm)($rootScope);
-      $rootScope.$digest();
-      var $anotherScope = anotherElm.find('.jdfs-main div').scope();
-      $anotherScope.current.font = $scope.fonts[PROVIDER_WEBSAFE][1];
+      d.scope.current.font = $scope.fonts[PROVIDER_WEBSAFE][1];
       $scope.current.font = $scope.fonts[PROVIDER_WEBSAFE][2];
       $rootScope.$digest();
 
       expect(fontsService.getUsedFonts().length).toBe(2);
       expect($scope.fonts[PROVIDER_WEBSAFE][1].used).toBe(1);
 
-      $anotherScope.current.font = $scope.fonts[PROVIDER_WEBSAFE][2];
-      $anotherScope.$digest();
+      d.scope.current.font = $scope.fonts[PROVIDER_WEBSAFE][2];
+      d.scope.$digest();
 
       expect(fontsService.getUsedFonts().length).toBe(1);
       expect(fontsService.getUsedFonts()[0].used).toBe(2);

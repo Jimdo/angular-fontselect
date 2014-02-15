@@ -4,7 +4,7 @@
 /* jshint undef: false, unused: false  */
 
 /* some globals we might need later on, set in beforeEach */
-var $rootScope, $compile, $injector, $httpBackend, $scope, $q, $controller, elm;
+var $rootScope, $compile, $injector, $httpBackend, $scope, $q, $controller, $googleScope, elm;
 
 /* Request Regex for catching Google Font API calls. */
 /** @const */
@@ -36,6 +36,32 @@ var AND_SOME_FONT_MORE = {
 
 var DEFAULT_WEBSAFE_FONTS_BACKUP;
 
+var directiveID = 1;
+
+function createNewDirective(attributeStr) {
+  var e, scope;
+
+  /* Create the element for our directive */
+  e = angular.element(
+    '<div id="wrap-' + directiveID + '">' +
+      '<jd-fontselect ' + attributeStr + '/>' +
+    '</div>');
+
+  /* Apply the directive */
+  $compile(e)($rootScope);
+  $rootScope.$digest();
+
+  /* Save a reference to the directive scope */
+  scope = e.find('.jdfs-main div').scope();
+
+  directiveID++;
+
+  return {
+    elm: e,
+    scope: scope
+  };
+}
+
 beforeEach(function() {
 
   DEFAULT_WEBSAFE_FONTS_BACKUP = angular.copy(DEFAULT_WEBSAFE_FONTS);
@@ -54,25 +80,32 @@ beforeEach(function() {
     $controller  = _$controller_;
   });
 
-  /* Create the element for our directive */
-  elm = angular.element(
-    '<div>' +
-      '<jd-fontselect />' +
-    '</div>');
+  $httpBackend.when('GET', GOOGLE_FONT_API_RGX).respond(GOOGLE_FONTS_RESPONSE);
 
-  /* Apply the directive */
-  $compile(elm)($rootScope);
-  $rootScope.$digest();
+  var d = createNewDirective();
 
-  /* Save a reference to the directive scope */
-  $scope = elm.find('.jdfs-main div').scope();
+  elm = d.elm;
+  $scope = d.scope;
 });
+
+function activateGoogle(e) {
+  var elem = e || elm;
+
+  $httpBackend.expectGET(GOOGLE_FONT_API_RGX);
+
+  $googleScope = elem.find('.jdfs-provider-google-fonts ' + PROVIDER_TITLE_CLASS).scope();
+  $googleScope.toggle();
+  $httpBackend.flush(1);
+
+  return $googleScope;
+}
 
 afterEach(function() {
   /* Each directive gets it's own id, we want to test only on id 1 */
   id = 1;
+  directiveID = 1;
+  _googleFontsInitiated = false;
   DEFAULT_WEBSAFE_FONTS = DEFAULT_WEBSAFE_FONTS_BACKUP;
-  _webFontLoaderInitiated = false;
   /* Make sure, there are no unexpected request */
   $httpBackend.verifyNoOutstandingExpectation();
   $httpBackend.verifyNoOutstandingRequest();
