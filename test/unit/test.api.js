@@ -1,4 +1,4 @@
-/* global $rootScope, DEFAULT_WEBSAFE_FONTS, PROVIDER_GOOGLE,
+/* global $rootScope, DEFAULT_WEBSAFE_FONTS, PROVIDER_GOOGLE, STATE_DEFAULTS,
           createNewDirective, activateGoogle, $googleScope */
 describe('api', function() {
   var elm, $scope;
@@ -101,6 +101,38 @@ describe('api', function() {
           });
         });
       });
+    });
+  });
+
+  describe('basic in', function() {
+    beforeEach(function() {
+      setupWithState();
+      $scope.current.font = DEFAULT_WEBSAFE_FONTS[0];
+      $scope.$digest();
+    });
+
+    it('should not fail when setting current to something invalid', function() {
+      $scope.current = false;
+    });
+
+    it('should call the reset method when the state gets invalid', function() {
+      spyOn($scope, 'reset').andCallThrough();
+      $scope.current = false;
+      $scope.$digest();
+      expect($scope.reset).toHaveBeenCalled();
+    });
+
+    it('should reset to defaults, when the state is set to false', function() {
+      $scope.current = false;
+      $scope.$digest();
+      expect($scope.current.provider).toBe(STATE_DEFAULTS.provider);
+    });
+
+    it('should unset the currently selected font on reset', function() {
+      expect($rootScope.selected.name).toBeDefined();
+      $scope.reset();
+      $scope.$digest();
+      expect($rootScope.selected.name).not.toBeDefined();
     });
   });
 });

@@ -129,6 +129,40 @@ var DEFAULT_WEBSAFE_FONTS = [
   }
 ];
 
+/** @const */
+var SORT_ATTRIBUTES = [
+  {
+    name: 'Popularity',
+    key: 'popularity',
+    dir: true
+  },
+  {
+    name: 'Alphabet',
+    key: 'name',
+    dir: false
+  },
+  {
+    name: 'Latest',
+    key: 'lastModified',
+    dir: true
+  }
+];
+
+/** @const */
+var STATE_DEFAULTS = {
+  sort: {
+    attr: undefined,
+    direction: true
+  },
+  provider: PROVIDER_WEBSAFE,
+  category: undefined,
+  font: undefined,
+  search: undefined,
+  subsets: {
+    latin: true
+  }
+};
+
 fontselectModule.constant('jdFontselectConfig', {
   googleApiKey: false
 });
