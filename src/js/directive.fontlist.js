@@ -153,10 +153,7 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
       if ($scope.isActive()) {
         $scope.current.provider = undefined;
       } else {
-        if (_activated.indexOf($scope.providerName) < 0) {
-          _initiate[$scope.providerName]();
-          _activated.push($scope.providerName);
-        }
+        _init();
         $scope.current.provider = $scope.providerName;
       }
     };
@@ -209,6 +206,13 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
       }
     }
 
+    function _init() {
+      if (_activated.indexOf($scope.providerName) < 0) {
+        _initiate[$scope.providerName]();
+        _activated.push($scope.providerName);
+      }
+    }
+
     /**
      * Initiation for the google list.
      *
@@ -217,5 +221,8 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
     _initiate[PROVIDER_GOOGLE] = function() {
       fontsService._initGoogleFonts();
     };
+
+    /* Initiate! */
+    if ($scope.current.provider === $scope.providerName) { _init(); }
   }
 ]);

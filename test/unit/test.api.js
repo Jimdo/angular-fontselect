@@ -1,5 +1,6 @@
 /* global $rootScope, DEFAULT_WEBSAFE_FONTS, PROVIDER_GOOGLE, STATE_DEFAULTS,
-          createNewDirective, activateGoogle, $googleScope */
+          createNewDirective, activateGoogle, $googleScope, $httpBackend,
+          NAME_FONTSSERVICE */
 describe('api', function() {
   var elm, $scope;
   function setupWithState(defaults) {
@@ -105,34 +106,87 @@ describe('api', function() {
   });
 
   describe('basic in', function() {
-    beforeEach(function() {
-      setupWithState();
-      $scope.current.font = DEFAULT_WEBSAFE_FONTS[0];
-      $scope.$digest();
+
+    describe('current and selected', function() {
+      beforeEach(function() {
+        setupWithState();
+        $scope.current.font = DEFAULT_WEBSAFE_FONTS[0];
+        $scope.$digest();
+      });
+
+      it('should not fail when setting current to something invalid', function() {
+        $scope.current = false;
+      });
+
+      it('should call the reset method when the state gets invalid', function() {
+        spyOn($scope, 'reset').andCallThrough();
+        $scope.current = false;
+        $scope.$digest();
+        expect($scope.reset).toHaveBeenCalled();
+      });
+
+      it('should reset to defaults, when the state is set to false', function() {
+        $scope.current = false;
+        $scope.$digest();
+        expect($scope.current.provider).toBe(STATE_DEFAULTS.provider);
+      });
+
+      it('should unset the currently selected font on reset', function() {
+        expect($rootScope.selected.name).toBeDefined();
+        $scope.reset();
+        $scope.$digest();
+        expect($rootScope.selected.name).not.toBeDefined();
+      });
     });
 
-    it('should not fail when setting current to something invalid', function() {
-      $scope.current = false;
-    });
+    describe('state', function() {
+      it('should set a passed state to selected.', function() {
+        var state = {font: DEFAULT_WEBSAFE_FONTS[1]};
+        setupWithState(state);
 
-    it('should call the reset method when the state gets invalid', function() {
-      spyOn($scope, 'reset').andCallThrough();
-      $scope.current = false;
-      $scope.$digest();
-      expect($scope.reset).toHaveBeenCalled();
-    });
+        expect($rootScope.selected.name).toBe(DEFAULT_WEBSAFE_FONTS[1].name);
+      });
 
-    it('should reset to defaults, when the state is set to false', function() {
-      $scope.current = false;
-      $scope.$digest();
-      expect($scope.current.provider).toBe(STATE_DEFAULTS.provider);
-    });
+      it('should have the google font category active, when state provider is google', function() {
+        var state = {provider: PROVIDER_GOOGLE};
+        setupWithState(state);
+        $httpBackend.flush();
 
-    it('should unset the currently selected font on reset', function() {
-      expect($rootScope.selected.name).toBeDefined();
-      $scope.reset();
-      $scope.$digest();
-      expect($rootScope.selected.name).not.toBeDefined();
+        expect(elm.find('.jdfs-provider-google-fonts').attr('class')).toContain('jdfs-active');
+      });
+
+      it('should replace our preselected font with the original from list', function() {
+        var currentFont = angular.copy(DEFAULT_WEBSAFE_FONTS[1]);
+        setupWithState({ font: currentFont });
+
+        delete $rootScope.state.font.$$hashKey;
+        delete $rootScope.state.font.used;
+
+        expect($rootScope.state.font).not.toBe(currentFont);
+        expect($rootScope.state.font).toEqual(currentFont);
+      });
+
+      it('should leave "outdated" preselected fonts as they are.', function() {
+        var currentFont = angular.copy(DEFAULT_WEBSAFE_FONTS[1]);
+        currentFont.name = 'Foobar Font';
+        currentFont.key = 'foobarfont';
+        setupWithState({ font: currentFont });
+
+        expect($rootScope.state.font).toBe(currentFont);
+      });
+
+      it('should be able to find the used font even though it was preselected', function() {
+        var font = angular.copy(DEFAULT_WEBSAFE_FONTS[1]);
+        var fontsService;
+        inject(function($injector) {
+          fontsService = $injector.get(NAME_FONTSSERVICE);
+        });
+        expect(fontsService.getUsedFonts().length).toBe(0);
+
+        setupWithState({ font: font });
+
+        expect(fontsService.getUsedFonts()[0].name).toEqual(font.name);
+      });
     });
   });
 });

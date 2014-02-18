@@ -1,6 +1,9 @@
 /* global PROVIDERS, STATE_DEFAULTS, NAME_FONTSSERVICE, DIR_PARTIALS, SORT_ATTRIBUTES */
 var id = 1;
 
+/** @const */
+var PLEASE_INITIALIZE_STATE_FONT = '_PISF';
+
 fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, '$rootScope', function(fontsService, $rootScope) {
   return {
     scope: {
@@ -18,7 +21,7 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, '$rootScope', fun
       $scope.categories = fontsService.getCategories();
       $scope.subsets = fontsService.getSubsetNames();
       $scope.sortAttrs = SORT_ATTRIBUTES;
-      $scope.selected = $scope.selected || {};
+      $scope.selected = {};
 
       function setState(extend) {
         $scope.current = angular.extend(
@@ -30,8 +33,6 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, '$rootScope', fun
           $scope.current.sort.attr = SORT_ATTRIBUTES[0];
         }
       }
-
-      setState($scope.current);
 
       $scope.reverseSort = function() {
         var sort = $scope.current.sort;
@@ -56,6 +57,23 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, '$rootScope', fun
       $scope.reset = function() {
         setState();
       };
+
+      $scope._setSelected = function(font) {
+        if (angular.isObject(font)) {
+          $scope.selected.name = font.name;
+          $scope.selected.stack = font.stack;
+        } else {
+          $scope.selected = {};
+        }
+      };
+
+      // Initialize
+
+      setState($scope.current);
+      if (angular.isObject($scope.current.font)) {
+        $scope._setSelected($scope.current.font);
+        $scope[PLEASE_INITIALIZE_STATE_FONT] = true;
+      }
     }],
     link: function(scope) {
 
@@ -80,16 +98,25 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, '$rootScope', fun
             }
           }
 
-          if (angular.isObject(newFont)) {
-            scope.selected.name = newFont.name;
-            scope.selected.stack = newFont.stack;
-          } else {
-            scope.selected = {};
-          }
+          scope._setSelected(newFont);
 
           $rootScope.$broadcast('jdfs.change', scope.selected);
         }
       });
+
+      if (scope[PLEASE_INITIALIZE_STATE_FONT]) {
+        var destroy = scope.$watch('fonts', function() {
+          var current = scope.current;
+          try {
+            var font = fontsService.getFontByKey(current.font.key, current.font.provider);
+            if (font) {
+              current.font = font;
+              delete scope[PLEASE_INITIALIZE_STATE_FONT];
+              destroy();
+            }
+          } catch (e) {}
+        }, true);
+      }
     }
   };
 }]);
