@@ -1,5 +1,5 @@
 /*!
- * angular-fontselect v0.2.1
+ * angular-fontselect v0.2.2
  * https://github.com/Jimdo/angular-fontselect
  *
  * A fontselect directive for AngularJS
@@ -1864,7 +1864,7 @@
   
   
     $templateCache.put('src/partials/fontselect.html',
-      "<div class=jdfs-main id=jd-fontselect-{{id}}><button ng-click=toggle() class=jdfs-toggle style=\"font-family: {{current.font.key}}\"><span>{{current.font.name || \"Current Font\"}}</span></button><input class=jdfs-search placeholder=\"Search by Fontname\" name=jdfs-{{id}}-search ng-model=current.search><div class=jdfs-window ng-show=active><div class=jdfs-fontlistcon><jd-fontlist fsid=id current=current fonts=fonts[provider] provider={{provider}} ng-repeat=\"provider in providers\"></div><div class=jdfs-filter><button class=\"jdfs-filterbtn jdfs-fontstyle-{{category.key}}\" ng-repeat=\"category in categories\" ng-class=\"{'jdfs-active jdfs-highlight': category.key == current.category}\" ng-click=setCategoryFilter(category.key) ng-model=current.category></button><div class=jdfs-searchoptions><div class=jdfs-charsets><div ng-repeat=\"(key, name) in subsets\" ng-class=\"{'jdfs-active jdfs-highlight': current.subsets[key]}\"><input ng-model=current.subsets[key] type=checkbox id=jdfs-{{id}}-subset-{{key}}><label for=jdfs-{{id}}-subset-{{key}}>{{name}}</label></div></div></div></div></div></div>"
+      "<div class=jdfs-main id=jd-fontselect-{{id}}><button ng-click=toggle() class=jdfs-toggle style=\"font-family: {{current.font.key}}\"><span>{{current.font.name || \"Current Font\"}}</span></button><input class=jdfs-search placeholder=\"Search by Fontname\" name=jdfs-{{id}}-search ng-model=current.search><div class=jdfs-window ng-show=active><div class=jdfs-fontlistcon><jd-fontlist fsid=id current=current fonts=fonts[provider] provider={{provider}} ng-repeat=\"provider in providers\"></div><div class=jdfs-filter><button class=\"jdfs-filterbtn jdfs-fontstyle-{{category.key}}\" ng-repeat=\"category in categories\" ng-class=\"{'jdfs-active jdfs-highlight': category.key == current.category}\" ng-click=setCategoryFilter(category.key) ng-model=current.category></button><div class=jdfs-searchoptions><div class=jdfs-charsets><div ng-repeat=\"(key, name) in subsets\" class=jdfs-subset ng-class=\"{'jdfs-active jdfs-highlight': current.subsets[key]}\"><input ng-model=current.subsets[key] type=checkbox id=jdfs-{{id}}-subset-{{key}}><label for=jdfs-{{id}}-subset-{{key}}>{{name}}</label></div></div></div></div></div></div>"
     );
   
   }]);
