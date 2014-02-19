@@ -13,7 +13,7 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, '$rootScope', fun
     restrict: 'E',
     templateUrl: DIR_PARTIALS + 'fontselect.html',
     replace: true,
-    controller: ['$scope', function($scope) {
+    controller: ['$scope', '$element', '$timeout', function($scope, $element, $timeout) {
       $scope.fonts = fontsService.getAllFonts();
       $scope.id = id++;
       $scope.providers = PROVIDERS;
@@ -34,6 +34,17 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, '$rootScope', fun
         }
       }
 
+      function isDescendant(parent, child) {
+        var node = child;
+        while (node !== null) {
+          if (node === parent) {
+            return true;
+          }
+          node = node.parentNode;
+        }
+        return false;
+      }
+
       $scope.reverseSort = function() {
         var sort = $scope.current.sort;
 
@@ -42,7 +53,24 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, '$rootScope', fun
 
       $scope.toggle = function() {
         $scope.active = !$scope.active;
+
+        if ($scope.active) {
+          $scope.setFocus();
+        }
       };
+
+      $scope.setFocus = function() {
+        $timeout(function() {
+          $element[0].querySelector('.jdfs-search').focus();
+        });
+      };
+
+      document.addEventListener('click', function(event) {
+        if ($scope.active && !isDescendant($element[0], event.target)) {
+          $scope.toggle();
+          $scope.$digest();
+        }
+      });
 
       $scope.setCategoryFilter = function(category) {
         var current = $scope.current;

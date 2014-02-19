@@ -25,6 +25,13 @@ describe('fontselect directive', function() {
     expect(element.all(by.css('li input')).count()).toBe(5);
   });
 
+  it('should become invisible when we click somewhere on the window', function() {
+    Helpers.toggle();
+
+    element(by.tagName('body')).click();
+    expect(element(by.className('jdfs-window')).isDisplayed()).toBe(false);
+  });
+
   describe('search', function() {
     var numberOfFonts;
 
@@ -179,6 +186,35 @@ describe('fontselect directive', function() {
       var pagesCount = Helpers.getPaginator().count();
       Helpers.getSubsetCheckbox(2).click();
       expect(Helpers.getPaginator().count()).not.toBe(pagesCount);
+    });
+  });
+
+  describe('Activate button', function() {
+    it('should be visible when the directive is inactive', function() {
+      expect(element(by.css('.jdfs-toggle')).isDisplayed()).toBe(true);
+    });
+
+    it('should be hidden when the directive is active', function() {
+      Helpers.toggle();
+      expect(element(by.css('.jdfs-toggle')).isDisplayed()).toBe(false);
+    });
+  });
+
+  describe('Search Bar', function() {
+    it('should not be visible when the directive is inactive', function() {
+      expect(element(by.model('current.search')).isDisplayed()).toBe(false);
+    });
+
+    it('should be hidden when the directive is active', function() {
+      Helpers.toggle();
+      expect(element(by.model('current.search')).isDisplayed()).toBe(true);
+    });
+
+    it('should be focused when the directive gets active', function() {
+      Helpers.toggle();
+
+      prot.actions().sendKeys('foo').perform();
+      expect(element(by.model('current.search')).getAttribute('value')).toBe('foo');
     });
   });
 
