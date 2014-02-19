@@ -1,7 +1,7 @@
 /* jshint unused: false */
 /** @const */
 var GOOGLE_FONT_CATEGORIES = {
-  'Handwriting': [
+  handwriting: [
     'Patrick Hand SC',
     'Grand Hotel',
     'Calligraffitti',
@@ -124,7 +124,7 @@ var GOOGLE_FONT_CATEGORIES = {
     'Domine',
     'Donegal One'
   ],
-  'Sans Serif': [
+  sansserif: [
     'Wendy One',
     'Tauri',
     'Sintony',
@@ -300,7 +300,7 @@ var GOOGLE_FONT_CATEGORIES = {
     'Ubuntu Condensed',
     'Ubuntu Mono'
   ],
-  'Display': [
+  display: [
     'Vampiro One',
     'Snowburst One',
     'Purple Purse',
@@ -542,7 +542,7 @@ var GOOGLE_FONT_CATEGORIES = {
     'Wellfleet',
     'Yeseva One'
   ],
-  'Serif': [
+  serif: [
     'Roboto Slab',
     'Noto Serif',
     'Libre Baskerville',
@@ -675,7 +675,7 @@ var GOOGLE_FONT_CATEGORIES = {
     'Volkhov',
     'Vollkorn'
   ],
-  'Other': [
+  other: [
     'Angkor',
     'Battambang',
     'Bayon',

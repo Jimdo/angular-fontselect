@@ -152,7 +152,7 @@ describe('api', function() {
         setupWithState(state);
         $httpBackend.flush();
 
-        expect(elm.find('.jdfs-provider-google-fonts').attr('class')).toContain('jdfs-active');
+        expect(elm.find('.jdfs-provider-google').attr('class')).toContain('jdfs-active');
       });
 
       it('should replace our preselected font with the original from list', function() {

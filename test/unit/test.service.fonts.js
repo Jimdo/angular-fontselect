@@ -33,7 +33,7 @@ describe('fontsService', function() {
   describe('add method', function() {
     it('should expand the fonts object', function() {
       fontsService.add(customFont);
-      expect(fontsService._fonts['Websafe Fonts']).toContain(customFont);
+      expect(fontsService._fonts.websafe).toContain(customFont);
     });
 
     it('should throw an error if we add an invalid font object', function() {
@@ -123,7 +123,7 @@ describe('fontsService', function() {
 
     it('should not load google fonts twice, when we open two directives', function() {
       var d = createNewDirective();
-      d.elm.find('.jdfs-provider-google-fonts ' + PROVIDER_TITLE_CLASS).scope().toggle();
+      d.elm.find('.jdfs-provider-google ' + PROVIDER_TITLE_CLASS).scope().toggle();
     });
   });
 

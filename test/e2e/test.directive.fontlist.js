@@ -10,11 +10,11 @@ describe('fontlist directive', function() {
   });
 
   it('should have a list for default webfonts', function() {
-    expect(element.all(by.css('.jdfs-provider-websafe-fonts')).count()).toBe(1);
+    expect(element.all(by.css('.jdfs-provider-websafe')).count()).toBe(1);
   });
 
   it('should have a list for google webfonts', function() {
-    expect(element.all(by.css('.jdfs-provider-google-fonts')).count()).toBe(1);
+    expect(element.all(by.css('.jdfs-provider-google')).count()).toBe(1);
   });
 
   it('should have no radio checked', function() {

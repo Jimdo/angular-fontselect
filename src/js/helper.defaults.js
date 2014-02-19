@@ -1,10 +1,10 @@
 /* jshint unused: false */
 
 /** @const */
-var PROVIDER_WEBSAFE = 'Websafe Fonts';
+var PROVIDER_WEBSAFE = 'websafe';
 
 /** @const */
-var PROVIDER_GOOGLE = 'Google Fonts';
+var PROVIDER_GOOGLE = 'google';
 
 /** @const */
 var PROVIDERS = [
@@ -132,17 +132,14 @@ var DEFAULT_WEBSAFE_FONTS = [
 /** @const */
 var SORT_ATTRIBUTES = [
   {
-    name: 'Popularity',
     key: 'popularity',
     dir: true
   },
   {
-    name: 'Alphabet',
     key: 'name',
     dir: false
   },
   {
-    name: 'Latest',
     key: 'lastModified',
     dir: true
   }
@@ -161,6 +158,46 @@ var STATE_DEFAULTS = {
   subsets: {
     latin: true
   }
+};
+
+/** @const */
+var TEXT_DEFAULTS = {
+  button: 'Choose Font',
+  search: 'Search by Fontname',
+  page: {
+    prev: '◄',
+    next: '►'
+  },
+  provider: {
+    websafe: 'Websafe Fonts',
+    google: 'Google Fonts'
+  },
+  category: {
+    serif: 'Serif',
+    sansserif: 'Sans Serif',
+    display: 'Display',
+    handwriting: 'Handwriting',
+    other: 'Other'
+  },
+  subset: {
+    cyrillic: 'Cyrillic',
+    'cyrillic-ext': 'Cyrillic Extended',
+    greek: 'Greek',
+    'greek-ext': 'Greek Extended',
+    latin: 'Latin',
+    'latin-ext': 'Latin Extended',
+    vietnamese: 'Vietnamese'
+  },
+  sort: {
+    popularity: 'Popularity',
+    name: 'Alphabet',
+    lastModified: 'Latest'
+  },
+  sortdir: {
+    desc: '▼',
+    asc: '▲'
+  }
+
 };
 
 fontselectModule.constant('jdFontselectConfig', {

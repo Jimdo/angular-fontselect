@@ -196,28 +196,23 @@ FontsService.prototype = {
   getCategories: function() {
     return [
       {
-        name: 'Serif',
         key: 'serif',
         fallback: 'serif'
       },
       {
-        name: 'Sans Serif',
         key: 'sansserif',
         fallback: 'sans-serif'
       },
       {
-        name: 'Handwriting',
         key: 'handwriting',
         fallback: 'cursive'
         
       },
       {
-        name: 'Display',
         key: 'display',
         fallback: 'cursive'
       },
       {
-        name: 'Other',
         key: 'other',
         fallback: 'sans-serif'
       }
@@ -386,11 +381,11 @@ FontsService.prototype = {
     for (var i = 0, l = categories.length; i < l; i++) {
       var category = categories[i];
 
-      if (typeof GOOGLE_FONT_CATEGORIES[category.name] === 'undefined') {
+      if (typeof GOOGLE_FONT_CATEGORIES[category.key] === 'undefined') {
         continue;
       }
 
-      if (GOOGLE_FONT_CATEGORIES[category.name].indexOf(font) >= 0) {
+      if (GOOGLE_FONT_CATEGORIES[category.key].indexOf(font) >= 0) {
         return category;
       }
     }

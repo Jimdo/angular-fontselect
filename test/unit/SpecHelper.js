@@ -93,7 +93,7 @@ function activateGoogle(e) {
 
   $httpBackend.expectGET(GOOGLE_FONT_API_RGX);
 
-  $googleScope = elem.find('.jdfs-provider-google-fonts ' + PROVIDER_TITLE_CLASS).scope();
+  $googleScope = elem.find('.jdfs-provider-google ' + PROVIDER_TITLE_CLASS).scope();
   $googleScope.toggle();
   $httpBackend.flush(1);
 

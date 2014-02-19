@@ -1,4 +1,4 @@
-/* global PROVIDERS, STATE_DEFAULTS, NAME_FONTSSERVICE, DIR_PARTIALS, SORT_ATTRIBUTES */
+/* global PROVIDERS, STATE_DEFAULTS, NAME_FONTSSERVICE, DIR_PARTIALS, SORT_ATTRIBUTES, TEXT_DEFAULTS */
 var id = 1;
 
 /** @const */
@@ -8,7 +8,8 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, '$rootScope', fun
   return {
     scope: {
       current: '=?state',
-      selected: '=?'
+      selected: '=?',
+      text: '=?'
     },
     restrict: 'E',
     templateUrl: DIR_PARTIALS + 'fontselect.html',
@@ -22,6 +23,7 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, '$rootScope', fun
       $scope.subsets = fontsService.getSubsetNames();
       $scope.sortAttrs = SORT_ATTRIBUTES;
       $scope.selected = {};
+      $scope.text = angular.extend(angular.copy(TEXT_DEFAULTS), $scope.text || {});
 
       function setState(extend) {
         $scope.current = angular.extend(

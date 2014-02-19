@@ -1,5 +1,6 @@
 /* global DEFAULT_WEBSAFE_FONTS, $injector, $scope, elm, PROVIDER_TITLE_CLASS, createNewDirective,
-          NAME_JDFONTLIST_CONTROLLER, $controller, NAME_FONTSSERVICE, ANOTHER_FONT, AND_SOME_FONT_MORE */
+          NAME_JDFONTLIST_CONTROLLER, $controller, NAME_FONTSSERVICE, ANOTHER_FONT, AND_SOME_FONT_MORE,
+          $rootScope */
 describe('fontselect directive', function() {
   'use strict';
 
@@ -270,4 +271,12 @@ describe('fontselect directive', function() {
     });
   });
 
+  describe('custom text', function() {
+    it('should apply text set as option to the activate button', function() {
+      $rootScope.text = {
+        button: 'Fara'
+      };
+      expect(jQuery('button', createNewDirective('text="text"').elm).first().text()).toBe('Fara');
+    });
+  });
 });

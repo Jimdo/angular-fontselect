@@ -1,7 +1,5 @@
 
 
-@import url("/src/jdfs-iconfont/style.css");
-
 @tabBg:            #eee;
 @activeTab:           #939393;
 
@@ -17,19 +15,6 @@
 @outerBorderRadius:       4px;
 @innerBorderRadius:       2px;
 
-.iconfont,[class^="icon-"], [class*=" icon-"] {
-  font-family: 'jdfs-iconfont';
-  speak: none;
-  font-style: normal;
-  font-weight: normal;
-  font-variant: normal;
-  text-transform: none;
-  line-height: 1;
-
-  /* Better Font Rendering =========== */
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
 
 .jdfs-main{
   position: relative;
@@ -142,15 +127,16 @@
 
 }
 
-.jdfs-filterbtn{
+.jdfs-filterbtn {
   
   border-radius: @innerBorderRadius;
   margin: 0 .3rem .3rem 0;
   width: 5em;
-  padding: 0;
+  padding: 1em 0;
   flex: 1 1 45%;
-  font-size: 66px;
+  font-size: 1em;
   line-height: 1.2;
+  vertical-align: middle;
   display: inline-block;
 
   background: @filterBtnBg;
@@ -184,22 +170,6 @@
   color: white;
 }
 
-.jdfs-fontstyle-serif:after{
-  .iconfont;
-  content: "\e600";
-}
-.jdfs-fontstyle-handwriting:after{
-  .iconfont;
-    content: "\e602";
-}
-.jdfs-fontstyle-sansserif:after{
-  .iconfont;
-    content: "\e601";
-}
-.jdfs-fontstyle-display:after{
-  .iconfont;
-    content: "\e603";
-}
-.jdfs-fontstyle-Other{
+.jdfs-fontstyle-other{
   display: none;
 }

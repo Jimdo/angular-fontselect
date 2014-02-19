@@ -6,29 +6,30 @@
 		ng-show="!active"
 		>
 		<span>
-			{{current.font.name || "Choose a Font"}}
+			{{current.font.name || text.button}}
 		</span>
 	</button>
 	<input
 		type="text"
 		class="jdfs-search"
-		placeholder="Search by Fontname"
+		placeholder="{{text.search}}"
 		name="jdfs-{{id}}-search"
 		ng-show="active"
 		ng-model="current.search" />
 	<div class="jdfs-window" ng-show="active">
 
-			<!-- <select ng-model="current.sort.attr" ng-options="a.name for a in sortAttrs"></select> -->
-			<!-- <button ng-click="reverseSort()">{{current.sort.direction ? '▼' : '▲'}}</button> -->
+			<!-- <select ng-model="current.sort.attr" ng-options="text.sort[a.key] for a in sortAttrs"></select> -->
+			<!-- <button ng-click="reverseSort()">{{current.sort.direction ? text.sortdir.desc : text.sortdir.asc}}</button> -->
 
 		<div class="jdfs-fontlistcon">
-
 			<jd-fontlist
 				fsid="id"
+				text="text"
 				current="current"
 				fonts="fonts[provider]"
 				provider="{{provider}}"
-				ng-repeat="provider in providers" />
+				ng-repeat="provider in providers"
+			></jd-fontlist>
 				
 		</div>
 
@@ -40,7 +41,9 @@
 				ng-repeat="category in categories"
 				ng-class="{'jdfs-active jdfs-highlight': category.key == current.category}"
 				ng-click="setCategoryFilter(category.key)"
-				ng-model="current.category">
+				ng-model="current.category"
+			>
+				{{text.category[category.key]}}
 			</button>
 
 
@@ -48,7 +51,7 @@
 				<div class="jdfs-charsets">
 					<div ng-repeat="(key, name) in subsets" class='jdfs-subset' ng-class="{'jdfs-active jdfs-highlight': current.subsets[key]}">
 						<input ng-model="current.subsets[key]" type="checkbox" id="jdfs-{{id}}-subset-{{key}}" />
-						<label for="jdfs-{{id}}-subset-{{key}}">{{name}}</label>
+						<label for="jdfs-{{id}}-subset-{{key}}">{{text.subset[key]}}</label>
 					</div>
 				</div>
 			</div>

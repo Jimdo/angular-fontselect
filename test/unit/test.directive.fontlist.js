@@ -5,7 +5,7 @@ describe('fontlist directive', function() {
   var fontlist, $childScope;
 
   beforeEach(function() {
-    fontlist = elm.find('.jdfs-provider-websafe-fonts').first();
+    fontlist = elm.find('.jdfs-provider-websafe').first();
     $childScope = fontlist.children().first().scope();
   });
 
@@ -18,7 +18,7 @@ describe('fontlist directive', function() {
   });
 
   it('should be the current provider', function() {
-    expect($scope.current.provider).toBe('Websafe Fonts');
+    expect($scope.current.provider).toBe('websafe');
   });
 
   it('should be active', function() {

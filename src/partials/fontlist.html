@@ -1,5 +1,6 @@
-<div class="jdfs-provider jdfs-provider-{{providerKey}}" ng-class="{'jdfs-active': isActive()}">
-	<p class="jdfs-provider-title" ng-class="{'jdfs-active': isActive()}" ng-click="toggle()">{{providerName}}
+<div class="jdfs-provider jdfs-provider-{{provider}}" ng-class="{'jdfs-active': isActive()}">
+	<p class="jdfs-provider-title" ng-class="{'jdfs-active': isActive()}" ng-click="toggle()">
+		{{text.provider[provider]}}
 		<span ng-if="getFilteredFonts().length == fonts.length">({{fonts.length}})</span>
 		<span ng-if="fonts.length && getFilteredFonts().length != fonts.length">({{getFilteredFonts().length}}/{{fonts.length}})</span>
 		<span ng-if="!fonts.length">(…)</span>

@@ -5,7 +5,7 @@ fontselectModule.directive('jdFont', ['jdFontselect.fonts', function(fontsServic
     restrict: 'E',
     replace: true,
     controller: ['$scope', function($scope) {
-      fontsService.load($scope.font, $scope.providerName);
+      fontsService.load($scope.font, $scope.provider);
     }]
   };
 }]);

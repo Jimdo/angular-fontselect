@@ -8,7 +8,8 @@ fontselectModule.directive(NAME_JDFONTLIST, function() {
       id: '=fsid',
       fonts: '=',
       current: '=',
-      providerName: '@provider'
+      text: '=',
+      provider: '@provider'
     },
     restrict: 'E',
     templateUrl: DIR_PARTIALS + 'fontlist.html',
@@ -36,8 +37,6 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
       count: 0,
       current: 0
     };
-
-    $scope.providerKey = _createKey($scope.providerName);
 
     /**
      * Set the current page
@@ -76,7 +75,7 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
      * @return {Boolean}
      */
     $scope.isActive = function() {
-      return $scope.current.provider === $scope.providerName;
+      return $scope.current.provider === $scope.provider;
     };
 
     /**
@@ -153,8 +152,8 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
       if ($scope.isActive()) {
         $scope.current.provider = undefined;
       } else {
+        $scope.current.provider = $scope.provider;
         _init();
-        $scope.current.provider = $scope.providerName;
       }
     };
 
@@ -207,9 +206,9 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
     }
 
     function _init() {
-      if (_activated.indexOf($scope.providerName) < 0) {
-        _initiate[$scope.providerName]();
-        _activated.push($scope.providerName);
+      if (_activated.indexOf($scope.provider) < 0) {
+        _initiate[$scope.provider]();
+        _activated.push($scope.provider);
       }
     }
 
@@ -223,6 +222,6 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
     };
 
     /* Initiate! */
-    if ($scope.current.provider === $scope.providerName) { _init(); }
+    if ($scope.current.provider === $scope.provider) { _init(); }
   }
 ]);

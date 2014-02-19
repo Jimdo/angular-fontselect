@@ -7,7 +7,7 @@ describe('current href directive', function() {
     $httpBackend.when('GET', GOOGLE_FONT_API_RGX).respond(GOOGLE_FONTS_RESPONSE);
     $httpBackend.expectGET(GOOGLE_FONT_API_RGX);
 
-    $googleScope = elm.find('.jdfs-provider-google-fonts ' + PROVIDER_TITLE_CLASS).scope();
+    $googleScope = elm.find('.jdfs-provider-google ' + PROVIDER_TITLE_CLASS).scope();
     $googleScope.toggle();
     $httpBackend.flush(1);
 
