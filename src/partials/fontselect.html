@@ -39,7 +39,7 @@
 
 			<div class="jdfs-searchoptions">
 				<div class="jdfs-charsets">
-					<div ng-repeat="(key, name) in subsets" ng-class="{'jdfs-active jdfs-highlight': current.subsets[key]}">
+					<div ng-repeat="(key, name) in subsets" class='jdfs-subset' ng-class="{'jdfs-active jdfs-highlight': current.subsets[key]}">
 						<input ng-model="current.subsets[key]" type="checkbox" id="jdfs-{{id}}-subset-{{key}}" />
 						<label for="jdfs-{{id}}-subset-{{key}}">{{name}}</label>
 					</div>
