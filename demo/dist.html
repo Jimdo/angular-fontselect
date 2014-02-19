@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Angular Fontselect Sandbox</title>
+  <style>
+    [ng-cloak] {
+      display: none;
+    }
+  </style>
+  <base href="/" />
+  <link rel="stylesheet" type="text/css" jd-fontselect-current-href />
+  <link rel="stylesheet/less" type="text/css" href="demo/styles.less" />
+  <link rel="stylesheet" type="text/css" href="dist/angular-fontselect.css" />
+</head>
+<body ng-cloak>
+    <div class="wrap">
+      <div class="headwrap relacon">
+
+        <div class="fontselect">
+          <jd-fontselect selected="header"></jd-fontselect>
+        </div>
+
+        <header style="font-family: {{header.stack}};">
+
+          <h1>Angular Fontselection, by Jimdo</h1>
+          <h2>a Directive written to bring a new experience to font family choosing
+          </h2>
+        </header>
+      </div>
+      <div class="contentwrap relacon">
+
+        <div class="fontselect">
+          <jd-fontselect selected="content"></j d-fontselect>
+        </div>
+
+        <section class="content mw" style="font-family: {{content.stack}};">
+
+
+          <p>Just implement to your angular App and make choosing a Font family easy. Actually in this State I really don"t know what I should write on this page but we need some text to show what you"re able to do with the interface
+          </p>
+          <br>
+          <p>Just implement to your angular App and make choosing a Font family easy. Actually in this State I really don"t know what I should write on this page but we need some text to show what you"re able to do with the interface
+          </p>
+
+        </section>
+
+
+    </div>
+      <div class="footerwrap relacon">
+
+        <div class="fontselect">
+          <jd-fontselect selected="footer"></jd-fontselect>
+        </div>
+        
+        <footer class='mw' style="font-family: {{footer.stack}};">
+          <a href="https://github.com/Jimdo/angular-fontselect">github repo</a>
+          <a href="http://jimdo.com">Jimdo</a>
+          
+        </footer>
+      </div>
+  </div>
+
+    <script src="bower_components/angular/angular.js"></script>
+    <script src="bower_components/less/dist/less-1.6.2.js"></script>
+    <script src="dist/libs/webfontloader.js"></script>
+    <script src="dist/angular-fontselect.js"></script>
+    <script src="demo/app.js"></script>
+
+  </div>
+</body>
+</html>
