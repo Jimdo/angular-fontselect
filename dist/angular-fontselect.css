@@ -50,15 +50,13 @@
 }
 .jdfs-toggle,
 .jdfs-search {
+  padding: 1rem;
+  min-width: 150px;
   display: flex;
   justify-content: center;
   align-items: center;
   border: none;
   background: white;
-  padding: 1rem;
-  width: 15rem;
-  height: 3rem;
-  line-height: 1;
   margin: 0;
 }
 .jdfs-toggle > *,
@@ -68,13 +66,13 @@
 .jdfs-fontlistcon {
   padding: .5em;
   overflow: hidden;
-  border-radius: 0 0 0 0;
-  background: #464646;
+  border-radius: 4px 0 0 4px;
+  background: #d6d6d6;
   width: 60%;
   flex: 1 0;
 }
 .jdfs-fontlist {
-  border-radius: 0;
+  border-radius: 2px;
   background: white;
   padding: 0;
   margin: 0;
@@ -91,13 +89,6 @@
   display: block;
   width: 100%;
 }
-.jdfs-fontlist label:hover {
-  background: #f1f1f1;
-}
-.jdfs-fontlist label.jdfs-active {
-  color: #ffffff;
-  background: #7ec621;
-}
 .jdfs-fontlist input {
   display: none;
 }
@@ -105,11 +96,8 @@
   border: none;
   background: white;
 }
-.jdfs-fontpagination.jdfs-active {
-  background: #7ec621;
-}
 .jdfs-filter {
-  border-radius: 0 0 0 0;
+  border-radius: 0 4px 4px 0;
   padding: .5em;
   width: 14em;
   display: -webkit-box;
@@ -119,11 +107,10 @@
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
-  color: #ffffff;
-  background: #464646;
+  background: #d6d6d6;
 }
 .jdfs-filterbtn {
-  border-radius: 0;
+  border-radius: 2px;
   margin: 0 .3rem .3rem 0;
   width: 5em;
   padding: 0;
@@ -131,17 +118,8 @@
   font-size: 66px;
   line-height: 1.2;
   display: inline-block;
-  color: gray;
-  background: #2e2e2e;
+  background: #ffffff;
   border: none;
-}
-.jdfs-filterbtn:hover {
-  color: white;
-  background: #828282;
-}
-.jdfs-filterbtn.jdfs-active {
-  background: #7ec621;
-  color: white;
 }
 .jdfs-filterbtn:focus,
 .jdfs-filterbtn:active {
@@ -149,6 +127,20 @@
 }
 .jdfs-filterbtn:last-child {
   margin-bottom: 0;
+}
+.jdfs-searchoptions {
+  flex: 0 0 100%;
+}
+.jdfs-provider-title {
+  background: #eeeeee;
+  margin: 0;
+  font-size: .8em;
+  padding: .2em 1em;
+}
+.jdfs-highlight,
+.jdfs-highlight:hover {
+  background: #81b4fc;
+  color: white;
 }
 .jdfs-fontstyle-serif:after {
   font-family: 'jdfs-iconfont';
@@ -204,16 +196,4 @@
 }
 .jdfs-fontstyle-Other {
   display: none;
-}
-.jdfs-searchoptions {
-  flex: 0 0 100%;
-}
-.jdfs-provider-title {
-  background: #eeeeee;
-  margin: 0;
-  font-size: .8em;
-  padding: .2em 1em;
-}
-.jdfs-provider-title.jdfs-active {
-  background: #939393;
 }

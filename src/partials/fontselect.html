@@ -31,7 +31,7 @@
 			<button
 				class="jdfs-filterbtn jdfs-fontstyle-{{category.key}}"
 				ng-repeat="category in categories"
-				ng-class="{'jdfs-active': category.key == current.category}"
+				ng-class="{'jdfs-active jdfs-highlight': category.key == current.category}"
 				ng-click="setCategoryFilter(category.key)"
 				ng-model="current.category">
 			</button>

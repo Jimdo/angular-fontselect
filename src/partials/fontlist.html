@@ -11,7 +11,7 @@
 		<button
 			class="jdfs-fontpagination"
 			ng-repeat="i in getPages() track by $index"
-			ng-class="{'jdfs-active': page.current == $index}"
+			ng-class="{'jdfs-active jdfs-highlight': page.current == $index}"
 			ng-click="setCurrentPage($index)">{{$index + 1}}</button>
 	</div>
 </div>
