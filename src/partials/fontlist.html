@@ -12,9 +12,9 @@
 			</button>
 		</div>
 		<div class="jdfs-fontcount">
-			<span ng-if="getFilteredFonts().length == fonts.length">({{fonts.length}})</span>
-			<span ng-if="fonts.length && getFilteredFonts().length != fonts.length">({{getFilteredFonts().length}}/{{fonts.length}})</span>
-			<span ng-if="!fonts.length">(…)</span>
+			<span ng-if="getFilteredFonts().length == fonts.length">{{fonts.length}}</span>
+			<span ng-if="fonts.length && getFilteredFonts().length != fonts.length">{{getFilteredFonts().length}}/{{fonts.length}}</span>
+			<span ng-if="!fonts.length">…</span>
 		</div>
 	</div>
 </div>
