@@ -1,14 +1,21 @@
-/* global browser, element, by */
+/* global browser, element, by, protractor */
 var sandboxUrl = 'http://localhost:8765/test/e2e/';
-var active;
+var active, prot;
 
 beforeEach(function() {
   active = false;
+  prot = protractor.getInstance();
   browser.get(sandboxUrl);
 });
 
 
 module.exports = {
+
+  /** @const */
+  CURRENT_PAGE_CONTAINER_CLASS: '.jdfs-page-current',
+
+  /** @const */
+  MAX_PAGE_CONTAINER_CLASS: '.jdfs-page-count',
 
   toggle: function() {
     if (!active) {
@@ -29,11 +36,31 @@ module.exports = {
   },
 
   getPaginator: function(n) {
-    var paginators = element.all(by.repeater('i in getPages() track by $index'));
+    var paginators = element.all(by.repeater('dir in [\'prev\', \'next\']'));
     if(typeof n === 'number') {
       return paginators.get(n);
     }
     return paginators;
+  },
+
+  currentPage: function() {
+    var d = protractor.promise.defer();
+
+    element(by.css(this.CURRENT_PAGE_CONTAINER_CLASS)).getText().then(function(text) {
+      d.fulfill(parseInt(text));
+    });
+
+    return d.promise;
+  },
+
+  pageCount: function() {
+    var d = protractor.promise.defer();
+
+    element(by.css(this.MAX_PAGE_CONTAINER_CLASS)).getText().then(function(text) {
+      d.fulfill(parseInt(text));
+    });
+
+    return d.promise;
   },
 
   getLi: function(n) {

@@ -5,13 +5,19 @@
 		</ul>
 		<div class="jdfs-paginationcon">
 			<button
-				class="jdfs-fontpagination"
-				ng-repeat="i in getPages() track by $index"
-				ng-class="{'jdfs-active jdfs-highlight': page.current == $index}"
-				ng-click="setCurrentPage($index)">{{$index + 1}}
-			</button>
+				ng-repeat="dir in ['prev', 'next']"
+				class="jdfs-fontpagination jdfs-fontpagination-{{dir}}"
+				ng-click="paginate(dir)"
+				ng-class="{'jdfs-disabled': !paginationButtonActive(dir)}"
+				ng-disabled="!paginationButtonActive(dir)"
+			>{{text.page[dir]}}</button>
+		</div>
+		<div class="jdfs-pagecon">
+			{{text.pageLabel}}
+			<span class="jdfs-page-current">{{page.current + 1}}</span>/<span class="jdfs-page-count">{{page.count}}</span>
 		</div>
 		<div class="jdfs-fontcount">
+			{{text.fontFabel}}
 			<span ng-if="getFilteredFonts().length == fonts.length">{{fonts.length}}</span>
 			<span ng-if="fonts.length && getFilteredFonts().length != fonts.length">{{getFilteredFonts().length}}/{{fonts.length}}</span>
 			<span ng-if="!fonts.length">…</span>

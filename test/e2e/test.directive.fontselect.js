@@ -53,7 +53,7 @@ describe('fontselect directive', function() {
     });
 
     it('should also reduce the amount of available pages', function() {
-      var beforeLength = Helpers.getPaginator().count();
+      var beforeLength = Helpers.pageCount();
       Helpers.searchFor('ar');
       expect(Helpers.getPaginator().count()).toBeLessThan(beforeLength);
     });
@@ -62,11 +62,11 @@ describe('fontselect directive', function() {
   describe('categories', function() {
     it('should reduce the amount of pages on click', function() {
       Helpers.toggle();
-      var numberOfPages = Helpers.getPaginator().count();
+      var numberOfPages = Helpers.pageCount();
 
       expect(numberOfPages).toBeGreaterThan(5);
       element.all(by.model('current.category')).get(1).click();
-      expect(Helpers.getPaginator().count()).toBeLessThan(numberOfPages);
+      expect(Helpers.pageCount()).toBeLessThan(numberOfPages);
     });
   });
 
@@ -175,9 +175,9 @@ describe('fontselect directive', function() {
     });
 
     it('should reduce the amount of pages when we click a checkbox', function() {
-      var pagesCount = Helpers.getPaginator().count();
+      var pagesCount = Helpers.pageCount();
       Helpers.getSubsetCheckbox(2).click();
-      expect(Helpers.getPaginator().count()).not.toBe(pagesCount);
+      expect(Helpers.pageCount()).not.toBe(pagesCount);
     });
   });
 

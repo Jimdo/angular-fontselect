@@ -154,6 +154,12 @@ var DEFAULT_CATEGORIES = [
 ];
 
 /** @const */
+var DIRECTION_NEXT = 'next';
+
+/** @const */
+var DIRECTION_PREVIOUS = 'prev';
+
+/** @const */
 var SORT_ATTRIBUTES = [
   {
     key: 'name',
@@ -188,6 +194,8 @@ var STATE_DEFAULTS = {
 var TEXT_DEFAULTS = {
   button: 'Choose Font',
   search: 'Search by Fontname',
+  pageLabel: 'Page: ',
+  fontFabel: 'Fonts: ',
   page: {
     prev: '◄',
     next: '►'

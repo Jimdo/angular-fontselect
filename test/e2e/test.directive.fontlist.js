@@ -53,12 +53,12 @@ describe('fontlist directive', function() {
 
   describe('pagination', function() {
 
-    it('should have multiple page buttons', function() {
-      expect(Helpers.getPaginator().count()).toBeGreaterThan(1);
+    it('should have two page buttons', function() {
+      expect(Helpers.getPaginator().count()).toBe(2);
     });
 
-    it('should have the first button activated', function() {
-      expect(Helpers.getPaginator(0).getAttribute('class')).toContain('active');
+    it('should have the first button deactivated', function() {
+      expect(Helpers.getPaginator(0).getAttribute('class')).toContain('disabled');
     });
 
     it('should change the displayed fonts on click', function() {
@@ -79,25 +79,33 @@ describe('fontlist directive', function() {
       });
     });
 
-    it('should be on the correct page when we close and reopen the directive', function() {
-      expect(Helpers.getPaginator(1).getAttribute('class')).not.toContain('jdfs-active');
+    it('should not reset the page when we close and reopen the directive', function() {
       Helpers.getPaginator(1).click();
+      expect(Helpers.getPaginator(0).getAttribute('class')).not.toContain('disabled');
       Helpers.toggle();
       Helpers.toggle();
-      expect(Helpers.getPaginator(1).getAttribute('class')).toContain('jdfs-active');
+      expect(Helpers.getPaginator(0).getAttribute('class')).not.toContain('disabled');
     });
 
     describe('with search', function() {
       it('should change the page if the current page does not exist anymore', function() {
-        Helpers.getPaginator(5).click();
+        expect(Helpers.currentPage()).toBe(1);
+        var next = Helpers.getPaginator(1);
+        next.click();
+        next.click();
+        next.click();
+        next.click();
 
-        Helpers.searchFor('ar');
-        expect(Helpers.getLi().count()).toBeGreaterThan(0);
+        expect(Helpers.currentPage()).toBe(5);
       });
 
       it('should stay on the page of our selected search when we change filters', function() {
+        var next = Helpers.getPaginator(1);
+        next.click();
+        next.click();
+        next.click();
+
         /* Navigate to a subpage and select a font */
-        Helpers.getPaginator(5).click();
         Helpers.getFontLabel(6).click();
 
         function getLabel(fr) {
@@ -126,7 +134,7 @@ describe('fontlist directive', function() {
             expect(getLabel(forTxt).count()).toBe(1);
             
             /* We should be back on the page we started */
-            expect(Helpers.getPaginator(5).getAttribute('class')).toContain('active');
+            expect(Helpers.currentPage()).toBe(4);
           });
         });
       });

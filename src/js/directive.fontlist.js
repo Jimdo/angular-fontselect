@@ -1,6 +1,7 @@
-/* global  NAME_CONTROLLER, DIR_PARTIALS */
+/* global  NAME_CONTROLLER, DIR_PARTIALS, DIRECTION_NEXT, DIRECTION_PREVIOUS */
 var NAME_JDFONTLIST = 'jdFontlist';
 var NAME_JDFONTLIST_CONTROLLER = NAME_JDFONTLIST + NAME_CONTROLLER;
+
 fontselectModule.directive(NAME_JDFONTLIST, function() {
   return {
     scope: {
@@ -42,6 +43,37 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
      */
     $scope.setCurrentPage = function(currentPage) {
       $scope.page.current = currentPage;
+    };
+
+    /**
+     * Go to the next or previous page.
+     *
+     * @param  {String} direction 'next' or 'prev'
+     * @return {void}
+     */
+    $scope.paginate = function(direction) {
+      if (!$scope.paginationButtonActive(direction)) {
+        return;
+      }
+
+      $scope.page.current += (direction === DIRECTION_PREVIOUS ? -1 : 1);
+    };
+
+    /**
+     * Check if the pagination button is active
+     *
+     * @param  {String} direction 'next' or 'prev'
+     * @return {Boolean}
+     */
+    $scope.paginationButtonActive = function(direction) {
+      _updatePageCount();
+      _updateCurrentPage();
+      var page = $scope.page;
+
+      return (
+        (direction === DIRECTION_NEXT && page.current < page.count - 1) ||
+        (direction === DIRECTION_PREVIOUS && page.current > 0)
+      );
     };
 
     /**
