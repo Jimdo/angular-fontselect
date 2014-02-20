@@ -5,16 +5,8 @@ describe('fontlist directive', function() {
 
   beforeEach(Helpers.toggle);
 
-  it('should have multiple fontlists', function() {
-    expect(element.all(by.repeater('provider in providers')).count()).toBeGreaterThan(1);
-  });
-
-  it('should have a list for default webfonts', function() {
-    expect(element.all(by.css('.jdfs-provider-websafe')).count()).toBe(1);
-  });
-
-  it('should have a list for google webfonts', function() {
-    expect(element.all(by.css('.jdfs-provider-google')).count()).toBe(1);
+  it('should not have multiple fontlists', function() {
+    expect(element.all(by.css('.jdfs-fontlist')).count()).toBe(1);
   });
 
   it('should have no radio checked', function() {
@@ -33,54 +25,33 @@ describe('fontlist directive', function() {
     expect(element.all(by.css('li input:checked')).count()).toBe(1);
   });
 
-  it('should link radio buttons between the single font lists.', function() {
-    /* Ensure our test button is not clicked, yet */
-    expect(Helpers.getFontLabel(1).getAttribute('class')).not.toMatch('jdfs-active');
-
-    /* Click on a radio button in the first list */
-    Helpers.getFontLabel(1).click();
-    expect(Helpers.getFontLabel(1).getAttribute('class')).toMatch('jdfs-active');
-
-    Helpers.openProviderListNo(1);
-
-    /* Click a radio button in the new list */
-    Helpers.getFontLabel(4).click();
-
-    Helpers.openProviderListNo(0);
-
-    /* Expect our own button to be unchecked */
-    expect(Helpers.getFontLabel(1).getAttribute('class')).not.toMatch('jdfs-active');
-  });
-
-  it('should keep our selection even if we switch font lists', function() {
-    Helpers.getFontLabel(1).click();
-    
-    expect(Helpers.getFontLabel(1).getAttribute('class')).toMatch('jdfs-active');
-    Helpers.openProviderListNo(1);
-    Helpers.openProviderListNo(0);
-    expect(Helpers.getFontLabel(1).getAttribute('class')).toMatch('jdfs-active');
-  });
-
   describe('font count', function() {
-    it('should display the amount of font\'s in the header', function() {
-      expect(element(by.css(Helpers.PROVIDER_TITLE_CLASS)).getText()).toContain('(5)');
+    it('should display the amount of font\'s somewhere', function() {
+      expect(element(by.css('.jdfs-fontcount')).getText()).toMatch(/[\d]+\/[\d]+/);
     });
 
     it('should adjust the first number when we apply filters', function() {
+      var before = element(by.css('.jdfs-fontcount')).getText();
       Helpers.searchFor('ari');
-      expect(element(by.css(Helpers.PROVIDER_TITLE_CLASS)).getText()).toContain('1/5');
+      expect(element(by.css('.jdfs-fontcount')).getText()).not.toBe(before);
     });
 
-    it('should display a placeholder when the fonts have not been loaded, yet', function() {
-      expect(element.all(by.css(Helpers.PROVIDER_TITLE_CLASS)).get(1).getText()).toContain('(…)');
+    it('should only display the amount of total fonts, when we deactivate all filters', function() {
+      element.all(by.model('current.subsets[key]')).then(function(elms) {
+        elms.forEach(function(elm) {
+          elm.getAttribute('selected').then(function(attr) {
+            if (attr) {
+              elm.click();
+            }
+          });
+        });
+      });
+
+      expect(element(by.css('.jdfs-fontcount')).getText()).not.toMatch(/\//);
     });
   });
 
-  describe('pagination of google fonts', function() {
-
-    beforeEach(function() {
-      Helpers.openProviderListNo(1);
-    });
+  describe('pagination', function() {
 
     it('should have multiple page buttons', function() {
       expect(Helpers.getPaginator().count()).toBeGreaterThan(1);
@@ -108,11 +79,11 @@ describe('fontlist directive', function() {
       });
     });
 
-    it('should be on the correct page when we close and reopen the list', function() {
+    it('should be on the correct page when we close and reopen the directive', function() {
       expect(Helpers.getPaginator(1).getAttribute('class')).not.toContain('jdfs-active');
       Helpers.getPaginator(1).click();
-      Helpers.openProviderListNo(0);
-      Helpers.openProviderListNo(1);
+      Helpers.toggle();
+      Helpers.toggle();
       expect(Helpers.getPaginator(1).getAttribute('class')).toContain('jdfs-active');
     });
 

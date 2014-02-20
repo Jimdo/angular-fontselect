@@ -16,10 +16,10 @@
 @innerBorderRadius:       2px;
 
 
-.jdfs-main{
+.jdfs-main {
   position: relative;
   display: inline-flex;
-  *, *:after, *:before{
+  *, *:after, *:before {
     box-sizing: border-box;
   }
   font-size: 16px;
@@ -27,7 +27,7 @@
 
 
 
-.jdfs-window{
+.jdfs-window {
   top: 100%;
   left: 0;
   z-index: 3000;
@@ -49,7 +49,7 @@
   align-items: flex-start;
 }
 
-.jdfs-toggle,.jdfs-search{
+.jdfs-toggle,.jdfs-search {
   height: 30px;
   min-width: 150px;
 
@@ -62,15 +62,15 @@
   background: white;
 
   margin: 0;
-  & > *{
+  & > * {
     flex: 1 auto;
   }
 }
-.jdfs-search{
+.jdfs-search {
   padding: 1em;
 }
 
-.jdfs-fontlistcon{
+.jdfs-fontlistcon {
   padding: .5em;
   overflow: hidden;
   border-radius: @outerBorderRadius 0 0 @outerBorderRadius;
@@ -80,36 +80,36 @@
 
 }
 
-.jdfs-fontlist{
+.jdfs-fontlist {
   border-radius: @innerBorderRadius;
   background: white;
   padding: 0;
   margin: 0;
   overflow: scroll;
   max-height: 200px;
-  li{
+  li {
     padding: 0;
     margin: 0;
     list-style-type: none;
   }
-  label{
+  label {
     padding: .5em 1em;
     display: block;
     width: 100%;
 
   }
 
-  input{
+  input {
     display: none;
   }
 }
-.jdfs-fontpagination{
+.jdfs-fontpagination {
   border: none;
   background: white;
 
 }
 
-.jdfs-filter{
+.jdfs-filter {
   border-radius: 0  @outerBorderRadius @outerBorderRadius 0;
   padding: .5em;
   width: 14em;
@@ -143,33 +143,24 @@
   border: none;
 
 
-  &:focus, &:active{
+  &:focus, &:active {
     outline: none;
   }
-  &:last-child{
+  &:last-child {
     margin-bottom: 0;
   }
 }
 
-
-
-.jdfs-searchoptions{
+.jdfs-searchoptions {
   flex: 0 0 100%;
 }
 
-.jdfs-provider-title{
-  background: @tabBg;
-  margin: 0;
-  font-size: .8em;
-  padding: .2em 1em;
-}
-
 .jdfs-highlight,
-.jdfs-highlight:hover{
+.jdfs-highlight:hover {
   background: #81b4fc;
   color: white;
 }
 
-.jdfs-fontstyle-other{
+.jdfs-fontstyle-other {
   display: none;
 }

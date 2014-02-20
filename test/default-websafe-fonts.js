@@ -1,3 +1,4 @@
+/* jshint undef: false, unused: false  */
 /* Mock the default font set. */
 DEFAULT_WEBSAFE_FONTS = [
   {

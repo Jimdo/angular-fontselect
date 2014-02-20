@@ -1,11 +1,5 @@
-<div class="jdfs-provider jdfs-provider-{{provider}}" ng-class="{'jdfs-active': isActive()}">
-	<p class="jdfs-provider-title" ng-class="{'jdfs-active': isActive()}" ng-click="toggle()">
-		{{text.provider[provider]}}
-		<span ng-if="getFilteredFonts().length == fonts.length">({{fonts.length}})</span>
-		<span ng-if="fonts.length && getFilteredFonts().length != fonts.length">({{getFilteredFonts().length}}/{{fonts.length}})</span>
-		<span ng-if="!fonts.length">(…)</span>
-	</p>
-	<div ng-if="isActive()">
+<div class="jdfs-fontlistcon" ng-class="{'jdfs-active': isActive()}">
+	<div>
 		<ul class='jdfs-fontlist'>
 			<jd-font ng-repeat="font in getFilteredFonts() | startFrom: page.current * page.size | limitTo: page.size" />
 		</ul>
@@ -16,6 +10,11 @@
 				ng-class="{'jdfs-active jdfs-highlight': page.current == $index}"
 				ng-click="setCurrentPage($index)">{{$index + 1}}
 			</button>
+		</div>
+		<div class="jdfs-fontcount">
+			<span ng-if="getFilteredFonts().length == fonts.length">({{fonts.length}})</span>
+			<span ng-if="fonts.length && getFilteredFonts().length != fonts.length">({{getFilteredFonts().length}}/{{fonts.length}})</span>
+			<span ng-if="!fonts.length">(…)</span>
 		</div>
 	</div>
 </div>

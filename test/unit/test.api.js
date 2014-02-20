@@ -1,6 +1,5 @@
 /* global $rootScope, DEFAULT_WEBSAFE_FONTS, PROVIDER_GOOGLE, STATE_DEFAULTS,
-          createNewDirective, activateGoogle, $googleScope, $httpBackend,
-          NAME_FONTSSERVICE */
+          createNewDirective, fontsService, NAME_FONTSSERVICE */
 describe('api', function() {
   var elm, $scope;
   function setupWithState(defaults) {
@@ -18,9 +17,7 @@ describe('api', function() {
   }
 
   function useGoogleFont() {
-    activateGoogle(elm);
-
-    $scope.current.font = $scope.fonts[PROVIDER_GOOGLE][0];
+    $scope.current.font = fontsService.searchFont({provider: PROVIDER_GOOGLE});
     $scope.$digest();
   }
 
@@ -54,11 +51,8 @@ describe('api', function() {
     });
 
     describe('google fonts', function() {
-      beforeEach(useGoogleFont);
 
-      it('should switch to google fonts', function() {
-        expect($rootScope.state.provider).toBe(PROVIDER_GOOGLE);
-      });
+      beforeEach(useGoogleFont);
 
       it('should have the first google font selected', function() {
         expect($rootScope.selected.name).toBe('Open Sans');
@@ -67,8 +61,8 @@ describe('api', function() {
 
       it('should call the change event on change', function() {
         var spy = jasmine.createSpy('jdfs.change event');
-        var font = $scope.fonts[PROVIDER_GOOGLE][2];
-        $googleScope.$on('jdfs.change', spy);
+        var font = fontsService.searchFonts({provider: PROVIDER_GOOGLE})[2];
+        $scope.$on('jdfs.change', spy);
 
         $scope.current.font = font;
         $scope.$digest();
@@ -80,13 +74,6 @@ describe('api', function() {
     });
 
     describe('font service', function() {
-      var fontsService;
-
-      beforeEach(function() {
-        inject(function($injector) {
-          fontsService = $injector.get('jdFontselect.fonts');
-        });
-      });
 
       it('should have a blank list of urls when only one webfont ist selected', function() {
         expect(fontsService.getUrls()).toEqual({});
@@ -145,14 +132,6 @@ describe('api', function() {
         setupWithState(state);
 
         expect($rootScope.selected.name).toBe(DEFAULT_WEBSAFE_FONTS[1].name);
-      });
-
-      it('should have the google font category active, when state provider is google', function() {
-        var state = {provider: PROVIDER_GOOGLE};
-        setupWithState(state);
-        $httpBackend.flush();
-
-        expect(elm.find('.jdfs-provider-google').attr('class')).toContain('jdfs-active');
       });
 
       it('should replace our preselected font with the original from list', function() {
