@@ -1,5 +1,5 @@
 /*!
- * angular-fontselect v0.3.0
+ * angular-fontselect v0.3.1
  * https://github.com/Jimdo/angular-fontselect
  *
  * A fontselect directive for AngularJS
@@ -1508,7 +1508,8 @@
       scope: {
         current: '=?state',
         selected: '=?',
-        text: '=?'
+        rawText: '@?text',
+        text: '=?textObj'
       },
       restrict: 'E',
       templateUrl: DIR_PARTIALS + 'fontselect.html',
@@ -1522,7 +1523,11 @@
         $scope.subsets = fontsService.getSubsetNames();
         $scope.sortAttrs = SORT_ATTRIBUTES;
         $scope.selected = {};
+  
         $scope.text = angular.extend(angular.copy(TEXT_DEFAULTS), $scope.text || {});
+        if ($scope.rawText) {
+          $scope.text = angular.extend($scope.text , $scope.$eval($scope.rawText) || {});
+        }
   
         function setState(extend) {
           $scope.current = angular.extend(
