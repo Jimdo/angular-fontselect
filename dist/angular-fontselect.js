@@ -1,5 +1,5 @@
 /*!
- * angular-fontselect v0.4.2
+ * angular-fontselect v0.4.3
  * https://github.com/Jimdo/angular-fontselect
  *
  * A fontselect directive for AngularJS
@@ -168,6 +168,12 @@
   ];
   
   /** @const */
+  var DIRECTION_NEXT = 'next';
+  
+  /** @const */
+  var DIRECTION_PREVIOUS = 'prev';
+  
+  /** @const */
   var SORT_ATTRIBUTES = [
     {
       key: 'name',
@@ -202,6 +208,8 @@
   var TEXT_DEFAULTS = {
     button: 'Choose Font',
     search: 'Search by Fontname',
+    pageLabel: 'Page: ',
+    fontFabel: 'Fonts: ',
     page: {
       prev: '◄',
       next: '►'
@@ -1673,6 +1681,7 @@
   // src/js/directive.fontlist.js
   var NAME_JDFONTLIST = 'jdFontlist';
   var NAME_JDFONTLIST_CONTROLLER = NAME_JDFONTLIST + NAME_CONTROLLER;
+  
   fontselectModule.directive(NAME_JDFONTLIST, function() {
     return {
       scope: {
@@ -1714,6 +1723,37 @@
        */
       $scope.setCurrentPage = function(currentPage) {
         $scope.page.current = currentPage;
+      };
+  
+      /**
+       * Go to the next or previous page.
+       *
+       * @param  {String} direction 'next' or 'prev'
+       * @return {void}
+       */
+      $scope.paginate = function(direction) {
+        if (!$scope.paginationButtonActive(direction)) {
+          return;
+        }
+  
+        $scope.page.current += (direction === DIRECTION_PREVIOUS ? -1 : 1);
+      };
+  
+      /**
+       * Check if the pagination button is active
+       *
+       * @param  {String} direction 'next' or 'prev'
+       * @return {Boolean}
+       */
+      $scope.paginationButtonActive = function(direction) {
+        _updatePageCount();
+        _updateCurrentPage();
+        var page = $scope.page;
+  
+        return (
+          (direction === DIRECTION_NEXT && page.current < page.count - 1) ||
+          (direction === DIRECTION_PREVIOUS && page.current > 0)
+        );
       };
   
       /**
@@ -1897,7 +1937,7 @@
   
   
     $templateCache.put('src/partials/fontlist.html',
-      "<div class=jdfs-fontlistcon ng-class=\"{'jdfs-active': isActive()}\"><div><ul class=jdfs-fontlist><jd-font ng-repeat=\"font in getFilteredFonts() | startFrom: page.current * page.size | limitTo: page.size\"></ul><div class=jdfs-paginationcon><button class=jdfs-fontpagination ng-repeat=\"i in getPages() track by $index\" ng-class=\"{'jdfs-active jdfs-highlight': page.current == $index}\" ng-click=setCurrentPage($index)>{{$index + 1}}</button></div><div class=jdfs-fontcount><span ng-if=\"getFilteredFonts().length == fonts.length\">{{fonts.length}}</span><span ng-if=\"fonts.length && getFilteredFonts().length != fonts.length\">{{getFilteredFonts().length}}/{{fonts.length}}</span><span ng-if=!fonts.length>…</span></div></div></div>"
+      "<div class=jdfs-fontlistcon ng-class=\"{'jdfs-active': isActive()}\"><div><ul class=jdfs-fontlist><jd-font ng-repeat=\"font in getFilteredFonts() | startFrom: page.current * page.size | limitTo: page.size\"></ul><div class=jdfs-paginationcon><button ng-repeat=\"dir in ['prev', 'next']\" class=\"jdfs-fontpagination jdfs-fontpagination-{{dir}}\" ng-click=paginate(dir) ng-class=\"{'jdfs-disabled': !paginationButtonActive(dir)}\" ng-disabled=!paginationButtonActive(dir)>{{text.page[dir]}}</button></div><div class=jdfs-pagecon>{{text.pageLabel}} <span class=jdfs-page-current>{{page.current + 1}}</span>/<span class=jdfs-page-count>{{page.count}}</span></div><div class=jdfs-fontcount>{{text.fontFabel}} <span ng-if=\"getFilteredFonts().length == fonts.length\">{{fonts.length}}</span> <span ng-if=\"fonts.length && getFilteredFonts().length != fonts.length\">{{getFilteredFonts().length}}/{{fonts.length}}</span> <span ng-if=!fonts.length>…</span></div></div></div>"
     );
   
   
