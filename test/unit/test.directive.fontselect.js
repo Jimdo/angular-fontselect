@@ -274,9 +274,14 @@ describe('fontselect directive', function() {
   describe('custom text', function() {
     it('should apply text set as option to the activate button', function() {
       $rootScope.text = {
-        button: 'Fara'
+        button: 'Foo'
       };
-      expect(jQuery('button', createNewDirective('text="text"').elm).first().text()).toBe('Fara');
+      expect(jQuery('button', createNewDirective('text-obj="text"').elm).first().text()).toBe('Foo');
+    });
+
+    it('should be able to evaluate raw text, passed to the directive', function() {
+      expect(jQuery('button', createNewDirective('text="{button: \'{{\'Fa\' + \'ra\'}}\'}"').elm).first().text())
+      .toBe('Fara');
     });
   });
 });
