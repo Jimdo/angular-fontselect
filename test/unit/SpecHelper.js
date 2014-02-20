@@ -4,14 +4,14 @@
 /* jshint undef: false, unused: false  */
 
 /* some globals we might need later on, set in beforeEach */
-var $rootScope, $compile, $injector, $httpBackend, $scope, $q, $controller, $googleScope, elm;
+var $rootScope, $compile, $injector, $httpBackend, $scope, $q, $controller, $googleScope, elm, fontsService;
 
 /* Request Regex for catching Google Font API calls. */
 /** @const */
 var GOOGLE_FONT_API_RGX = /http(s)?:\/\/www\.googleapis\.com\/webfonts\/v1\/.*/;
 
 /** @const */
-var PROVIDER_TITLE_CLASS = '.jdfs-provider-title';
+var LIST_CONTAINER_CLASS = '.jdfs-fontlistcon';
 
 /** @const */
 var ANOTHER_FONT = {
@@ -24,6 +24,7 @@ var ANOTHER_FONT = {
   subsets: [SUBSET_LATIN, SUBSET_GREEK]
 };
 
+/** @const */
 var AND_SOME_FONT_MORE = {
   name: 'Mooh',
   key: 'mooh',
@@ -31,11 +32,10 @@ var AND_SOME_FONT_MORE = {
   stack: 'Mooh, cursive',
   popularity: 7,
   lastModified: '2014-01-31',
-  subsets: [SUBSET_VIETNAMESE]
+  subsets: ['fooSubset']
 };
 
 var DEFAULT_WEBSAFE_FONTS_BACKUP;
-
 var directiveID = 1;
 
 function createNewDirective(attributeStr) {
@@ -80,25 +80,18 @@ beforeEach(function() {
     $controller  = _$controller_;
   });
 
+  fontsService = $injector.get(NAME_FONTSSERVICE);
+
   $httpBackend.when('GET', GOOGLE_FONT_API_RGX).respond(GOOGLE_FONTS_RESPONSE);
+  $httpBackend.expectGET(GOOGLE_FONT_API_RGX);
 
   var d = createNewDirective();
 
   elm = d.elm;
   $scope = d.scope;
-});
 
-function activateGoogle(e) {
-  var elem = e || elm;
-
-  $httpBackend.expectGET(GOOGLE_FONT_API_RGX);
-
-  $googleScope = elem.find('.jdfs-provider-google ' + PROVIDER_TITLE_CLASS).scope();
-  $googleScope.toggle();
   $httpBackend.flush(1);
-
-  return $googleScope;
-}
+});
 
 afterEach(function() {
   /* Each directive gets it's own id, we want to test only on id 1 */

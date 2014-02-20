@@ -1,22 +1,13 @@
-/* global PROVIDER_WEBSAFE, $scope, $rootScope, activateGoogle,
-          PROVIDER_TITLE_CLASS, createNewDirective, $googleScope */
+/* global PROVIDER_WEBSAFE, $scope, $rootScope, createNewDirective, fontsService */
 
 describe('fontsService', function() {
   'use strict';
 
-  var fontsService, customFont;
-
-  customFont = {
+  var customFont = {
     name: 'Foo',
     key: 'foo',
     stack: 'Foo, "Comic Sans", serif'
   };
-
-  beforeEach(inject(function() {
-    inject(function($injector) {
-      fontsService = $injector.get('jdFontselect.fonts');
-    });
-  }));
 
   it('should exist', function() {
     expect(fontsService).toBeDefined();
@@ -33,7 +24,7 @@ describe('fontsService', function() {
   describe('add method', function() {
     it('should expand the fonts object', function() {
       fontsService.add(customFont);
-      expect(fontsService._fonts.websafe).toContain(customFont);
+      expect(fontsService._fonts).toContain(customFont);
     });
 
     it('should throw an error if we add an invalid font object', function() {
@@ -63,10 +54,10 @@ describe('fontsService', function() {
 
   describe('remove method', function() {
     it('should be able to remove a font from the global list', function() {
-      var all = fontsService.getAllFonts()[PROVIDER_WEBSAFE];
+      var all = fontsService.getAllFonts();
       var beforeLength = all.length;
 
-      var index  = fontsService.removeFont(all[0], PROVIDER_WEBSAFE);
+      var index  = fontsService.removeFont(all[0]);
       expect(all.length).toBe(beforeLength - 1);
       expect(index).toBeGreaterThan(0);
     });
@@ -88,7 +79,8 @@ describe('fontsService', function() {
 
     it('should find fonts by key after we removed some', function() {
       fontsService.removeFont('verdana', PROVIDER_WEBSAFE);
-      expect(fontsService.getFontByKey('timesnewroman', PROVIDER_WEBSAFE).name).toBe('Times New Roman');
+      expect(fontsService.searchFont({key: 'timesnewroman', provider: PROVIDER_WEBSAFE}).name)
+        .toBe('Times New Roman');
     });
   });
 
@@ -109,21 +101,8 @@ describe('fontsService', function() {
   });
 
   describe('google fonts', function() {
-
-    beforeEach(activateGoogle);
-
-    it('should succeed on on all the beforeEach tests', function() {});
-
-    it('should not call the fontService initiator twice.', function() {
-      spyOn(fontsService, '_initGoogleFonts');
-      $googleScope.toggle();
-      $googleScope.toggle();
-      expect(fontsService._initGoogleFonts).not.toHaveBeenCalled();
-    });
-
     it('should not load google fonts twice, when we open two directives', function() {
-      var d = createNewDirective();
-      d.elm.find('.jdfs-provider-google ' + PROVIDER_TITLE_CLASS).scope().toggle();
+      createNewDirective();
     });
   });
 
@@ -133,7 +112,7 @@ describe('fontsService', function() {
     });
 
     it('should know which fonts are active', function() {
-      $scope.current.font = $scope.fonts[PROVIDER_WEBSAFE][2];
+      $scope.current.font = $scope.fonts[2];
       $scope.$digest();
 
       expect($scope.current.font).toBeDefined();
@@ -144,19 +123,19 @@ describe('fontsService', function() {
     it('should keep track of used fonts for all directives', function() {
       var d = createNewDirective();
 
-      d.scope.current.font = $scope.fonts[PROVIDER_WEBSAFE][1];
-      $scope.current.font = $scope.fonts[PROVIDER_WEBSAFE][2];
+      d.scope.current.font = $scope.fonts[1];
+      $scope.current.font = $scope.fonts[2];
       $rootScope.$digest();
 
       expect(fontsService.getUsedFonts().length).toBe(2);
-      expect($scope.fonts[PROVIDER_WEBSAFE][1].used).toBe(1);
+      expect($scope.fonts[1].used).toBe(1);
 
-      d.scope.current.font = $scope.fonts[PROVIDER_WEBSAFE][2];
+      d.scope.current.font = $scope.fonts[2];
       d.scope.$digest();
 
       expect(fontsService.getUsedFonts().length).toBe(1);
       expect(fontsService.getUsedFonts()[0].used).toBe(2);
-      expect($scope.fonts[PROVIDER_WEBSAFE][1].used).toBe(0);
+      expect($scope.fonts[1].used).toBe(0);
     });
   });
 });

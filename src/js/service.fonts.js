@@ -1,4 +1,5 @@
-/* global DEFAULT_WEBSAFE_FONTS, PROVIDER_WEBSAFE, PROVIDER_GOOGLE, GOOGLE_FONT_CATEGORIES, NAME_FONTSSERVICE */
+/* global DEFAULT_WEBSAFE_FONTS, PROVIDER_WEBSAFE, PROVIDER_GOOGLE */
+/* global GOOGLE_FONT_CATEGORIES, NAME_FONTSSERVICE, DEFAULT_CATEGORIES */
 
 /** @const */
 var REQUIRED_FONT_OBJECT_KEYS = [
@@ -100,7 +101,7 @@ FontsService.prototype = {
   _init: function() {
     var self = this;
     
-    self._fonts = self._fonts || {};
+    self._fonts = self._fonts || [];
     self._map = {};
     self._subsets = [];
     self._subsetNames = {};
@@ -124,10 +125,6 @@ FontsService.prototype = {
       throw 'Invalid font object.';
     }
 
-    if (!angular.isArray(self._fonts[provider])) {
-      self._fonts[provider] = [];
-    }
-
     if (!angular.isObject(self._map[provider])) {
       self._map[provider] = {};
     }
@@ -136,40 +133,62 @@ FontsService.prototype = {
       self._addSubsets(fontObj.subsets);
     }
 
-    var index = self._fonts[provider].push(fontObj)-1;
+    self._fonts.push(fontObj);
+  },
 
-    self._map[provider][fontObj.key] = index;
+  searchFonts: function(object) {
+    var self = this;
+
+    return self.$filter('filter')(self._fonts, object);
+  },
+
+  searchFont: function(object) {
+    var self = this;
+
+    var fonts = self.searchFonts(object);
+    
+    if (fonts.length > 0) {
+      fonts = fonts[0];
+    } else {
+      return false;
+    }
+
+    return fonts;
   },
 
   getFontByKey: function(key, provider) {
     var self = this;
-    
-    if (!angular.isString(provider)) {
+
+    if (!provider) {
       throw 'Provider is not set.';
     }
 
-    try {
-      return self._fonts[provider][self._map[provider][key]];
-    } catch (e) {
+    var font = self.searchFont({key: key, provider: provider});
+
+    if (!font) {
       throw 'Font "' + key + '" not found in "' + provider + '".';
     }
+
+    return font;
   },
 
   removeFont: function(font, provider) {
     var self = this;
 
-    if (angular.isString(font)) {
-      font = self.getFontByKey(font, provider);
+    if (angular.isString(font) && !provider) {
+      throw 'Provider is not set.';
     }
 
     try {
-      var index = self._fonts[provider].indexOf(font);
+      if (angular.isString(font)) {
+        font = self.getFontByKey(font, provider);
+      }
+
+      var index = self._fonts.indexOf(font);
       var retVal = 0;
 
       if (index >= 0) {
-        delete self._map[provider][font.key];
-        retVal = self._fonts[provider].splice(index, 1).length;
-        self._remap(provider, index);
+        retVal = self._fonts.splice(index, 1).length;
       }
       return retVal;
     } catch (e) {
@@ -194,29 +213,7 @@ FontsService.prototype = {
   },
 
   getCategories: function() {
-    return [
-      {
-        key: 'serif',
-        fallback: 'serif'
-      },
-      {
-        key: 'sansserif',
-        fallback: 'sans-serif'
-      },
-      {
-        key: 'handwriting',
-        fallback: 'cursive'
-        
-      },
-      {
-        key: 'display',
-        fallback: 'cursive'
-      },
-      {
-        key: 'other',
-        fallback: 'sans-serif'
-      }
-    ];
+    return DEFAULT_CATEGORIES;
   },
 
   getSubsets: function() {
@@ -227,18 +224,18 @@ FontsService.prototype = {
     return this._subsetNames;
   },
 
-  load: function(font, provider) {
+  load: function(font) {
     if (font.loaded) {
       return;
     }
 
     font.loaded = true;
 
-    if (provider === PROVIDER_WEBSAFE) {
+    if (font.provider === PROVIDER_WEBSAFE) {
       return;
     }
 
-    this['_load' + provider](font);
+    this['_load' + font.provider](font);
   },
 
   getUrls: function() {
@@ -255,15 +252,10 @@ FontsService.prototype = {
 
   getUsedFonts: function() {
     var self = this;
-    var usedFonts = [];
 
-    angular.forEach(self._fonts, function(fonts) {
-      usedFonts = usedFonts.concat(self.$filter('filter')(fonts, {used: true}, function(used) {
-        return !!used;
-      }));
+    return self.$filter('filter')(self._fonts, {used: true}, function(used) {
+      return !!used;
     });
-    
-    return usedFonts;
   },
 
   getGoogleUrl: function() {

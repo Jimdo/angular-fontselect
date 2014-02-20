@@ -1,20 +1,8 @@
-/* global $compile, $rootScope, $scope, PROVIDER_GOOGLE, $httpBackend, URL_GOOGLE_FONTS_CSS,
-          GOOGLE_FONT_API_RGX, GOOGLE_FONTS_RESPONSE, elm, PROVIDER_TITLE_CLASS */
+/* global $compile, $rootScope, $scope, PROVIDER_GOOGLE, URL_GOOGLE_FONTS_CSS,
+          fontsService */
 describe('current href directive', function() {
-  var cfElm, $googleScope, $cfScope;
+  var cfElm, $cfScope;
 
-  function activateGoogle() {
-    $httpBackend.when('GET', GOOGLE_FONT_API_RGX).respond(GOOGLE_FONTS_RESPONSE);
-    $httpBackend.expectGET(GOOGLE_FONT_API_RGX);
-
-    $googleScope = elm.find('.jdfs-provider-google ' + PROVIDER_TITLE_CLASS).scope();
-    $googleScope.toggle();
-    $httpBackend.flush(1);
-
-    $scope.current.font = $scope.fonts[PROVIDER_GOOGLE][0];
-    $scope.$digest();
-  }
-  
   beforeEach(function() {
     cfElm = angular.element(
       '<div><link rel="stylesheet/css" type="text/css" jd-fontselect-current-href class="foob" /></div>'
@@ -31,11 +19,10 @@ describe('current href directive', function() {
   });
 
   it('should become present once we select a google font', function() {
-    activateGoogle();
-    $scope.current.font = $scope.fonts[PROVIDER_GOOGLE][2];
+    $scope.current.font = fontsService.searchFonts({provider: PROVIDER_GOOGLE})[2];
     $cfScope.$digest();
 
-    var expectedFonURL = URL_GOOGLE_FONTS_CSS + 'family=' + $scope.fonts[PROVIDER_GOOGLE][2].name;
+    var expectedFonURL = URL_GOOGLE_FONTS_CSS + 'family=' + $scope.current.font.name;
 
     expect(cfElm.find('.foob').length).toBe(1);
     expect(cfElm.find('.foob').attr('href')).toBe(expectedFonURL);

@@ -1,26 +1,27 @@
 /* global browser, element, by */
 var sandboxUrl = 'http://localhost:8765/test/e2e/';
+var active;
 
 beforeEach(function() {
+  active = false;
   browser.get(sandboxUrl);
 });
 
+
 module.exports = {
 
-  /** @const */
-  PROVIDER_TITLE_CLASS: '.jdfs-provider-title',
-
   toggle: function() {
-    element(by.css('.jdfs-toggle')).click();
-  },
+    if (!active) {
+      element(by.css('.jdfs-toggle')).click();
+    } else {
+      element(by.css('body')).click();
+    }
 
-  openProviderListNo: function(n) {
-    element.all(by.repeater('provider in providers')).get(n)
-      .findElement(by.css(this.PROVIDER_TITLE_CLASS)).click();
+    active = !active;
   },
 
   getFontLabel: function(n) {
-    var labels = element.all(by.css('.jdfs-provider label'));
+    var labels = element.all(by.css('.jdfs-fontlist label'));
     if(typeof n === 'number') {
       return labels.get(n);
     }

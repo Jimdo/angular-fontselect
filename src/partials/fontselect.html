@@ -21,17 +21,12 @@
 			<!-- <select ng-model="current.sort.attr" ng-options="text.sort[a.key] for a in sortAttrs"></select> -->
 			<!-- <button ng-click="reverseSort()">{{current.sort.direction ? text.sortdir.desc : text.sortdir.asc}}</button> -->
 
-		<div class="jdfs-fontlistcon">
-			<jd-fontlist
-				fsid="id"
-				text="text"
-				current="current"
-				fonts="fonts[provider]"
-				provider="{{provider}}"
-				ng-repeat="provider in providers"
-			></jd-fontlist>
-				
-		</div>
+		<jd-fontlist
+			fsid="id"
+			text="text"
+			current="current"
+			fonts="fonts"
+		></jd-fontlist>
 
 		<div class="jdfs-filter">
 	

@@ -1,6 +1,6 @@
-/* global DEFAULT_WEBSAFE_FONTS, $injector, $scope, elm, PROVIDER_TITLE_CLASS, createNewDirective,
-          NAME_JDFONTLIST_CONTROLLER, $controller, NAME_FONTSSERVICE, ANOTHER_FONT, AND_SOME_FONT_MORE,
-          $rootScope */
+/* global DEFAULT_WEBSAFE_FONTS, $injector, $scope, elm, createNewDirective,
+          NAME_JDFONTLIST_CONTROLLER, $controller, ANOTHER_FONT, AND_SOME_FONT_MORE,
+          $rootScope, fontsService, LIST_CONTAINER_CLASS */
 describe('fontselect directive', function() {
   'use strict';
 
@@ -33,7 +33,7 @@ describe('fontselect directive', function() {
   });
 
   it('should provide a list with some fonts', function() {
-    expect(elm.find('li').length).toBe(5);
+    expect(elm.find('li').length).toBe(9);
   });
 
   it('should not show the font-select window when inactive', function() {
@@ -48,7 +48,7 @@ describe('fontselect directive', function() {
   it('should expend if we add a new font via the fonts service', function() {
     var length = elm.find('li').length;
 
-    $injector.get('jdFontselect.fonts').add(ANOTHER_FONT);
+    fontsService.add(ANOTHER_FONT);
 
     $scope.$digest();
     expect(elm.find('li').length).toBe(length + 1);
@@ -75,11 +75,11 @@ describe('fontselect directive', function() {
     }
 
     it('should have radio buttons inside the list items', function() {
-      expect(elm.find('li input[type="radio"]').length).toBe(5);
+      expect(elm.find('li input[type="radio"]').length).toBe(9);
     });
 
     it('should have labels for the radio buttons', function() {
-      expect(elm.find('li label').length).toBe(5);
+      expect(elm.find('li label').length).toBe(9);
     });
 
     it('should link the labels to the radio buttons', function() {
@@ -88,13 +88,9 @@ describe('fontselect directive', function() {
         .toBe(radio.siblings('label').first().attr('for'));
     });
 
-    it('should be able to provide a preview of the font', function() {
+    it('should provide a preview of the font', function() {
       expect(normalizeFontStack(elm.find('li label').eq(0).css('font-family')))
-        .toBe(normalizeFontStack(DEFAULT_WEBSAFE_FONTS[2].stack));
-    });
-
-    it('should create multiple font lists for providers', function() {
-      expect(elm.find('.jdfs-provider').length).toBeGreaterThan(1);
+        .toBe(normalizeFontStack(DEFAULT_WEBSAFE_FONTS[0].stack));
     });
   });
 
@@ -133,12 +129,6 @@ describe('fontselect directive', function() {
   });
 
   describe('character sets', function() {
-    var fontsService;
-
-    beforeEach(function() {
-      fontsService = $injector.get(NAME_FONTSSERVICE);
-    });
-
     it('should have a list of subsets', function() {
       expect(fontsService.getSubsets()).toBeInstanceOf(Array);
     });
@@ -186,7 +176,7 @@ describe('fontselect directive', function() {
     }
 
     beforeEach(function() {
-      $listScope = elm.find(PROVIDER_TITLE_CLASS).scope();
+      $listScope = elm.find(LIST_CONTAINER_CLASS).scope();
 
       spies.orderBy = jasmine.createSpy('orderBy');
       spies.filter = jasmine.createSpy('filter');
@@ -200,7 +190,7 @@ describe('fontselect directive', function() {
         $filter: function(name) {
           return spies[name].andCallFake($filter(name));
         },
-        fontsService: $injector.get('jdFontselect.fonts')
+        fontsService: fontsService
       });
 
       expectAllSpiesCalled(0);
@@ -274,9 +264,14 @@ describe('fontselect directive', function() {
   describe('custom text', function() {
     it('should apply text set as option to the activate button', function() {
       $rootScope.text = {
-        button: 'Fara'
+        button: 'Foo'
       };
-      expect(jQuery('button', createNewDirective('text="text"').elm).first().text()).toBe('Fara');
+      expect(jQuery('button', createNewDirective('text-obj="text"').elm).first().text()).toBe('Foo');
+    });
+
+    it('should be able to evaluate raw text, passed to the directive', function() {
+      expect(jQuery('button', createNewDirective('text="{button: \'{{\'Fa\' + \'ra\'}}\'}"').elm).first().text())
+      .toBe('Fara');
     });
   });
 });

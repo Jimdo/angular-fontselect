@@ -1,7 +1,6 @@
-/* global  PROVIDER_GOOGLE, PROVIDER_WEBSAFE, NAME_CONTROLLER, DIR_PARTIALS */
+/* global  NAME_CONTROLLER, DIR_PARTIALS */
 var NAME_JDFONTLIST = 'jdFontlist';
 var NAME_JDFONTLIST_CONTROLLER = NAME_JDFONTLIST + NAME_CONTROLLER;
-
 fontselectModule.directive(NAME_JDFONTLIST, function() {
   return {
     scope: {
@@ -9,7 +8,6 @@ fontselectModule.directive(NAME_JDFONTLIST, function() {
       fonts: '=',
       current: '=',
       text: '=',
-      provider: '@provider'
     },
     restrict: 'E',
     templateUrl: DIR_PARTIALS + 'fontlist.html',
@@ -28,8 +26,6 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
     var _categorizedFonts;
     var _fontsInSubsets;
     var _lastPageCount = 0;
-    var _activated = [PROVIDER_WEBSAFE];
-    var _initiate = {};
     var _sortCache = {};
 
     $scope.page = {
@@ -67,15 +63,6 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
         return [];
       }
       return pages;
-    };
-
-    /**
-     * Check if this list is active
-     *
-     * @return {Boolean}
-     */
-    $scope.isActive = function() {
-      return $scope.current.provider === $scope.provider;
     };
 
     /**
@@ -144,20 +131,6 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
     };
 
     /**
-     * Activate or deactivate the this List.
-     *
-     * @return {void}
-     */
-    $scope.toggle = function() {
-      if ($scope.isActive()) {
-        $scope.current.provider = undefined;
-      } else {
-        $scope.current.provider = $scope.provider;
-        _init();
-      }
-    };
-
-    /**
      * Calculate the amount of pages we have.
      *
      * @return {void}
@@ -205,23 +178,7 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
       }
     }
 
-    function _init() {
-      if (_activated.indexOf($scope.provider) < 0) {
-        _initiate[$scope.provider]();
-        _activated.push($scope.provider);
-      }
-    }
-
-    /**
-     * Initiation for the google list.
-     *
-     * @return {void}
-     */
-    _initiate[PROVIDER_GOOGLE] = function() {
-      fontsService._initGoogleFonts();
-    };
-
     /* Initiate! */
-    if ($scope.current.provider === $scope.provider) { _init(); }
+    fontsService._initGoogleFonts();
   }
 ]);

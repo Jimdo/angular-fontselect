@@ -9,7 +9,8 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, '$rootScope', fun
     scope: {
       current: '=?state',
       selected: '=?',
-      text: '=?'
+      rawText: '@?text',
+      text: '=?textObj'
     },
     restrict: 'E',
     templateUrl: DIR_PARTIALS + 'fontselect.html',
@@ -23,7 +24,11 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, '$rootScope', fun
       $scope.subsets = fontsService.getSubsetNames();
       $scope.sortAttrs = SORT_ATTRIBUTES;
       $scope.selected = {};
+
       $scope.text = angular.extend(angular.copy(TEXT_DEFAULTS), $scope.text || {});
+      if ($scope.rawText) {
+        $scope.text = angular.extend($scope.text , $scope.$eval($scope.rawText) || {});
+      }
 
       function setState(extend) {
         $scope.current = angular.extend(

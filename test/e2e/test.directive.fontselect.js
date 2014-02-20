@@ -22,7 +22,7 @@ describe('fontselect directive', function() {
   });
 
   it('should have a list of checkboxes', function() {
-    expect(element.all(by.css('li input')).count()).toBe(5);
+    expect(element.all(by.css('li input')).count()).toBe(30);
   });
 
   it('should become invisible when we click somewhere on the window', function() {
@@ -47,14 +47,12 @@ describe('fontselect directive', function() {
     });
 
     it('should reduce the length of the results', function() {
-      expect(numberOfFonts).toBe(5);
-      Helpers.searchFor('ver');
+      expect(numberOfFonts).toBe(30);
+      Helpers.searchFor('verda');
       expect(Helpers.getLi().count()).toBeLessThan(numberOfFonts);
     });
 
     it('should also reduce the amount of available pages', function() {
-      Helpers.openProviderListNo(1);
-
       var beforeLength = Helpers.getPaginator().count();
       Helpers.searchFor('ar');
       expect(Helpers.getPaginator().count()).toBeLessThan(beforeLength);
@@ -62,18 +60,13 @@ describe('fontselect directive', function() {
   });
 
   describe('categories', function() {
-    var categoryradios, numberOfFonts;
-
-    beforeEach(function() {
-      numberOfFonts = Helpers.getLi().count();
+    it('should reduce the amount of pages on click', function() {
       Helpers.toggle();
-      categoryradios = element.all(by.model('current.category'));
-    });
+      var numberOfPages = Helpers.getPaginator().count();
 
-    it('should reduce the length of the font list on click', function() {
-      expect(numberOfFonts).toBe(5);
-      categoryradios.get(1).click();
-      expect(Helpers.getLi().count()).toBeLessThan(numberOfFonts);
+      expect(numberOfPages).toBeGreaterThan(5);
+      element.all(by.model('current.category')).get(1).click();
+      expect(Helpers.getPaginator().count()).toBeLessThan(numberOfPages);
     });
   });
 
@@ -153,7 +146,6 @@ describe('fontselect directive', function() {
 
     beforeEach(function() {
       Helpers.toggle();
-      Helpers.openProviderListNo(1);
     });
 
     it('should have some checkboxes for character set filtering', function() {

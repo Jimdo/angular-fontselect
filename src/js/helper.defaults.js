@@ -34,7 +34,7 @@ var DEFAULT_WEBSAFE_FONTS = [
   {
     name: 'Consolas',
     key: 'consolas',
-    category: 'other',
+    category: 'sans-serif',
     stack: 'Consolas, "Lucida Console", Monaco, monospace',
     popularity: 1,
     lastModified: '2014-02-04'
@@ -42,7 +42,7 @@ var DEFAULT_WEBSAFE_FONTS = [
   {
     name: 'Courier New',
     key: 'couriernew',
-    category: 'other',
+    category: 'serif',
     stack: '"Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace',
     popularity: 1,
     lastModified: '2014-01-28'
@@ -66,7 +66,7 @@ var DEFAULT_WEBSAFE_FONTS = [
   {
     name: 'Impact',
     key: 'impact',
-    category: 'other',
+    category: 'display',
     stack: 'Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif',
     popularity: 3,
     lastModified: '2014-02-04'
@@ -130,14 +130,38 @@ var DEFAULT_WEBSAFE_FONTS = [
 ];
 
 /** @const */
-var SORT_ATTRIBUTES = [
+var DEFAULT_CATEGORIES = [
   {
-    key: 'popularity',
-    dir: true
+    key: 'serif',
+    fallback: 'serif'
   },
+  {
+    key: 'sansserif',
+    fallback: 'sans-serif'
+  },
+  {
+    key: 'handwriting',
+    fallback: 'cursive'
+  },
+  {
+    key: 'display',
+    fallback: 'cursive'
+  },
+  {
+    key: 'other',
+    fallback: 'sans-serif'
+  }
+];
+
+/** @const */
+var SORT_ATTRIBUTES = [
   {
     key: 'name',
     dir: false
+  },
+  {
+    key: 'popularity',
+    dir: true
   },
   {
     key: 'lastModified',
