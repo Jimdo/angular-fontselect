@@ -1,5 +1,5 @@
 /*!
- * angular-fontselect v0.4.1
+ * angular-fontselect v0.4.2
  * https://github.com/Jimdo/angular-fontselect
  *
  * A fontselect directive for AngularJS
@@ -1897,7 +1897,7 @@
   
   
     $templateCache.put('src/partials/fontlist.html',
-      "<div class=jdfs-fontlistcon ng-class=\"{'jdfs-active': isActive()}\"><div><ul class=jdfs-fontlist><jd-font ng-repeat=\"font in getFilteredFonts() | startFrom: page.current * page.size | limitTo: page.size\"></ul><div class=jdfs-paginationcon><button class=jdfs-fontpagination ng-repeat=\"i in getPages() track by $index\" ng-class=\"{'jdfs-active jdfs-highlight': page.current == $index}\" ng-click=setCurrentPage($index)>{{$index + 1}}</button></div><div class=jdfs-fontcount><span ng-if=\"getFilteredFonts().length == fonts.length\">{{fonts.length}}</span> <span ng-if=\"fonts.length && getFilteredFonts().length != fonts.length\">{{getFilteredFonts().length}}/{{fonts.length}}</span> <span ng-if=!fonts.length>…</span></div></div></div>"
+      "<div class=jdfs-fontlistcon ng-class=\"{'jdfs-active': isActive()}\"><div><ul class=jdfs-fontlist><jd-font ng-repeat=\"font in getFilteredFonts() | startFrom: page.current * page.size | limitTo: page.size\"></ul><div class=jdfs-paginationcon><button class=jdfs-fontpagination ng-repeat=\"i in getPages() track by $index\" ng-class=\"{'jdfs-active jdfs-highlight': page.current == $index}\" ng-click=setCurrentPage($index)>{{$index + 1}}</button></div><div class=jdfs-fontcount><span ng-if=\"getFilteredFonts().length == fonts.length\">{{fonts.length}}</span><span ng-if=\"fonts.length && getFilteredFonts().length != fonts.length\">{{getFilteredFonts().length}}/{{fonts.length}}</span><span ng-if=!fonts.length>…</span></div></div></div>"
     );
   
   
