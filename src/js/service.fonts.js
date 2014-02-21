@@ -18,7 +18,7 @@ var METHOD_GET = 'get';
 var URL_GOOGLE_FONTS_API = 'https://www.googleapis.com/webfonts/v1/webfonts';
 
 /** @const */
-var URL_GOOGLE_FONTS_CSS = 'http://fonts.googleapis.com/css?';
+var URL_GOOGLE_FONTS_CSS = 'http://fonts.googleapis.com/css';
 
 /** @const */
 var SUBSET_CYRILLIC = 'cyrillic';
@@ -103,7 +103,9 @@ FontsService.prototype = {
     
     self._fonts = self._fonts || [];
     self._map = {};
-    self._subsets = [];
+    self._allSubsets = [];
+    self._subsets = {};
+
     self._subsetNames = {};
     self._addDefaultFonts();
   },
@@ -216,12 +218,32 @@ FontsService.prototype = {
     return DEFAULT_CATEGORIES;
   },
 
-  getSubsets: function() {
-    return this._subsets;
+  getAllSubsets: function() {
+    return this._allSubsets;
   },
 
   getSubsetNames: function() {
     return this._subsetNames;
+  },
+
+  getSubsets: function() {
+    return this._subsets;
+  },
+
+  setSubsets: function(subsets, additive) {
+    var self = this;
+
+    if (angular.isUndefined(additive)) {
+      additive = true;
+    }
+
+    angular.forEach(subsets, function(active, subset) {
+      if (active || !additive) {
+        self._subsets[subset] = active;
+      }
+    });
+
+    return self._subsets;
   },
 
   load: function(font) {
@@ -244,7 +266,7 @@ FontsService.prototype = {
     var urls = {};
     
     if (googleUrl) {
-      urls.google = googleUrl;
+      urls[PROVIDER_GOOGLE] = googleUrl;
     }
 
     return urls;
@@ -261,6 +283,8 @@ FontsService.prototype = {
   getGoogleUrl: function() {
     var self = this;
     var googleFonts = self.$filter('filter')(self.getUsedFonts(), {provider: PROVIDER_GOOGLE});
+    var subsets = [];
+    var url = URL_GOOGLE_FONTS_CSS;
 
     if (googleFonts.length) {
       var googleNames = [];
@@ -269,7 +293,19 @@ FontsService.prototype = {
         googleNames.push(googleFonts[i].name);
       }
 
-      return URL_GOOGLE_FONTS_CSS + 'family=' + window.escape(googleNames.join('|'));
+      url += '?family=' + window.escape(googleNames.join('|'));
+
+      angular.forEach(self._subsets, function(active, key) {
+        if (active) {
+          subsets.push(key);
+        }
+      });
+
+      if (subsets.length) {
+        url += '&subset=' + subsets.join(',');
+      }
+
+      return url;
     } else {
       return false;
     }
@@ -354,7 +390,7 @@ FontsService.prototype = {
   _addSubset: function(subset) {
     var self = this;
 
-    if (self._subsets.indexOf(subset) < 0) {
+    if (self._allSubsets.indexOf(subset) < 0) {
       var fragments = subset.split('-');
 
       for (var i = 0, l = fragments.length; i < l; i++) {
@@ -362,7 +398,7 @@ FontsService.prototype = {
       }
 
       self._subsetNames[subset] = fragments.join(' ');
-      self._subsets.push(subset);
+      self._allSubsets.push(subset);
     }
   },
 

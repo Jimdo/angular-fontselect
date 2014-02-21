@@ -130,7 +130,7 @@ describe('fontselect directive', function() {
 
   describe('character sets', function() {
     it('should have a list of subsets', function() {
-      expect(fontsService.getSubsets()).toBeInstanceOf(Array);
+      expect(fontsService.getAllSubsets()).toBeInstanceOf(Array);
     });
 
     it('should try to add new subsets when we add a new font', function() {
@@ -140,9 +140,9 @@ describe('fontselect directive', function() {
     });
 
     it('should expand the list of subsets if new are present', function() {
-      var listBefore = fontsService._subsets.length;
+      var listBefore = fontsService._allSubsets.length;
       fontsService.add(AND_SOME_FONT_MORE);
-      expect(fontsService._subsets.length).toBe(listBefore + 1);
+      expect(fontsService._allSubsets.length).toBe(listBefore + 1);
     });
 
     it('should not add existing subsets', function() {
@@ -156,7 +156,7 @@ describe('fontselect directive', function() {
     });
 
     it('should have checkboxes for all subsets', function() {
-      expect(elm.find('input[type="checkbox"]').length).toBe(fontsService._subsets.length);
+      expect(elm.find('input[type="checkbox"]').length).toBe(fontsService._allSubsets.length);
     });
   });
 

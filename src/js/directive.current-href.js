@@ -6,9 +6,13 @@ fontselectModule.directive('jdFontselectCurrentHref', [NAME_FONTSSERVICE, functi
     replace: true,
     controller: ['$scope', function($scope) {
       $scope.urls = [];
-      $scope.$on('jdfs.change', function() {
+
+      function update() {
         $scope.urls = fontsService.getUrls();
-      });
+      }
+
+      $scope.$on('jdfs.change', update);
+      $scope.$on('jdfs.change.subsets', update);
     }]
   };
 }]);

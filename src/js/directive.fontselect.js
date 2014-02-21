@@ -39,6 +39,8 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, '$rootScope', fun
         if (!$scope.current.sort.attr) {
           $scope.current.sort.attr = SORT_ATTRIBUTES[0];
         }
+
+        $scope.current.subsets = fontsService.setSubsets($scope.current.subsets);
       }
 
       function isDescendant(parent, child) {
@@ -138,6 +140,12 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, '$rootScope', fun
           $rootScope.$broadcast('jdfs.change', scope.selected);
         }
       });
+
+      scope.$watch('current.subsets', function(newSubsets, oldSubsets) {
+        if (newSubsets !== oldSubsets) {
+          $rootScope.$broadcast('jdfs.change.subsets', newSubsets);
+        }
+      }, true);
 
       if (scope[PLEASE_INITIALIZE_STATE_FONT]) {
         var destroy = scope.$watch('fonts', function() {

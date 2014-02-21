@@ -85,7 +85,7 @@ describe('api', function() {
           useGoogleFont();
 
           expect(fontsService.getUrls()).toEqual({
-            google: 'http://fonts.googleapis.com/css?family=Open%20Sans'
+            google: 'http://fonts.googleapis.com/css?family=Open%20Sans&subset=latin'
           });
         });
       });
