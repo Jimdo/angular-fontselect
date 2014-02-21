@@ -1,5 +1,5 @@
 /*!
- * angular-fontselect v0.4.3
+ * angular-fontselect v0.5.0
  * https://github.com/Jimdo/angular-fontselect
  *
  * A fontselect directive for AngularJS
@@ -87,6 +87,22 @@
   border-radius: 0 4px 4px 0;
   padding: .5em;
   width: 14em;
+  background: #d6d6d6;
+}
+.jdfs-filter h4 {
+  margin: 0 0 .5em;
+}
+.jdfs-filter .jdfs-styles,
+.jdfs-filter .jdfs-providers,
+.jdfs-filter .jdfs-subsets {
+  margin-top: 1em;
+}
+.jdfs-filter .jdfs-styles:first-child,
+.jdfs-filter .jdfs-providers:first-child,
+.jdfs-filter .jdfs-subsets:first-child {
+  margin-top: 0;
+}
+.jdfs-styles {
   display: -webkit-box;
   display: -moz-box;
   display: -ms-flexbox;
@@ -94,7 +110,9 @@
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
-  background: #d6d6d6;
+}
+.jdfs-styles h4 {
+  flex: 100%;
 }
 .jdfs-filterbtn {
   border-radius: 2px;
@@ -115,9 +133,6 @@
 }
 .jdfs-filterbtn:last-child {
   margin-bottom: 0;
-}
-.jdfs-searchoptions {
-  flex: 0 0 100%;
 }
 .jdfs-highlight,
 .jdfs-highlight:hover {

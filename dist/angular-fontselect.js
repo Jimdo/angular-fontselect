@@ -1,5 +1,5 @@
 /*!
- * angular-fontselect v0.4.3
+ * angular-fontselect v0.5.0
  * https://github.com/Jimdo/angular-fontselect
  *
  * A fontselect directive for AngularJS
@@ -21,10 +21,9 @@
   var PROVIDER_GOOGLE = 'google';
   
   /** @const */
-  var PROVIDERS = [
-    PROVIDER_WEBSAFE,
-    PROVIDER_GOOGLE
-  ];
+  var PROVIDERS = {};
+  PROVIDERS[PROVIDER_WEBSAFE] = true;
+  PROVIDERS[PROVIDER_GOOGLE] = true;
   
   /** @const */
   var DIR_PARTIALS = 'src/partials/';
@@ -174,6 +173,84 @@
   var DIRECTION_PREVIOUS = 'prev';
   
   /** @const */
+  var REQUIRED_FONT_OBJECT_KEYS = [
+    'name',
+    'key',
+    'stack'
+  ];
+  
+  /** @const */
+  var SUPPORT_KHMER = false;
+  
+  /** @const */
+  var METHOD_GET = 'get';
+  
+  /** @const */
+  var URL_GOOGLE_FONTS_API = 'https://www.googleapis.com/webfonts/v1/webfonts';
+  
+  /** @const */
+  var URL_GOOGLE_FONTS_CSS = 'http://fonts.googleapis.com/css';
+  
+  /** @const */
+  var SUBSET_CYRILLIC = 'cyrillic';
+  
+  /** @const */
+  var SUBSET_CYRILLIC_EXT = 'cyrillic-ext';
+  
+  /** @const */
+  var SUBSET_GREEK = 'greek';
+  
+  /** @const */
+  var SUBSET_GREEK_EXT = 'greek-ext';
+  
+  /** @const */
+  var SUBSET_LATIN = 'latin';
+  
+  /** @const */
+  var SUBSET_LATIN_EXT = 'latin-ext';
+  
+  /** @const */
+  var SUBSET_VIETNAMESE = 'vietnamese';
+  
+  /** @const */
+  var SUBSET_PRIORITY = [
+    SUBSET_LATIN,
+    SUBSET_LATIN_EXT,
+    SUBSET_GREEK,
+    SUBSET_GREEK_EXT,
+    SUBSET_CYRILLIC,
+    SUBSET_CYRILLIC_EXT,
+    SUBSET_VIETNAMESE
+  ];
+  
+  /** @const */
+  var VARIANTS_REGULAR = ['regular', '400', '300', '500'];
+  
+  /** @const */
+  var VARIANTS_LIGHT = ['light', '100', '200'];
+  
+  /** @const */
+  var VARIANTS_BOLD = ['bold', '600', '700', '800', '900'];
+  
+  /** @const */
+  var VARIANTS_ITALIC = ['italic', '400italic', '300italic', '500italic'];
+  
+  /** @const */
+  var VARIANTS_LIGHT_ITALIC = ['lightitalic', '100italic', '200italic'];
+  
+  /** @const */
+  var VARIANTS_BOLD_ITALIC = ['bolditalic', '600italic', '700italic', '800italic', '900italic'];
+  
+  /** @const */
+  var VARIANT_PRIORITY = VARIANTS_REGULAR.concat(
+    VARIANTS_LIGHT,
+    VARIANTS_BOLD,
+    VARIANTS_ITALIC,
+    VARIANTS_LIGHT_ITALIC,
+    VARIANTS_BOLD_ITALIC
+  );
+  
+  /** @const */
   var SORT_ATTRIBUTES = [
     {
       key: 'name',
@@ -195,7 +272,7 @@
       attr: undefined,
       direction: true
     },
-    provider: PROVIDER_WEBSAFE,
+    providers: PROVIDERS,
     category: undefined,
     font: undefined,
     search: undefined,
@@ -208,6 +285,9 @@
   var TEXT_DEFAULTS = {
     button: 'Choose Font',
     search: 'Search by Fontname',
+    providerLabel: 'Providers',
+    subsetLabel: 'Subsets',
+    styleLabel: 'Font Styles',
     pageLabel: 'Page: ',
     fontFabel: 'Fonts: ',
     page: {
@@ -1104,84 +1184,6 @@
   });
 
   // src/js/service.fonts.js
-  /** @const */
-  var REQUIRED_FONT_OBJECT_KEYS = [
-    'name',
-    'key',
-    'stack'
-  ];
-  
-  /** @const */
-  var SUPPORT_KHMER = false;
-  
-  /** @const */
-  var METHOD_GET = 'get';
-  
-  /** @const */
-  var URL_GOOGLE_FONTS_API = 'https://www.googleapis.com/webfonts/v1/webfonts';
-  
-  /** @const */
-  var URL_GOOGLE_FONTS_CSS = 'http://fonts.googleapis.com/css?';
-  
-  /** @const */
-  var SUBSET_CYRILLIC = 'cyrillic';
-  
-  /** @const */
-  var SUBSET_CYRILLIC_EXT = 'cyrillic-ext';
-  
-  /** @const */
-  var SUBSET_GREEK = 'greek';
-  
-  /** @const */
-  var SUBSET_GREEK_EXT = 'greek-ext';
-  
-  /** @const */
-  var SUBSET_LATIN = 'latin';
-  
-  /** @const */
-  var SUBSET_LATIN_EXT = 'latin-ext';
-  
-  /** @const */
-  var SUBSET_VIETNAMESE = 'vietnamese';
-  
-  /** @const */
-  var SUBSET_PRIORITY = [
-    SUBSET_LATIN,
-    SUBSET_LATIN_EXT,
-    SUBSET_GREEK,
-    SUBSET_GREEK_EXT,
-    SUBSET_CYRILLIC,
-    SUBSET_CYRILLIC_EXT,
-    SUBSET_VIETNAMESE
-  ];
-  
-  /** @const */
-  var VARIANTS_REGULAR = ['regular', '400', '300', '500'];
-  
-  /** @const */
-  var VARIANTS_LIGHT = ['light', '100', '200'];
-  
-  /** @const */
-  var VARIANTS_BOLD = ['bold', '600', '700', '800', '900'];
-  
-  /** @const */
-  var VARIANTS_ITALIC = ['italic', '400italic', '300italic', '500italic'];
-  
-  /** @const */
-  var VARIANTS_LIGHT_ITALIC = ['lightitalic', '100italic', '200italic'];
-  
-  /** @const */
-  var VARIANTS_BOLD_ITALIC = ['bolditalic', '600italic', '700italic', '800italic', '900italic'];
-  
-  /** @const */
-  var VARIANT_PRIORITY = VARIANTS_REGULAR.concat(
-    VARIANTS_LIGHT,
-    VARIANTS_BOLD,
-    VARIANTS_ITALIC,
-    VARIANTS_LIGHT_ITALIC,
-    VARIANTS_BOLD_ITALIC
-  );
-  
   var _fontsServiceDeps = ['$http', '$q', 'jdFontselectConfig', '$filter'];
   
   var _googleFontsInitiated = false;
@@ -1206,7 +1208,10 @@
       
       self._fonts = self._fonts || [];
       self._map = {};
-      self._subsets = [];
+      self._allSubsets = [];
+      self._subsets = {};
+      self._providers = {};
+  
       self._subsetNames = {};
       self._addDefaultFonts();
     },
@@ -1319,12 +1324,38 @@
       return DEFAULT_CATEGORIES;
     },
   
-    getSubsets: function() {
-      return this._subsets;
+    getAllSubsets: function() {
+      return this._allSubsets;
     },
   
     getSubsetNames: function() {
       return this._subsetNames;
+    },
+  
+    getSubsets: function() {
+      return this._subsets;
+    },
+  
+    setSubsets: function(subsets, additive) {
+      return this._setSelects(this._subsets, subsets, additive);
+    },
+  
+    setProviders: function(providers, additive) {
+      return this._setSelects(this._providers, providers, additive);
+    },
+  
+    _setSelects: function(target, srcs, additive) {
+      if (angular.isUndefined(additive)) {
+        additive = true;
+      }
+  
+      angular.forEach(srcs, function(active, src) {
+        if (active || !additive) {
+          target[src] = active;
+        }
+      });
+  
+      return target;
     },
   
     load: function(font) {
@@ -1347,7 +1378,7 @@
       var urls = {};
       
       if (googleUrl) {
-        urls.google = googleUrl;
+        urls[PROVIDER_GOOGLE] = googleUrl;
       }
   
       return urls;
@@ -1364,6 +1395,8 @@
     getGoogleUrl: function() {
       var self = this;
       var googleFonts = self.$filter('filter')(self.getUsedFonts(), {provider: PROVIDER_GOOGLE});
+      var subsets = [];
+      var url = URL_GOOGLE_FONTS_CSS;
   
       if (googleFonts.length) {
         var googleNames = [];
@@ -1372,7 +1405,19 @@
           googleNames.push(googleFonts[i].name);
         }
   
-        return URL_GOOGLE_FONTS_CSS + 'family=' + window.escape(googleNames.join('|'));
+        url += '?family=' + window.escape(googleNames.join('|'));
+  
+        angular.forEach(self._subsets, function(active, key) {
+          if (active) {
+            subsets.push(key);
+          }
+        });
+  
+        if (subsets.length) {
+          url += '&subset=' + subsets.join(',');
+        }
+  
+        return url;
       } else {
         return false;
       }
@@ -1457,7 +1502,7 @@
     _addSubset: function(subset) {
       var self = this;
   
-      if (self._subsets.indexOf(subset) < 0) {
+      if (self._allSubsets.indexOf(subset) < 0) {
         var fragments = subset.split('-');
   
         for (var i = 0, l = fragments.length; i < l; i++) {
@@ -1465,7 +1510,7 @@
         }
   
         self._subsetNames[subset] = fragments.join(' ');
-        self._subsets.push(subset);
+        self._allSubsets.push(subset);
       }
     },
   
@@ -1540,7 +1585,7 @@
       controller: ['$scope', '$element', '$timeout', function($scope, $element, $timeout) {
         $scope.fonts = fontsService.getAllFonts();
         $scope.id = id++;
-        $scope.providers = PROVIDERS;
+        $scope.providers = angular.copy(PROVIDERS);
         $scope.active = false;
         $scope.categories = fontsService.getCategories();
         $scope.subsets = fontsService.getSubsetNames();
@@ -1561,6 +1606,9 @@
           if (!$scope.current.sort.attr) {
             $scope.current.sort.attr = SORT_ATTRIBUTES[0];
           }
+  
+          $scope.current.subsets = fontsService.setSubsets($scope.current.subsets);
+          $scope.current.providers = fontsService.setProviders($scope.current.providers);
         }
   
         function isDescendant(parent, child) {
@@ -1661,6 +1709,12 @@
           }
         });
   
+        scope.$watch('current.subsets', function(newSubsets, oldSubsets) {
+          if (newSubsets !== oldSubsets) {
+            $rootScope.$broadcast('jdfs.change.subsets', newSubsets);
+          }
+        }, true);
+  
         if (scope[PLEASE_INITIALIZE_STATE_FONT]) {
           var destroy = scope.$watch('fonts', function() {
             var current = scope.current;
@@ -1706,6 +1760,7 @@
       var _sortedFonts;
       var _categorizedFonts;
       var _fontsInSubsets;
+      var _fontsInProviders;
       var _lastPageCount = 0;
       var _sortCache = {};
   
@@ -1795,7 +1850,16 @@
           if ($scope.fonts.length !== _sortCache.sourceCache) {
             _sortCache.sourceCache = $scope.fonts.length;
             /* ESKALATE! */
+            _sortCache.providers = null;
+          }
+  
+          if (_sortCache.providers !== JSON.stringify($scope.current.providers)) {
+            _sortCache.providers = JSON.stringify($scope.current.providers);
             _sortCache.subsets = null;
+  
+            _fontsInProviders = $scope.fonts.filter(function(font) {
+              return $scope.current.providers[font.provider];
+            });
           }
   
           if (_sortCache.subsets !== JSON.stringify($scope.current.subsets)) {
@@ -1803,11 +1867,10 @@
             _sortCache.sortdir = null;
   
             _fontsInSubsets = $filter('hasAllSubsets')(
-              $scope.fonts,
+              _fontsInProviders,
               $scope.current.subsets
             );
           }
-  
   
           if (_sortCache.sortattr !== $scope.current.sort.attr.key ||
             _sortCache.sortdir !== $scope.current.sort.direction)
@@ -1915,9 +1978,13 @@
       replace: true,
       controller: ['$scope', function($scope) {
         $scope.urls = [];
-        $scope.$on('jdfs.change', function() {
+  
+        function update() {
           $scope.urls = fontsService.getUrls();
-        });
+        }
+  
+        $scope.$on('jdfs.change', update);
+        $scope.$on('jdfs.change.subsets', update);
       }]
     };
   }]);
@@ -1942,7 +2009,7 @@
   
   
     $templateCache.put('src/partials/fontselect.html',
-      "<div class=jdfs-main id=jd-fontselect-{{id}}><button ng-click=toggle() class=jdfs-toggle style=\"font-family: {{current.font.stack}}\" ng-show=!active><span>{{current.font.name || text.button}}</span></button><input class=jdfs-search placeholder={{text.search}} name=jdfs-{{id}}-search ng-show=active ng-model=current.search><div class=jdfs-window ng-show=active><jd-fontlist fsid=id text=text current=current fonts=fonts></jd-fontlist><div class=jdfs-filter><button class=\"jdfs-filterbtn jdfs-fontstyle-{{category.key}}\" ng-repeat=\"category in categories\" ng-class=\"{'jdfs-active jdfs-highlight': category.key == current.category}\" ng-click=setCategoryFilter(category.key) ng-model=current.category>{{text.category[category.key]}}</button><div class=jdfs-searchoptions><div class=jdfs-charsets><div ng-repeat=\"(key, name) in subsets\" class=jdfs-subset ng-class=\"{'jdfs-active jdfs-highlight': current.subsets[key]}\"><input ng-model=current.subsets[key] type=checkbox id=jdfs-{{id}}-subset-{{key}}><label for=jdfs-{{id}}-subset-{{key}}>{{text.subset[key]}}</label></div></div></div></div></div></div>"
+      "<div class=jdfs-main id=jd-fontselect-{{id}}><button ng-click=toggle() class=jdfs-toggle style=\"font-family: {{current.font.stack}}\" ng-show=!active><span>{{current.font.name || text.button}}</span></button><input class=jdfs-search placeholder={{text.search}} name=jdfs-{{id}}-search ng-show=active ng-model=current.search><div class=jdfs-window ng-show=active><jd-fontlist fsid=id text=text current=current fonts=fonts></jd-fontlist><div class=jdfs-filter><div class=jdfs-styles><h4 class=jdfs-filter-headline>{{text.styleLabel}}</h4><button class=\"jdfs-filterbtn jdfs-fontstyle-{{category.key}}\" ng-repeat=\"category in categories\" ng-class=\"{'jdfs-active jdfs-highlight': category.key == current.category}\" ng-click=setCategoryFilter(category.key) ng-model=current.category>{{text.category[category.key]}}</button></div><div class=jdfs-providers><h4 class=jdfs-filter-headline>{{text.providerLabel}}</h4><div ng-repeat=\"(provider, active) in providers\" class=jdfs-provider ng-class=\"{'jdfs-active jdfs-highlight': current.providers[provider]}\"><input ng-model=current.providers[provider] type=checkbox id=jdfs-{{id}}-provider-{{provider}}><label for=jdfs-{{id}}-provider-{{provider}}>{{text.provider[provider]}}</label></div></div><div class=jdfs-subsets><h4 class=jdfs-filter-headline>{{text.subsetLabel}}</h4><div ng-repeat=\"(key, name) in subsets\" class=jdfs-subset ng-class=\"{'jdfs-active jdfs-highlight': current.subsets[key]}\"><input ng-model=current.subsets[key] type=checkbox id=jdfs-{{id}}-subset-{{key}}><label for=jdfs-{{id}}-subset-{{key}}>{{text.subset[key]}}</label></div></div></div></div></div>"
     );
   
   }]);
