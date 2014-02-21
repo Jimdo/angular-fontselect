@@ -181,6 +181,34 @@ describe('fontselect directive', function() {
     });
   });
 
+  describe('providers', function() {
+    beforeEach(Helpers.toggle);
+
+    it('should have multiple provider toggles', function() {
+      expect(Helpers.getProviderCheckbox().count()).toBeGreaterThan(1);
+    });
+
+    it('should have all provider toggles selected', function() {
+      Helpers.getProviderCheckbox().then(function(checkboxes) {
+        checkboxes.forEach(function(checkbox) {
+          expect(checkbox.isSelected()).toBe(true);
+        });
+      });
+    });
+
+    it('should reduce the amount of selected fonts when we deselect a checkbox', function() {
+      var previousAmount = Helpers.currentFontAmount();
+
+      Helpers.getProviderCheckbox().then(function(checkboxes) {
+        checkboxes.forEach(function(checkbox) {
+          checkbox.click();
+          expect(Helpers.currentFontAmount()).toBeLessThan(previousAmount);
+          checkbox.click();
+        });
+      });
+    });
+  });
+
   describe('Activate button', function() {
     it('should be visible when the directive is inactive', function() {
       expect(element(by.css('.jdfs-toggle')).isDisplayed()).toBe(true);

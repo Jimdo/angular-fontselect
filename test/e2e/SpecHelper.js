@@ -17,6 +17,9 @@ module.exports = {
   /** @const */
   MAX_PAGE_CONTAINER_CLASS: '.jdfs-page-count',
 
+  /** @const */
+  FONTCOUNT_CONTAINER_CLASS: '.jdfs-fontcount',
+
   toggle: function() {
     if (!active) {
       element(by.css('.jdfs-toggle')).click();
@@ -63,6 +66,26 @@ module.exports = {
     return d.promise;
   },
 
+  totalFonts: function() {
+    var d = protractor.promise.defer();
+
+    element(by.css(this.FONTCOUNT_CONTAINER_CLASS)).getText().then(function(text) {
+      d.fulfill(parseInt(text.split('/')[1]));
+    });
+
+    return d.promise;
+  },
+
+  currentFontAmount: function() {
+    var d = protractor.promise.defer();
+
+    element(by.css(this.FONTCOUNT_CONTAINER_CLASS)).getText().then(function(text) {
+      d.fulfill(parseInt(text.split('/')[0].replace(/[^\d]*/g, '')));
+    });
+
+    return d.promise;
+  },
+
   getLi: function(n) {
     var li = element.all(by.css('li'));
     if(typeof n === 'number') {
@@ -81,6 +104,14 @@ module.exports = {
 
   getSubsetCheckbox: function(n) {
     var checkboxes = element.all(by.model('current.subsets[key]'));
+    if(typeof n === 'number') {
+      return checkboxes.get(n);
+    }
+    return checkboxes;
+  },
+
+  getProviderCheckbox: function(n) {
+    var checkboxes = element.all(by.model('current.providers[provider]'));
     if(typeof n === 'number') {
       return checkboxes.get(n);
     }

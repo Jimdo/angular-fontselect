@@ -18,7 +18,7 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, '$rootScope', fun
     controller: ['$scope', '$element', '$timeout', function($scope, $element, $timeout) {
       $scope.fonts = fontsService.getAllFonts();
       $scope.id = id++;
-      $scope.providers = PROVIDERS;
+      $scope.providers = angular.copy(PROVIDERS);
       $scope.active = false;
       $scope.categories = fontsService.getCategories();
       $scope.subsets = fontsService.getSubsetNames();
@@ -41,6 +41,7 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, '$rootScope', fun
         }
 
         $scope.current.subsets = fontsService.setSubsets($scope.current.subsets);
+        $scope.current.providers = fontsService.setProviders($scope.current.providers);
       }
 
       function isDescendant(parent, child) {

@@ -62,6 +62,15 @@ describe('fontselect directive', function() {
     expect(createNewDirective().elm.find('.jdfs-main').attr('id')).toBe('jd-fontselect-2');
   });
 
+  describe('providers', function() {
+    it('should have a wrapper for the provider selection', function() {
+      expect(elm.find('.jdfs-providers').length).toBe(1);
+    });
+
+    it('should have multiple lables for all dem providers', function() {
+      expect(elm.find('.jdfs-providers label').length).toBeGreaterThan(1);
+    });
+  });
 
   describe('font list', function() {
 
@@ -156,7 +165,7 @@ describe('fontselect directive', function() {
     });
 
     it('should have checkboxes for all subsets', function() {
-      expect(elm.find('input[type="checkbox"]').length).toBe(fontsService._allSubsets.length);
+      expect(elm.find('.jdfs-subsets input').length).toBe(fontsService._allSubsets.length);
     });
   });
 

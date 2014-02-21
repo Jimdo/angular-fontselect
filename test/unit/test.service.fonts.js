@@ -148,4 +148,14 @@ describe('fontsService', function() {
       expect(d.scope.current.subsets.foo).toBe('fara');
     });
   });
+
+  describe('providers', function() {
+    it('should use one global provider object for all directives', function() {
+      var d = createNewDirective();
+      expect($scope.current.providers).toBe(d.scope.current.providers);
+
+      $scope.current.providers.foo = 'fara';
+      expect(d.scope.current.providers.foo).toBe('fara');
+    });
+  });
 });

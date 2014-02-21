@@ -41,7 +41,6 @@
 
   width: 500px;
 
-
   display: -webkit-box;
   display: -moz-box;
   display: -ms-flexbox;
@@ -110,6 +109,22 @@
   padding: .5em;
   width: 14em;
 
+  background: @containerBg;
+  h4 {
+    margin: 0 0 .5em;
+  }
+}
+
+.jdfs-filter {
+  .jdfs-styles, .jdfs-providers, .jdfs-subsets {
+    margin-top: 1em;
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+}
+
+.jdfs-styles {
   display: -webkit-box;
   display: -moz-box;
   display: -ms-flexbox;
@@ -118,9 +133,9 @@
 
   justify-content: space-between;
   flex-wrap: wrap;
-
-  background: @containerBg;
-
+  h4 {
+    flex: 100%;
+  }
 }
 
 .jdfs-filterbtn {
@@ -145,10 +160,6 @@
   &:last-child {
     margin-bottom: 0;
   }
-}
-
-.jdfs-searchoptions {
-  flex: 0 0 100%;
 }
 
 .jdfs-highlight,

@@ -7,10 +7,9 @@ var PROVIDER_WEBSAFE = 'websafe';
 var PROVIDER_GOOGLE = 'google';
 
 /** @const */
-var PROVIDERS = [
-  PROVIDER_WEBSAFE,
-  PROVIDER_GOOGLE
-];
+var PROVIDERS = {};
+PROVIDERS[PROVIDER_WEBSAFE] = true;
+PROVIDERS[PROVIDER_GOOGLE] = true;
 
 /** @const */
 var DIR_PARTIALS = 'src/partials/';
@@ -160,6 +159,84 @@ var DIRECTION_NEXT = 'next';
 var DIRECTION_PREVIOUS = 'prev';
 
 /** @const */
+var REQUIRED_FONT_OBJECT_KEYS = [
+  'name',
+  'key',
+  'stack'
+];
+
+/** @const */
+var SUPPORT_KHMER = false;
+
+/** @const */
+var METHOD_GET = 'get';
+
+/** @const */
+var URL_GOOGLE_FONTS_API = 'https://www.googleapis.com/webfonts/v1/webfonts';
+
+/** @const */
+var URL_GOOGLE_FONTS_CSS = 'http://fonts.googleapis.com/css';
+
+/** @const */
+var SUBSET_CYRILLIC = 'cyrillic';
+
+/** @const */
+var SUBSET_CYRILLIC_EXT = 'cyrillic-ext';
+
+/** @const */
+var SUBSET_GREEK = 'greek';
+
+/** @const */
+var SUBSET_GREEK_EXT = 'greek-ext';
+
+/** @const */
+var SUBSET_LATIN = 'latin';
+
+/** @const */
+var SUBSET_LATIN_EXT = 'latin-ext';
+
+/** @const */
+var SUBSET_VIETNAMESE = 'vietnamese';
+
+/** @const */
+var SUBSET_PRIORITY = [
+  SUBSET_LATIN,
+  SUBSET_LATIN_EXT,
+  SUBSET_GREEK,
+  SUBSET_GREEK_EXT,
+  SUBSET_CYRILLIC,
+  SUBSET_CYRILLIC_EXT,
+  SUBSET_VIETNAMESE
+];
+
+/** @const */
+var VARIANTS_REGULAR = ['regular', '400', '300', '500'];
+
+/** @const */
+var VARIANTS_LIGHT = ['light', '100', '200'];
+
+/** @const */
+var VARIANTS_BOLD = ['bold', '600', '700', '800', '900'];
+
+/** @const */
+var VARIANTS_ITALIC = ['italic', '400italic', '300italic', '500italic'];
+
+/** @const */
+var VARIANTS_LIGHT_ITALIC = ['lightitalic', '100italic', '200italic'];
+
+/** @const */
+var VARIANTS_BOLD_ITALIC = ['bolditalic', '600italic', '700italic', '800italic', '900italic'];
+
+/** @const */
+var VARIANT_PRIORITY = VARIANTS_REGULAR.concat(
+  VARIANTS_LIGHT,
+  VARIANTS_BOLD,
+  VARIANTS_ITALIC,
+  VARIANTS_LIGHT_ITALIC,
+  VARIANTS_BOLD_ITALIC
+);
+
+/** @const */
 var SORT_ATTRIBUTES = [
   {
     key: 'name',
@@ -181,7 +258,7 @@ var STATE_DEFAULTS = {
     attr: undefined,
     direction: true
   },
-  provider: PROVIDER_WEBSAFE,
+  providers: PROVIDERS,
   category: undefined,
   font: undefined,
   search: undefined,
@@ -194,6 +271,9 @@ var STATE_DEFAULTS = {
 var TEXT_DEFAULTS = {
   button: 'Choose Font',
   search: 'Search by Fontname',
+  providerLabel: 'Providers',
+  subsetLabel: 'Subsets',
+  styleLabel: 'Font Styles',
   pageLabel: 'Page: ',
   fontFabel: 'Fonts: ',
   page: {

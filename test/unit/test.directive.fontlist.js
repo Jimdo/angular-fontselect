@@ -1,4 +1,4 @@
-/* global elm, $scope, LIST_CONTAINER_CLASS */
+/* global elm, $scope, LIST_CONTAINER_CLASS, PROVIDER_WEBSAFE, PROVIDER_GOOGLE */
 describe('fontlist directive', function() {
   'use strict';
 
@@ -13,8 +13,9 @@ describe('fontlist directive', function() {
     expect(fontlist.length).toBe(1);
   });
 
-  it('should be the current provider', function() {
-    expect($scope.current.provider).toBe('websafe');
+  it('should have providers set', function() {
+    expect($scope.current.providers[PROVIDER_WEBSAFE]).toBe(true);
+    expect($scope.current.providers[PROVIDER_GOOGLE]).toBe(true);
   });
 
   it('should have two pagination buttons', function() {

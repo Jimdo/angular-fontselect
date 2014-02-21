@@ -29,25 +29,41 @@
 		></jd-fontlist>
 
 		<div class="jdfs-filter">
-	
 		
-			<button
-				class="jdfs-filterbtn jdfs-fontstyle-{{category.key}}"
-				ng-repeat="category in categories"
-				ng-class="{'jdfs-active jdfs-highlight': category.key == current.category}"
-				ng-click="setCategoryFilter(category.key)"
-				ng-model="current.category"
-			>
-				{{text.category[category.key]}}
-			</button>
+			<div class="jdfs-styles">
+				<h4 class="jdfs-filter-headline">{{text.styleLabel}}</h4>
+				<button
+					class="jdfs-filterbtn jdfs-fontstyle-{{category.key}}"
+					ng-repeat="category in categories"
+					ng-class="{'jdfs-active jdfs-highlight': category.key == current.category}"
+					ng-click="setCategoryFilter(category.key)"
+					ng-model="current.category"
+				>
+					{{text.category[category.key]}}
+				</button>
+			</div>
 
+			<div class="jdfs-providers">
+				<h4 class="jdfs-filter-headline">{{text.providerLabel}}</h4>
+				<div
+					ng-repeat="(provider, active) in providers"
+					class='jdfs-provider'
+					ng-class="{'jdfs-active jdfs-highlight': current.providers[provider]}"
+				>
+					<input ng-model="current.providers[provider]" type="checkbox" id="jdfs-{{id}}-provider-{{provider}}" />
+					<label for="jdfs-{{id}}-provider-{{provider}}">{{text.provider[provider]}}</label>
+				</div>
+			</div>
 
-			<div class="jdfs-searchoptions">
-				<div class="jdfs-charsets">
-					<div ng-repeat="(key, name) in subsets" class='jdfs-subset' ng-class="{'jdfs-active jdfs-highlight': current.subsets[key]}">
-						<input ng-model="current.subsets[key]" type="checkbox" id="jdfs-{{id}}-subset-{{key}}" />
-						<label for="jdfs-{{id}}-subset-{{key}}">{{text.subset[key]}}</label>
-					</div>
+			<div class="jdfs-subsets">
+				<h4 class="jdfs-filter-headline">{{text.subsetLabel}}</h4>
+				<div
+					ng-repeat="(key, name) in subsets"
+					class='jdfs-subset'
+					ng-class="{'jdfs-active jdfs-highlight': current.subsets[key]}"
+				>
+					<input ng-model="current.subsets[key]" type="checkbox" id="jdfs-{{id}}-subset-{{key}}" />
+					<label for="jdfs-{{id}}-subset-{{key}}">{{text.subset[key]}}</label>
 				</div>
 			</div>
 
