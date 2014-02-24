@@ -1,5 +1,5 @@
 /*!
- * angular-fontselect v0.5.1
+ * angular-fontselect v0.5.2
  * https://github.com/Jimdo/angular-fontselect
  *
  * A fontselect directive for AngularJS
@@ -1598,7 +1598,8 @@
         current: '=?state',
         selected: '=?',
         rawText: '@?text',
-        text: '=?textObj'
+        text: '=?textObj',
+        onInit: '&?'
       },
       restrict: 'E',
       templateUrl: DIR_PARTIALS + 'fontselect.html',
@@ -1710,6 +1711,8 @@
           $scope._setSelected($scope.current.font);
           $scope[PLEASE_INITIALIZE_STATE_FONT] = true;
         }
+  
+        $scope.onInit({$scope: $scope, $element: $element});
       }],
       link: function(scope) {
   
