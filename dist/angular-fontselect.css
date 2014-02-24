@@ -1,5 +1,5 @@
 /*!
- * angular-fontselect v0.5.0
+ * angular-fontselect v0.5.1
  * https://github.com/Jimdo/angular-fontselect
  *
  * A fontselect directive for AngularJS
@@ -63,8 +63,6 @@
   background: white;
   padding: 0;
   margin: 0;
-  overflow: scroll;
-  max-height: 200px;
 }
 .jdfs-fontlist li {
   padding: 0;

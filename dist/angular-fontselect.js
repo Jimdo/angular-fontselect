@@ -1,5 +1,5 @@
 /*!
- * angular-fontselect v0.5.0
+ * angular-fontselect v0.5.1
  * https://github.com/Jimdo/angular-fontselect
  *
  * A fontselect directive for AngularJS
@@ -24,6 +24,9 @@
   var PROVIDERS = {};
   PROVIDERS[PROVIDER_WEBSAFE] = true;
   PROVIDERS[PROVIDER_GOOGLE] = true;
+  
+  /** @const */
+  var PAGE_SIZE_DEFAULT = 10;
   
   /** @const */
   var DIR_PARTIALS = 'src/partials/';
@@ -249,6 +252,24 @@
     VARIANTS_LIGHT_ITALIC,
     VARIANTS_BOLD_ITALIC
   );
+  
+  /** @const */
+  var KEY_ESCAPE = 27;
+  
+  /** @const */
+  var KEY_ENTER = 13;
+  
+  /** @const */
+  var KEY_UP = 38;
+  
+  /** @const */
+  var KEY_DOWN = 40;
+  
+  /** @const */
+  var KEY_LEFT = 37;
+  
+  /** @const */
+  var KEY_RIGHT = 39;
   
   /** @const */
   var SORT_ATTRIBUTES = [
@@ -1622,6 +1643,11 @@
           return false;
         }
   
+        function close() {
+          $scope.toggle();
+          $scope.$digest();
+        }
+  
         $scope.reverseSort = function() {
           var sort = $scope.current.sort;
   
@@ -1644,8 +1670,13 @@
   
         document.addEventListener('click', function(event) {
           if ($scope.active && !isDescendant($element[0], event.target)) {
-            $scope.toggle();
-            $scope.$digest();
+            close();
+          }
+        });
+  
+        document.addEventListener('keyup', function(event) {
+          if ($scope.active && event.keyCode === KEY_ESCAPE) {
+            close();
           }
         });
   
@@ -1743,6 +1774,7 @@
         fonts: '=',
         current: '=',
         text: '=',
+        active: '='
       },
       restrict: 'E',
       templateUrl: DIR_PARTIALS + 'fontlist.html',
@@ -1753,10 +1785,9 @@
   
   fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
     '$scope',
+    '$rootScope',
     '$filter',
-    'jdFontselect.fonts',
-    function($scope, $filter, fontsService) {
-      var _filteredFonts;
+    'jdFontselect.fonts',  function($scope, $rootScope, $filter, fontsService) {    var _filteredFonts;
       var _sortedFonts;
       var _categorizedFonts;
       var _fontsInSubsets;
@@ -1765,10 +1796,77 @@
       var _sortCache = {};
   
       $scope.page = {
-        size: 30,
+        size: PAGE_SIZE_DEFAULT,
         count: 0,
         current: 0
       };
+  
+      function isOnCurrentPage(index) {
+        var currentMinIndex = $scope.page.current * $scope.page.size;
+  
+        return index >= currentMinIndex && index < currentMinIndex + $scope.page.size;
+      }
+  
+      $scope.keyfocus = function(direction, amount) {
+        var index = _filteredFonts.indexOf($scope.current.font);
+        var pageoffset = $scope.page.size * $scope.page.current;
+        var onPage = isOnCurrentPage(index);
+  
+        if (angular.isUndefined(amount)) {
+          amount = 1;
+        }
+  
+        index += (direction === DIRECTION_PREVIOUS ? -amount : amount);
+  
+        if (!onPage && _filteredFonts[index + pageoffset]) {
+          index += pageoffset;
+        }
+  
+        if (_filteredFonts[index]) {
+          $scope.current.font = _filteredFonts[index];
+  
+          $scope.page.current = Math.floor(index / $scope.page.size);
+  
+          $rootScope.$digest();
+        }
+      };
+  
+      document.addEventListener('keydown', function(event) {
+        if (!$scope.active) {
+          return;
+        }
+  
+        function prevent() {
+          event.preventDefault();
+          return false;
+        }
+  
+        var key = event.keyCode;
+  
+        if (key === KEY_DOWN) {
+          $scope.keyfocus(DIRECTION_NEXT);
+          return prevent();
+        } else if (key === KEY_UP) {
+          $scope.keyfocus(DIRECTION_PREVIOUS);
+          return prevent();
+        }
+  
+        if (document.activeElement.tagName === 'INPUT' && document.activeElement.value) {
+          return;
+        }
+  
+        var amount = $scope.page.size;
+        if (key === KEY_RIGHT) {
+          if (!$scope.current.font) {
+            amount++;
+          }
+          $scope.keyfocus(DIRECTION_NEXT, amount);
+          return prevent();
+        } else if (key === KEY_LEFT) {
+          $scope.keyfocus(DIRECTION_PREVIOUS, $scope.page.size);
+          return prevent();
+        }
+      });
   
       /**
        * Set the current page
@@ -2009,7 +2107,7 @@
   
   
     $templateCache.put('src/partials/fontselect.html',
-      "<div class=jdfs-main id=jd-fontselect-{{id}}><button ng-click=toggle() class=jdfs-toggle style=\"font-family: {{current.font.stack}}\" ng-show=!active><span>{{current.font.name || text.button}}</span></button><input class=jdfs-search placeholder={{text.search}} name=jdfs-{{id}}-search ng-show=active ng-model=current.search><div class=jdfs-window ng-show=active><jd-fontlist fsid=id text=text current=current fonts=fonts></jd-fontlist><div class=jdfs-filter><div class=jdfs-styles><h4 class=jdfs-filter-headline>{{text.styleLabel}}</h4><button class=\"jdfs-filterbtn jdfs-fontstyle-{{category.key}}\" ng-repeat=\"category in categories\" ng-class=\"{'jdfs-active jdfs-highlight': category.key == current.category}\" ng-click=setCategoryFilter(category.key) ng-model=current.category>{{text.category[category.key]}}</button></div><div class=jdfs-providers><h4 class=jdfs-filter-headline>{{text.providerLabel}}</h4><div ng-repeat=\"(provider, active) in providers\" class=jdfs-provider ng-class=\"{'jdfs-active jdfs-highlight': current.providers[provider]}\"><input ng-model=current.providers[provider] type=checkbox id=jdfs-{{id}}-provider-{{provider}}><label for=jdfs-{{id}}-provider-{{provider}}>{{text.provider[provider]}}</label></div></div><div class=jdfs-subsets><h4 class=jdfs-filter-headline>{{text.subsetLabel}}</h4><div ng-repeat=\"(key, name) in subsets\" class=jdfs-subset ng-class=\"{'jdfs-active jdfs-highlight': current.subsets[key]}\"><input ng-model=current.subsets[key] type=checkbox id=jdfs-{{id}}-subset-{{key}}><label for=jdfs-{{id}}-subset-{{key}}>{{text.subset[key]}}</label></div></div></div></div></div>"
+      "<div class=jdfs-main id=jd-fontselect-{{id}}><button ng-click=toggle() class=jdfs-toggle style=\"font-family: {{current.font.stack}}\" ng-show=!active><span>{{current.font.name || text.button}}</span></button><input class=jdfs-search placeholder={{text.search}} name=jdfs-{{id}}-search ng-show=active ng-model=current.search><div class=jdfs-window ng-show=active><jd-fontlist fsid=id text=text current=current fonts=fonts active=active></jd-fontlist><div class=jdfs-filter><div class=jdfs-styles><h4 class=jdfs-filter-headline>{{text.styleLabel}}</h4><button class=\"jdfs-filterbtn jdfs-fontstyle-{{category.key}}\" ng-repeat=\"category in categories\" ng-class=\"{'jdfs-active jdfs-highlight': category.key == current.category}\" ng-click=setCategoryFilter(category.key) ng-model=current.category>{{text.category[category.key]}}</button></div><div class=jdfs-providers><h4 class=jdfs-filter-headline>{{text.providerLabel}}</h4><div ng-repeat=\"(provider, active) in providers\" class=jdfs-provider ng-class=\"{'jdfs-active jdfs-highlight': current.providers[provider]}\"><input ng-model=current.providers[provider] type=checkbox id=jdfs-{{id}}-provider-{{provider}}><label for=jdfs-{{id}}-provider-{{provider}}>{{text.provider[provider]}}</label></div></div><div class=jdfs-subsets><h4 class=jdfs-filter-headline>{{text.subsetLabel}}</h4><div ng-repeat=\"(key, name) in subsets\" class=jdfs-subset ng-class=\"{'jdfs-active jdfs-highlight': current.subsets[key]}\"><input ng-model=current.subsets[key] type=checkbox id=jdfs-{{id}}-subset-{{key}}><label for=jdfs-{{id}}-subset-{{key}}>{{text.subset[key]}}</label></div></div></div></div></div>"
     );
   
   }]);
