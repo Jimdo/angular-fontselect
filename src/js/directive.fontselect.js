@@ -11,7 +11,8 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, '$rootScope', fun
       current: '=?state',
       selected: '=?',
       rawText: '@?text',
-      text: '=?textObj'
+      text: '=?textObj',
+      onInit: '&?'
     },
     restrict: 'E',
     templateUrl: DIR_PARTIALS + 'fontselect.html',
@@ -123,6 +124,8 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, '$rootScope', fun
         $scope._setSelected($scope.current.font);
         $scope[PLEASE_INITIALIZE_STATE_FONT] = true;
       }
+
+      $scope.onInit({$scope: $scope, $element: $element});
     }],
     link: function(scope) {
 

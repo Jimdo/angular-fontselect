@@ -35,6 +35,22 @@ describe('api', function() {
     expect($rootScope.state.font).toBe('foo');
   });
 
+  it('should call an init method when passed', function() {
+    $rootScope.initFS = jasmine.createSpy('external initiation');
+
+    createNewDirective('on-init="initFS()"');
+    expect($rootScope.initFS).toHaveBeenCalled();
+  });
+
+  it('should pass the element and scope into external init callback', function() {
+    $rootScope.initFS = function($element, $scope) {
+      expect($element.length).toBe(1);
+      expect($scope.id).toBe(2);
+    };
+
+    createNewDirective('on-init="initFS($element, $scope)"');
+  });
+
   describe('basic out', function() {
     beforeEach(function() {
       setupWithState();
