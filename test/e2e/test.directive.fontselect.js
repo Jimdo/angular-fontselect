@@ -22,7 +22,7 @@ describe('fontselect directive', function() {
   });
 
   it('should have a list of checkboxes', function() {
-    expect(element.all(by.css('li input')).count()).toBe(30);
+    expect(element.all(by.css('li input')).count()).toBe(Helpers.PAGE_SIZE_DEFAULT);
   });
 
   it('should become invisible when we click somewhere on the window', function() {
@@ -47,8 +47,8 @@ describe('fontselect directive', function() {
     });
 
     it('should reduce the length of the results', function() {
-      expect(numberOfFonts).toBe(30);
-      Helpers.searchFor('verda');
+      expect(numberOfFonts).toBe(Helpers.PAGE_SIZE_DEFAULT);
+      Helpers.searchFor('verdan');
       expect(Helpers.getLi().count()).toBeLessThan(numberOfFonts);
     });
 
@@ -238,4 +238,115 @@ describe('fontselect directive', function() {
     });
   });
 
+  describe('Keyboard support', function() {
+    beforeEach(Helpers.toggle);
+
+    it('should close the directive when we hit ESC', function() {
+      expect(element(by.className('jdfs-window')).isDisplayed()).toBe(true);
+      prot.actions().sendKeys(protractor.Key.ESCAPE).perform();
+      expect(element(by.className('jdfs-window')).isDisplayed()).toBe(false);
+    });
+
+    it('should select the first font when we hit the down arrow key', function() {
+      var font = Helpers.getFontLabel(0);
+      expect(font.getAttribute('class')).not.toContain('jdfs-active');
+      prot.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+      expect(font.getAttribute('class')).toContain('jdfs-active');
+    });
+
+    it('should select the first font of the second page when we hit the right arrow key', function() {
+      expect(Helpers.currentPage()).toBe(1);
+      prot.actions().sendKeys(protractor.Key.ARROW_RIGHT).perform();
+      expect(Helpers.currentPage()).toBe(2);
+      expect(Helpers.getFontLabel(0).getAttribute('class')).toContain('jdfs-active');
+    });
+
+    it('should deselect the current element when we play around with arrow keys', function() {
+      var font1 = Helpers.getFontLabel(0);
+      var font2 = Helpers.getFontLabel(1);
+
+      prot.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+      expect(font1.getAttribute('class')).toContain('jdfs-active');
+      expect(font2.getAttribute('class')).not.toContain('jdfs-active');
+
+      prot.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+      expect(font1.getAttribute('class')).not.toContain('jdfs-active');
+      expect(font2.getAttribute('class')).toContain('jdfs-active');
+
+      prot.actions().sendKeys(protractor.Key.ARROW_UP).perform();
+      expect(font1.getAttribute('class')).toContain('jdfs-active');
+      expect(font2.getAttribute('class')).not.toContain('jdfs-active');
+    });
+
+    it('should switch to the next page, when we hit the down arrow on the bottom of the list (and back)', function() {
+      expect(Helpers.currentPage()).toBe(1);
+
+      Helpers.getFontLabel(9).click();
+      prot.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+      expect(Helpers.currentPage()).toBe(2);
+
+      prot.actions().sendKeys(protractor.Key.ARROW_UP).perform();
+      expect(Helpers.currentPage()).toBe(1);
+    });
+
+    it('should not change pages or selections when we try to go up/left on the first page', function() {
+      var font = Helpers.getFontLabel(0);
+
+      prot.actions().sendKeys(protractor.Key.ARROW_LEFT).perform();
+      expect(Helpers.currentPage()).toBe(1);
+      expect(font.getAttribute('class')).not.toContain('jdfs-active');
+
+      prot.actions().sendKeys(protractor.Key.ARROW_UP).perform();
+      expect(Helpers.currentPage()).toBe(1);
+      expect(font.getAttribute('class')).not.toContain('jdfs-active');
+    });
+
+    it('should change the page when we hit the right left arrows', function() {
+      expect(Helpers.currentPage()).toBe(1);
+      prot.actions().sendKeys(protractor.Key.ARROW_RIGHT).perform();
+      expect(Helpers.currentPage()).toBe(2);
+      prot.actions().sendKeys(protractor.Key.ARROW_LEFT).perform();
+      expect(Helpers.currentPage()).toBe(1);
+    });
+
+    it('should not change the page, when the search is focused and has value', function() {
+      prot.actions()
+        .sendKeys('D')
+        .sendKeys(protractor.Key.ARROW_RIGHT)
+        .perform();
+
+      expect(Helpers.currentPage()).toBe(1);
+      expect(Helpers.pageCount()).toBeGreaterThan(1);
+    });
+
+    it('should change the page when we defocus the search after input', function() {
+      Helpers.searchFor('Fo');
+      Helpers.getFontLabel(3).click();
+      prot.actions().sendKeys(protractor.Key.ARROW_RIGHT).perform();
+
+      expect(Helpers.currentPage()).toBe(2);
+    });
+
+    it('should not change the page, when re are on the last page and hit right', function() {
+      Helpers.searchFor('Foob');
+      Helpers.getPaginator(1).click();
+
+      expect(Helpers.currentPage()).toBe(2);
+      expect(Helpers.pageCount()).toBe(2);
+
+      prot.actions().sendKeys(protractor.Key.ARROW_RIGHT).perform();
+
+      expect(Helpers.currentPage()).toBe(2);
+
+      Helpers.getFontLabel().then(function(labels) {
+        var label = labels[labels.length - 1];
+
+        label.click();
+        prot.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+
+        expect(Helpers.currentPage()).toBe(2);
+        expect(label.getAttribute('class')).toContain('jdfs-active');
+      });
+    });
+  });
 });

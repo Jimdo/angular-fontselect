@@ -1,4 +1,5 @@
 /* global PROVIDERS, STATE_DEFAULTS, NAME_FONTSSERVICE, DIR_PARTIALS, SORT_ATTRIBUTES, TEXT_DEFAULTS */
+/* global KEY_ESCAPE */
 var id = 1;
 
 /** @const */
@@ -55,6 +56,11 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, '$rootScope', fun
         return false;
       }
 
+      function close() {
+        $scope.toggle();
+        $scope.$digest();
+      }
+
       $scope.reverseSort = function() {
         var sort = $scope.current.sort;
 
@@ -77,8 +83,13 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, '$rootScope', fun
 
       document.addEventListener('click', function(event) {
         if ($scope.active && !isDescendant($element[0], event.target)) {
-          $scope.toggle();
-          $scope.$digest();
+          close();
+        }
+      });
+
+      document.addEventListener('keyup', function(event) {
+        if ($scope.active && event.keyCode === KEY_ESCAPE) {
+          close();
         }
       });
 

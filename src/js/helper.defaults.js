@@ -12,6 +12,9 @@ PROVIDERS[PROVIDER_WEBSAFE] = true;
 PROVIDERS[PROVIDER_GOOGLE] = true;
 
 /** @const */
+var PAGE_SIZE_DEFAULT = 10;
+
+/** @const */
 var DIR_PARTIALS = 'src/partials/';
 
 /** @const */
@@ -235,6 +238,24 @@ var VARIANT_PRIORITY = VARIANTS_REGULAR.concat(
   VARIANTS_LIGHT_ITALIC,
   VARIANTS_BOLD_ITALIC
 );
+
+/** @const */
+var KEY_ESCAPE = 27;
+
+/** @const */
+var KEY_ENTER = 13;
+
+/** @const */
+var KEY_UP = 38;
+
+/** @const */
+var KEY_DOWN = 40;
+
+/** @const */
+var KEY_LEFT = 37;
+
+/** @const */
+var KEY_RIGHT = 39;
 
 /** @const */
 var SORT_ATTRIBUTES = [

@@ -12,6 +12,9 @@ beforeEach(function() {
 module.exports = {
 
   /** @const */
+  PAGE_SIZE_DEFAULT: 10,
+
+  /** @const */
   CURRENT_PAGE_CONTAINER_CLASS: '.jdfs-page-current',
 
   /** @const */

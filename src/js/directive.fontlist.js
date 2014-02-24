@@ -1,4 +1,5 @@
-/* global  NAME_CONTROLLER, DIR_PARTIALS, DIRECTION_NEXT, DIRECTION_PREVIOUS */
+/* global NAME_CONTROLLER, DIR_PARTIALS, DIRECTION_NEXT, DIRECTION_PREVIOUS, KEY_DOWN */
+/* global KEY_UP, KEY_RIGHT, KEY_LEFT, PAGE_SIZE_DEFAULT */
 var NAME_JDFONTLIST = 'jdFontlist';
 var NAME_JDFONTLIST_CONTROLLER = NAME_JDFONTLIST + NAME_CONTROLLER;
 
@@ -9,6 +10,7 @@ fontselectModule.directive(NAME_JDFONTLIST, function() {
       fonts: '=',
       current: '=',
       text: '=',
+      active: '='
     },
     restrict: 'E',
     templateUrl: DIR_PARTIALS + 'fontlist.html',
@@ -19,9 +21,12 @@ fontselectModule.directive(NAME_JDFONTLIST, function() {
 
 fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
   '$scope',
+  '$rootScope',
   '$filter',
   'jdFontselect.fonts',
-  function($scope, $filter, fontsService) {
+  /* jshint maxparams: 4 */
+  function($scope, $rootScope, $filter, fontsService) {
+  /* jshint maxparams: 3 */
     var _filteredFonts;
     var _sortedFonts;
     var _categorizedFonts;
@@ -31,10 +36,77 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
     var _sortCache = {};
 
     $scope.page = {
-      size: 30,
+      size: PAGE_SIZE_DEFAULT,
       count: 0,
       current: 0
     };
+
+    function isOnCurrentPage(index) {
+      var currentMinIndex = $scope.page.current * $scope.page.size;
+
+      return index >= currentMinIndex && index < currentMinIndex + $scope.page.size;
+    }
+
+    $scope.keyfocus = function(direction, amount) {
+      var index = _filteredFonts.indexOf($scope.current.font);
+      var pageoffset = $scope.page.size * $scope.page.current;
+      var onPage = isOnCurrentPage(index);
+
+      if (angular.isUndefined(amount)) {
+        amount = 1;
+      }
+
+      index += (direction === DIRECTION_PREVIOUS ? -amount : amount);
+
+      if (!onPage && _filteredFonts[index + pageoffset]) {
+        index += pageoffset;
+      }
+
+      if (_filteredFonts[index]) {
+        $scope.current.font = _filteredFonts[index];
+
+        $scope.page.current = Math.floor(index / $scope.page.size);
+
+        $rootScope.$digest();
+      }
+    };
+
+    document.addEventListener('keydown', function(event) {
+      if (!$scope.active) {
+        return;
+      }
+
+      function prevent() {
+        event.preventDefault();
+        return false;
+      }
+
+      var key = event.keyCode;
+
+      if (key === KEY_DOWN) {
+        $scope.keyfocus(DIRECTION_NEXT);
+        return prevent();
+      } else if (key === KEY_UP) {
+        $scope.keyfocus(DIRECTION_PREVIOUS);
+        return prevent();
+      }
+
+      if (document.activeElement.tagName === 'INPUT' && document.activeElement.value) {
+        return;
+      }
+
+      var amount = $scope.page.size;
+      if (key === KEY_RIGHT) {
+        if (!$scope.current.font) {
+          amount++;
+        }
+        $scope.keyfocus(DIRECTION_NEXT, amount);
+        return prevent();
+      } else if (key === KEY_LEFT) {
+        $scope.keyfocus(DIRECTION_PREVIOUS, $scope.page.size);
+        return prevent();
+      }
+    });
 
     /**
      * Set the current page
