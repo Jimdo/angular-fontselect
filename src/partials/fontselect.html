@@ -40,7 +40,7 @@
 					ng-click="setCategoryFilter(category.key)"
 					ng-model="current.category"
 				>
-					{{text.category[category.key]}}
+					{{text.category[category.key] || toName(category.key)}}
 				</button>
 			</div>
 
@@ -52,7 +52,7 @@
 					ng-class="{'jdfs-active jdfs-highlight': current.providers[provider]}"
 				>
 					<input ng-model="current.providers[provider]" type="checkbox" id="jdfs-{{id}}-provider-{{provider}}" />
-					<label for="jdfs-{{id}}-provider-{{provider}}">{{text.provider[provider]}}</label>
+					<label for="jdfs-{{id}}-provider-{{provider}}">{{text.provider[provider] || toName(provider)}}</label>
 				</div>
 			</div>
 
@@ -64,7 +64,7 @@
 					ng-class="{'jdfs-active jdfs-highlight': current.subsets[key]}"
 				>
 					<input ng-model="current.subsets[key]" type="checkbox" id="jdfs-{{id}}-subset-{{key}}" />
-					<label for="jdfs-{{id}}-subset-{{key}}">{{text.subset[key]}}</label>
+					<label for="jdfs-{{id}}-subset-{{key}}">{{text.subset[key] || toName(key)}}</label>
 				</div>
 			</div>
 

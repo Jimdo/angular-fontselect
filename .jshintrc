@@ -86,6 +86,7 @@
         "require",
         "fontselectModule",
         "_bind",
-        "_createKey"
+        "_createKey",
+        "_createName"
     ]
 }

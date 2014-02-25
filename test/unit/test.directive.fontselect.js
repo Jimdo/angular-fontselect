@@ -62,6 +62,20 @@ describe('fontselect directive', function() {
     expect(createNewDirective().elm.find('.jdfs-main').attr('id')).toBe('jd-fontselect-2');
   });
 
+  describe('toName method', function() {
+    it('should exist on scope', function() {
+      expect($scope.toName).toBeInstanceOf(Function);
+    });
+
+    it('should be a reference to the global helper', function() {
+      expect($scope.toName).toBe(_createName);
+    });
+
+    it('should convert my key to a name', function() {
+      expect($scope.toName('foo-bar anything')).toBe('Foo Bar Anything');
+    });
+  });
+
   describe('providers', function() {
     it('should have a wrapper for the provider selection', function() {
       expect(elm.find('.jdfs-providers').length).toBe(1);

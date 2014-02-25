@@ -76,6 +76,8 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, '$rootScope', fun
         }
       };
 
+      $scope.toName = _createName;
+
       $scope.setFocus = function() {
         $timeout(function() {
           $element[0].querySelector('.jdfs-search').focus();
@@ -127,6 +129,7 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, '$rootScope', fun
 
       $scope.onInit({$scope: $scope, $element: $element});
     }],
+
     link: function(scope) {
 
       scope.$watch('current.font', function(newFont, oldFont) {
