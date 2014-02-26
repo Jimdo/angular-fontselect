@@ -44,6 +44,8 @@ Helpers.getTemplate = function(name) {
   return fs.readFileSync('./tasks/templates/' + name + '.tpl', 'utf8');
 };
 
+var API_KEY_FILENAME = 'tmp.apikeys.js';
+
 Helpers.setUpApiKeyFile = function() {
   var keys = {}, hasKeys = false;
 
@@ -54,10 +56,17 @@ Helpers.setUpApiKeyFile = function() {
 
   if (hasKeys) {
     fs.writeFileSync(
-      'tmp.apikeys.js',
+      API_KEY_FILENAME,
       'angular.module("jdFontselect").constant("jdFontselectConfig", ' + JSON.stringify(keys) + ');'
     );
   }
 };
+
+Helpers.ensureApiKeyFileExists = function() {
+  var exists = grunt.file.exists(API_KEY_FILENAME);
+  if (!exists) {
+    grunt.fail.fatal('We need an API key for the Google web fonts, please get one here: https://developers.google.com/fonts/docs/developer_api#Auth');
+  }
+}
 
 module.exports = Helpers;

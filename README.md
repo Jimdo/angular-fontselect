@@ -87,9 +87,13 @@ API KEYS
 #### For Development / Testing
 
 The tests expect a valid API Key for Google Web fonts.
-[Get one](https://developers.google.com/fonts/docs/developer_api#Auth)
 
-You should set your key into the environment Variable
+How to get one:
+* Go to the [Google Developers Console](https://developers.google.com/fonts/docs/developer_api#Auth) and create a new project (or use an existing one if the font selection is part of it)
+* Enable `APIs & auth` / `APIs` / `Web Fonts Developer API`
+* Go to `APIs & auth` / `Credentials` and click on `CREATE NEW KEY` in the `Public API access` section.
+* Copy your API key to the clipboard
+* Set your key into the environment Variable
 `export JD_FONTSELECT_GOOGLE_FONTS_API_KEY="__yourKeyHere__"`
 The build and test tasks will then create a file named `tmp.apikeys.js` in the
 project root and include it in the demos and tests.

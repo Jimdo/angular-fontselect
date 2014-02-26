@@ -32,6 +32,7 @@ module.exports = function(grunt) {
   grunt.registerTask('_git:dist', ['gitcommit:dist', 'gittag:dist', 'gitpush:dist', 'gitpush:disttags']);
   grunt.registerTask('_protractor:start', ['http-server:test', 'protractor']);
   grunt.registerTask('_build:apikeys', function() { Helpers.setUpApiKeyFile(); });
+  grunt.registerTask('_build:ensureApiKeyFileExists', function() { Helpers.ensureApiKeyFileExists(); });
 
   /* "Public" Tasks */
 
@@ -42,7 +43,13 @@ module.exports = function(grunt) {
   grunt.registerTask('demo', ['http-server:demo']);
 
   /* Execute all tests. */
-  grunt.registerTask('test', ['_test:beforeEach', 'karma:all', '_protractor:start']);
+  grunt.registerTask('test', [
+    '_build:apikeys',
+    '_build:ensureApiKeyFileExists',
+    '_test:beforeEach',
+    'karma:all',
+    '_protractor:start'
+  ]);
   /* Execute e2e tests. */
   grunt.registerTask('test:e2e', ['_test:beforeEach', '_protractor:start']);
   /* Execute unit tests. */
