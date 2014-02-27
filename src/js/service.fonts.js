@@ -48,6 +48,9 @@ FontsService.prototype = {
 
     fontObj.provider = provider;
 
+    /* Set provider as "fall-back" in the font-stack, so we can use the stack as unique key */
+    fontObj.stack += ', "' + provider + '"';
+
     if (!self.isValidFontObject(fontObj)) {
       throw 'Invalid font object.';
     }

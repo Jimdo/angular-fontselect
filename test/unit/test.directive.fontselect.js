@@ -91,7 +91,13 @@ describe('fontselect directive', function() {
     function normalizeFontStack(stack) {
       stack = stack.replace(/"/g, '\'').split(',');
       angular.forEach(stack, function(font, i) {
-        stack[i] = font.replace(/^\s+|\s+$/g, '');
+        font = font.replace(/^\s+|\s+$/g, '');
+
+        if (font.indexOf(' ') === -1) {
+          font = font.replace(/'/g, '');
+        }
+
+        stack[i] = font;
       });
 
       return stack.join(',');

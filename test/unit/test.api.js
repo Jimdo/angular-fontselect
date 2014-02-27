@@ -59,7 +59,7 @@ describe('api', function() {
     });
 
     it('should provide the font stack of our currently selected font', function() {
-      expect($rootScope.selected.stack).toBe('Arial, "Helvetica Neue", Helvetica, sans-serif');
+      expect($rootScope.selected.stack).toBe('Arial, "Helvetica Neue", Helvetica, sans-serif, "websafe"');
     });
 
     it('should provide the name of the current font', function() {
@@ -72,7 +72,7 @@ describe('api', function() {
 
       it('should have the first google font selected', function() {
         expect($rootScope.selected.name).toBe('Open Sans');
-        expect($rootScope.selected.stack).toBe('"Open Sans", sans-serif');
+        expect($rootScope.selected.stack).toBe('"Open Sans", sans-serif, "google"');
       });
 
       it('should call the change event on change', function() {
