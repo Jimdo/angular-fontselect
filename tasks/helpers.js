@@ -65,8 +65,10 @@ Helpers.setUpApiKeyFile = function() {
 Helpers.ensureApiKeyFileExists = function() {
   var exists = grunt.file.exists(API_KEY_FILENAME);
   if (!exists) {
-    grunt.fail.fatal('We need an API key for the Google web fonts, please get one here: https://developers.google.com/fonts/docs/developer_api#Auth');
+    grunt.fail.fatal('We need an API key for the Google web fonts, please get one here:' +
+      'https://developers.google.com/fonts/docs/developer_api#Auth'
+    );
   }
-}
+};
 
 module.exports = Helpers;
