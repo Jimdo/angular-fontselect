@@ -102,6 +102,18 @@ FontsService.prototype = {
     return font;
   },
 
+  getFontByStack: function(stack) {
+    var self = this;
+
+    var font = self.searchFont({stack: stack});
+
+    if (!font) {
+      throw 'Font with stack "' + stack + '" not found.';
+    }
+
+    return font;
+  },
+
   removeFont: function(font, provider) {
     var self = this;
 

@@ -9,9 +9,8 @@ describe('api', function() {
     }
 
     $rootScope.state = defaults;
-    $rootScope.selected = {};
 
-    var d = createNewDirective('state="state" selected="selected"');
+    var d = createNewDirective('state="state" stack="stack" name="name"');
     $scope = d.scope;
     elm = d.elm;
   }
@@ -59,11 +58,11 @@ describe('api', function() {
     });
 
     it('should provide the font stack of our currently selected font', function() {
-      expect($rootScope.selected.stack).toBe('Arial, "Helvetica Neue", Helvetica, sans-serif, "websafe"');
+      expect($rootScope.stack).toBe('Arial, "Helvetica Neue", Helvetica, sans-serif, "websafe"');
     });
 
     it('should provide the name of the current font', function() {
-      expect($rootScope.selected.name).toBe('Arial');
+      expect($rootScope.name).toBe('Arial');
     });
 
     describe('google fonts', function() {
@@ -71,8 +70,8 @@ describe('api', function() {
       beforeEach(useGoogleFont);
 
       it('should have the first google font selected', function() {
-        expect($rootScope.selected.name).toBe('Open Sans');
-        expect($rootScope.selected.stack).toBe('"Open Sans", sans-serif, "google"');
+        expect($rootScope.name).toBe('Open Sans');
+        expect($rootScope.stack).toBe('"Open Sans", sans-serif, "google"');
       });
 
       it('should call the change event on change', function() {
@@ -113,8 +112,16 @@ describe('api', function() {
     describe('current and selected', function() {
       beforeEach(function() {
         setupWithState();
+
+        expect($scope.name).toBe('');
+        expect($scope.stack).toBe('');
         $scope.current.font = DEFAULT_WEBSAFE_FONTS[0];
         $scope.$digest();
+      });
+
+      it('should set name and stack when we init with state', function() {
+        expect($scope.name).not.toBe('');
+        expect($scope.stack).not.toBe('');
       });
 
       it('should not fail when setting current to something invalid', function() {
@@ -134,11 +141,28 @@ describe('api', function() {
         expect($scope.current.provider).toBe(STATE_DEFAULTS.provider);
       });
 
-      it('should unset the currently selected font on reset', function() {
-        expect($rootScope.selected.name).toBeDefined();
+      it('should unset the currently selected font name on reset', function() {
+        expect($rootScope.name).not.toBe('');
         $scope.reset();
         $scope.$digest();
-        expect($rootScope.selected.name).not.toBeDefined();
+        expect($rootScope.name).toBe('');
+      });
+
+      it('should unset the currently selected font stack on reset', function() {
+        expect($rootScope.stack).not.toBe('');
+        $scope.reset();
+        $scope.$digest();
+        expect($rootScope.stack).toBe('');
+      });
+    });
+
+    describe('init with stack', function() {
+      it('should find the font for our init stack and initiate with it.', function() {
+        expect($rootScope.name).not.toBeDefined();
+        $rootScope.stack = DEFAULT_WEBSAFE_FONTS[1].stack;
+        setupWithState();
+        expect($rootScope.name).toBe(DEFAULT_WEBSAFE_FONTS[1].name);
+        expect($rootScope.state.font).toBe(DEFAULT_WEBSAFE_FONTS[1]);
       });
     });
 
@@ -147,7 +171,7 @@ describe('api', function() {
         var state = {font: DEFAULT_WEBSAFE_FONTS[1]};
         setupWithState(state);
 
-        expect($rootScope.selected.name).toBe(DEFAULT_WEBSAFE_FONTS[1].name);
+        expect($rootScope.name).toBe(DEFAULT_WEBSAFE_FONTS[1].name);
       });
 
       it('should replace our preselected font with the original from list', function() {
@@ -163,8 +187,7 @@ describe('api', function() {
 
       it('should leave "outdated" preselected fonts as they are.', function() {
         var currentFont = angular.copy(DEFAULT_WEBSAFE_FONTS[1]);
-        currentFont.name = 'Foobar Font';
-        currentFont.key = 'foobarfont';
+        currentFont.stack = 'some outdated font stack.';
         setupWithState({ font: currentFont });
 
         expect($rootScope.state.font).toBe(currentFont);

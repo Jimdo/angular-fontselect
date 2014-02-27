@@ -3,13 +3,14 @@
 var id = 1;
 
 /** @const */
-var PLEASE_INITIALIZE_STATE_FONT = '_PISF';
+var PLEASE_SET_FONT_BY_KEY = '_PSFBY';
 
 fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, '$rootScope', function(fontsService, $rootScope) {
   return {
     scope: {
       current: '=?state',
-      selected: '=?',
+      stack: '=?',
+      name: '=?',
       rawText: '@?text',
       text: '=?textObj',
       onInit: '&?'
@@ -25,7 +26,8 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, '$rootScope', fun
       $scope.categories = fontsService.getCategories();
       $scope.subsets = fontsService.getSubsetNames();
       $scope.sortAttrs = SORT_ATTRIBUTES;
-      $scope.selected = {};
+      $scope.name = '';
+      $scope.stack = $scope.stack || '';
 
       $scope.text = angular.extend(angular.copy(TEXT_DEFAULTS), $scope.text || {});
       if ($scope.rawText) {
@@ -40,6 +42,11 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, '$rootScope', fun
 
         if (!$scope.current.sort.attr) {
           $scope.current.sort.attr = SORT_ATTRIBUTES[0];
+        }
+
+        if (angular.isObject($scope.current.font)) {
+          $scope.stack = $scope.current.font.stack;
+          $scope.name = $scope.current.font.name;
         }
 
         $scope.current.subsets = fontsService.setSubsets($scope.current.subsets);
@@ -112,19 +119,21 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, '$rootScope', fun
 
       $scope._setSelected = function(font) {
         if (angular.isObject(font)) {
-          $scope.selected.name = font.name;
-          $scope.selected.stack = font.stack;
+          $scope.name = font.name;
+          $scope.stack = font.stack;
         } else {
-          $scope.selected = {};
+          $scope.name = '';
+          $scope.stack = '';
         }
       };
 
-      // Initialize
+      /* INITIALIZE */
+      if (angular.isObject($scope.current)) {
+        setState($scope.current);
+      }
 
-      setState($scope.current);
-      if (angular.isObject($scope.current.font)) {
-        $scope._setSelected($scope.current.font);
-        $scope[PLEASE_INITIALIZE_STATE_FONT] = true;
+      if ($scope.stack.length) {
+        $scope[PLEASE_SET_FONT_BY_KEY] = $scope.stack;
       }
 
       $scope.onInit({$scope: $scope, $element: $element});
@@ -155,7 +164,7 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, '$rootScope', fun
 
           scope._setSelected(newFont);
 
-          $rootScope.$broadcast('jdfs.change', scope.selected);
+          $rootScope.$broadcast('jdfs.change', {name: scope.name, stack: scope.stack});
         }
       });
 
@@ -165,14 +174,14 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, '$rootScope', fun
         }
       }, true);
 
-      if (scope[PLEASE_INITIALIZE_STATE_FONT]) {
+      if (scope[PLEASE_SET_FONT_BY_KEY]) {
         var destroy = scope.$watch('fonts', function() {
           var current = scope.current;
           try {
-            var font = fontsService.getFontByKey(current.font.key, current.font.provider);
+            var font = fontsService.getFontByStack(scope[PLEASE_SET_FONT_BY_KEY]);
             if (font) {
               current.font = font;
-              delete scope[PLEASE_INITIALIZE_STATE_FONT];
+              delete scope[PLEASE_SET_FONT_BY_KEY];
               destroy();
             }
           } catch (e) {}
