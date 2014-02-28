@@ -1,5 +1,5 @@
 /*!
- * angular-fontselect v0.6.1
+ * angular-fontselect v0.6.2
  * https://github.com/Jimdo/angular-fontselect
  *
  * A fontselect directive for AngularJS
@@ -1242,6 +1242,7 @@
       self._allSubsets = [];
       self._subsets = {};
       self._providers = {};
+      self._imports = {};
   
       self._subsetNames = {};
       self._addDefaultFonts();
@@ -1378,6 +1379,10 @@
       return this._subsetNames;
     },
   
+    getImports: function() {
+      return this._imports;
+    },
+  
     getSubsets: function() {
       return this._subsets;
     },
@@ -1394,18 +1399,31 @@
       return this._setSelects(this._providers, providers, additive);
     },
   
+    setImports: function(imports, additive) {
+      return this._setSelects(this._imports, imports, additive);
+    },
+  
     _setSelects: function(target, srcs, additive) {
-      if (angular.isUndefined(additive)) {
-        additive = true;
+      /* If we aren't additive, remove all keys that are not present in srcs */
+      if (!additive && !angular.isUndefined(additive)) {
+        angular.forEach(target, function(active, src) {
+          if (!srcs[src]) {
+            delete target[src];
+          }
+        });
       }
   
       angular.forEach(srcs, function(active, src) {
-        if (active || !additive) {
+        if (active) {
           target[src] = active;
         }
       });
   
       return target;
+    },
+  
+    updateImports: function() {
+      this.setImports(this.getUrls());
     },
   
     load: function(font) {
@@ -1621,7 +1639,7 @@
   /** @const */
   var PLEASE_SET_FONT_BY_KEY = '_PSFBY';
   
-  fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, '$rootScope', function(fontsService, $rootScope) {
+  fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsService) {
     return {
       scope: {
         current: '=?state',
@@ -1779,14 +1797,13 @@
             }
   
             scope._setSelected(newFont);
-  
-            $rootScope.$broadcast('jdfs.change', {name: scope.name, stack: scope.stack});
+            fontsService.updateImports();
           }
         });
   
         scope.$watch('current.subsets', function(newSubsets, oldSubsets) {
           if (newSubsets !== oldSubsets) {
-            $rootScope.$broadcast('jdfs.change.subsets', newSubsets);
+            fontsService.updateImports();
           }
         }, true);
   
@@ -2119,14 +2136,7 @@
       restrict: 'A',
       replace: true,
       controller: ['$scope', function($scope) {
-        $scope.urls = [];
-  
-        function update() {
-          $scope.urls = fontsService.getUrls();
-        }
-  
-        $scope.$on('jdfs.change', update);
-        $scope.$on('jdfs.change.subsets', update);
+        $scope.urls = fontsService.getImports();
       }]
     };
   }]);
