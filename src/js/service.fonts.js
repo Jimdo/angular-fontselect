@@ -170,6 +170,10 @@ FontsService.prototype = {
     return this._subsets;
   },
 
+  getProviders: function() {
+    return this._subsets;
+  },
+
   setSubsets: function(subsets, additive) {
     return this._setSelects(this._subsets, subsets, additive);
   },

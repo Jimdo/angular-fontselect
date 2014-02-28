@@ -206,5 +206,30 @@ describe('api', function() {
         expect(fontsService.getUsedFonts()[0].name).toEqual(font.name);
       });
     });
+
+    describe('set globals on fontsService', function() {
+      beforeEach(setupWithState);
+
+      it('should have a getSubsets method', function() {
+        expect(fontsService.getSubsets).toBeInstanceOf(Function);
+      });
+
+      it('should have a getProviders method', function() {
+        expect(fontsService.getProviders).toBeInstanceOf(Function);
+      });
+
+      it('should set subsets globally with setSubsets method', function() {
+        expect($scope.current.subsets.fooSubset).toBeUndefined();
+        fontsService.setSubsets({fooSubset: true});
+        expect($scope.current.subsets.fooSubset).toBe(true);
+      });
+
+      it('should set providers globally with setProviders method', function() {
+        expect($scope.current.subsets.fooProvider).toBeUndefined();
+        fontsService.setSubsets({fooProvider: true});
+        expect($scope.current.subsets.fooProvider).toBe(true);
+      });
+    });
+
   });
 });
