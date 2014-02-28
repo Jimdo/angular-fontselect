@@ -5,7 +5,7 @@ var id = 1;
 /** @const */
 var PLEASE_SET_FONT_BY_KEY = '_PSFBY';
 
-fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, '$rootScope', function(fontsService, $rootScope) {
+fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsService) {
   return {
     scope: {
       current: '=?state',
@@ -163,14 +163,13 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, '$rootScope', fun
           }
 
           scope._setSelected(newFont);
-
-          $rootScope.$broadcast('jdfs.change', {name: scope.name, stack: scope.stack});
+          fontsService.updateImports();
         }
       });
 
       scope.$watch('current.subsets', function(newSubsets, oldSubsets) {
         if (newSubsets !== oldSubsets) {
-          $rootScope.$broadcast('jdfs.change.subsets', newSubsets);
+          fontsService.updateImports();
         }
       }, true);
 

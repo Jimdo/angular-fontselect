@@ -30,6 +30,7 @@ FontsService.prototype = {
     self._allSubsets = [];
     self._subsets = {};
     self._providers = {};
+    self._imports = {};
 
     self._subsetNames = {};
     self._addDefaultFonts();
@@ -166,6 +167,10 @@ FontsService.prototype = {
     return this._subsetNames;
   },
 
+  getImports: function() {
+    return this._imports;
+  },
+
   getSubsets: function() {
     return this._subsets;
   },
@@ -182,18 +187,31 @@ FontsService.prototype = {
     return this._setSelects(this._providers, providers, additive);
   },
 
+  setImports: function(imports, additive) {
+    return this._setSelects(this._imports, imports, additive);
+  },
+
   _setSelects: function(target, srcs, additive) {
-    if (angular.isUndefined(additive)) {
-      additive = true;
+    /* If we aren't additive, remove all keys that are not present in srcs */
+    if (!additive && !angular.isUndefined(additive)) {
+      angular.forEach(target, function(active, src) {
+        if (!srcs[src]) {
+          delete target[src];
+        }
+      });
     }
 
     angular.forEach(srcs, function(active, src) {
-      if (active || !additive) {
+      if (active) {
         target[src] = active;
       }
     });
 
     return target;
+  },
+
+  updateImports: function() {
+    this.setImports(this.getUrls());
   },
 
   load: function(font) {

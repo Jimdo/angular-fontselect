@@ -158,4 +158,40 @@ describe('fontsService', function() {
       expect(d.scope.current.providers.foo).toBe('fara');
     });
   });
+
+  describe('_setSelects method', function() {
+    var fixture, input;
+
+    beforeEach(function() {
+      input = {bar: true};
+      fixture = {foo: true};
+    });
+
+    it('should add new keys to global object', function() {
+      fontsService._setSelects(fixture, input);
+      expect(fixture.bar).toBe(true);
+    });
+
+    it('should return the master object', function() {
+      expect(fontsService._setSelects(fixture, input)).toBe(fixture);
+    });
+
+    it('should do nothing for non-objects', function() {
+      expect(fontsService._setSelects(fixture, '')).toBe(fixture);
+    });
+
+    it('should delete keys from original in non-additive mode', function() {
+      fontsService._setSelects(fixture, input, false);
+      expect(fixture.foo).toBeUndefined();
+    });
+
+    it('should still use the master object on non-additive mode', function() {
+      expect(fixture).not.toEqual(input);
+
+      var returnedObj = fontsService._setSelects(fixture, input, false);
+      expect(returnedObj).toBe(fixture);
+      expect(returnedObj).not.toBe(input);
+      expect(returnedObj).toEqual(input);
+    });
+  });
 });

@@ -73,19 +73,6 @@ describe('api', function() {
         expect($rootScope.name).toBe('Open Sans');
         expect($rootScope.stack).toBe('"Open Sans", sans-serif, "google"');
       });
-
-      it('should call the change event on change', function() {
-        var spy = jasmine.createSpy('jdfs.change event');
-        var font = fontsService.searchFonts({provider: PROVIDER_GOOGLE})[2];
-        $scope.$on('jdfs.change', spy);
-
-        $scope.current.font = font;
-        $scope.$digest();
-
-        expect(spy).toHaveBeenCalled();
-        expect(spy.mostRecentCall.args[1]).toEqual({name: font.name, stack: font.stack});
-      });
-
     });
 
     describe('font service', function() {
