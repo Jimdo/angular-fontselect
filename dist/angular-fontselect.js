@@ -1,5 +1,5 @@
 /*!
- * angular-fontselect v0.6.0
+ * angular-fontselect v0.6.1
  * https://github.com/Jimdo/angular-fontselect
  *
  * A fontselect directive for AngularJS
@@ -1379,6 +1379,10 @@
     },
   
     getSubsets: function() {
+      return this._subsets;
+    },
+  
+    getProviders: function() {
       return this._subsets;
     },
   
