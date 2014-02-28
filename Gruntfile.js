@@ -29,7 +29,6 @@ module.exports = function(grunt) {
     'concat:bannerToDistStyle',
     'concat:bannerToDistStyleMin'
   ]);
-  grunt.registerTask('_git:dist', ['gitcommit:dist', 'gittag:dist', 'gitpush:dist', 'gitpush:disttags']);
   grunt.registerTask('_protractor:start', ['http-server:test', 'protractor']);
   grunt.registerTask('_build:apikeys', function() { Helpers.setUpApiKeyFile(); });
   grunt.registerTask('_build:ensureApiKeyFileExists', function() { Helpers.ensureApiKeyFileExists(); });
@@ -68,11 +67,15 @@ module.exports = function(grunt) {
   ]);
 
   /* Distribute a new patch version. */
-  grunt.registerTask('dist', ['test', 'bump', 'build', '_git:dist']);
-  /* Distribute a new minor version. */
-  grunt.registerTask('dist:minor', ['test', 'bump:minor', 'build', '_git:dist']);
-  /* Distribute a new major version. */
-  grunt.registerTask('dist:major', ['test', 'bump:major', 'build', '_git:dist']);
+
+  grunt.registerTask('release', 'Test, bump, build and release.', function(type) {
+    grunt.task.run([
+      'test',
+      'bump-only:' + (type || 'patch'),
+      'build',
+      'bump-commit'
+    ]);
+  });
 
   grunt.registerTask('default', ['test', 'build']);
 
