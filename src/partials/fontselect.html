@@ -20,14 +20,6 @@
 
 			<!-- <select ng-model="current.sort.attr" ng-options="text.sort[a.key] for a in sortAttrs"></select> -->
 			<!-- <button ng-click="reverseSort()">{{current.sort.direction ? text.sortdir.desc : text.sortdir.asc}}</button> -->
-		<button
-			ng-click="toggle()"
-			class="jdfs-close"
-			>
-			<span>
-				{{text.closeButton}}
-			</span>
-		</button>
 		<jd-fontlist
 			fsid="id"
 			text="text"
@@ -37,7 +29,6 @@
 		></jd-fontlist>
 
 		<div class="jdfs-filter">
-		
 			<div class="jdfs-styles">
 				<h4 class="jdfs-filter-headline">{{text.styleLabel}}</h4>
 				<button
@@ -75,7 +66,14 @@
 				</div>
 			</div>
 
+			<button
+				ng-click="toggle()"
+				class="jdfs-close"
+				>
+				<span>
+					{{text.closeButton}}
+				</span>
+			</button>
 		</div>
-
 	</div>
 </div>
