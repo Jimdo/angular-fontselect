@@ -176,7 +176,7 @@ FontsService.prototype = {
   },
 
   getProviders: function() {
-    return this._subsets;
+    return this._providers;
   },
 
   setSubsets: function(subsets, additive) {

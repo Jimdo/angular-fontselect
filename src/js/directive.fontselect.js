@@ -35,6 +35,7 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsSer
       }
 
       function setState(extend) {
+        var globalSubsets, globalProviders;
         $scope.current = angular.extend(
           angular.copy(STATE_DEFAULTS),
           extend || {}
@@ -49,8 +50,13 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsSer
           $scope.name = $scope.current.font.name;
         }
 
-        $scope.current.subsets = fontsService.setSubsets($scope.current.subsets);
-        $scope.current.providers = fontsService.setProviders($scope.current.providers);
+        globalSubsets = fontsService.getSubsets();
+        $scope.current.subsets = _objLength(globalSubsets) ?
+          globalSubsets : fontsService.setSubsets($scope.current.subsets);
+
+        globalProviders = fontsService.getProviders();
+        $scope.current.providers = _objLength(globalProviders) ?
+          globalProviders : fontsService.setProviders($scope.current.providers);
       }
 
       function isDescendant(parent, child) {

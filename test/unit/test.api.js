@@ -1,5 +1,5 @@
 /* global $rootScope, DEFAULT_WEBSAFE_FONTS, PROVIDER_GOOGLE, STATE_DEFAULTS,
-          createNewDirective, fontsService, NAME_FONTSSERVICE */
+          createNewDirective, fontsService, NAME_FONTSSERVICE, PROVIDERS */
 describe('api', function() {
   var elm, $scope;
   function setupWithState(defaults) {
@@ -218,5 +218,48 @@ describe('api', function() {
       });
     });
 
+    describe('get globals from fontsService', function() {
+      var providers, subsets;
+      beforeEach(function() {
+        providers = {};
+        subsets = {};
+
+        fontsService._providers = providers;
+        fontsService._subsets = subsets;
+      });
+
+      it('should not get any providers from fontsService before we have initiated anything', function() {
+        expect(fontsService.getProviders()).toEqual({});
+      });
+
+      it('should not get any subsets from fontsService before we have initiated anything', function() {
+        expect(fontsService.getSubsets()).toEqual({});
+      });
+
+      it('should set default providers to fontService when we initiate a new font selection', function() {
+        createNewDirective();
+        expect(providers).toEqual(PROVIDERS);
+      });
+
+      it('should set default subsets to fontService when we initiate a new font selection', function() {
+        createNewDirective();
+        expect(subsets).toEqual(STATE_DEFAULTS.subsets);
+      });
+
+      it ('should not expand the default providers once they are initiated', function() {
+        var fakeProviders = {foo: 'fara'};
+        fontsService.setProviders(fakeProviders);
+        createNewDirective();
+        expect(providers).toEqual(fakeProviders);
+      });
+
+      it ('should not expand the default subsets once they are initiated', function() {
+        var fakeSubsets = {lorem: 'dolor'};
+        fontsService.setSubsets(fakeSubsets);
+        createNewDirective();
+        expect(subsets).toEqual(fakeSubsets);
+      });
+    });
   });
+
 });

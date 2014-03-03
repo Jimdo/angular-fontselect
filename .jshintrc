@@ -87,6 +87,7 @@
         "fontselectModule",
         "_bind",
         "_createKey",
+        "_objLength",
         "_createName"
     ]
 }

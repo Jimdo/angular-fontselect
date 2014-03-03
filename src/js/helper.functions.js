@@ -12,3 +12,14 @@ function _createName(key) {
 
   return words.join(' ');
 }
+
+function _objLength(object) {
+  var size = 0, key;
+  for (key in object) {
+    if (object.hasOwnProperty(key)) {
+      size++;
+    }
+  }
+
+  return size;
+}
