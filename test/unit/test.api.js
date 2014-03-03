@@ -143,13 +143,28 @@ describe('api', function() {
       });
     });
 
-    describe('init with stack', function() {
+    describe('stack', function() {
       it('should find the font for our init stack and initiate with it.', function() {
         expect($rootScope.name).not.toBeDefined();
         $rootScope.stack = DEFAULT_WEBSAFE_FONTS[1].stack;
         setupWithState();
         expect($rootScope.name).toBe(DEFAULT_WEBSAFE_FONTS[1].name);
         expect($rootScope.state.font).toBe(DEFAULT_WEBSAFE_FONTS[1]);
+      });
+
+      it('should also trigger reset method when stack gets false', function() {
+        setupWithState();
+        spyOn($scope, 'reset').andCallThrough();
+        $rootScope.stack = false;
+        $scope.$digest();
+        expect($scope.reset).toHaveBeenCalled();
+      });
+
+      it('should change the current font if we change the stack', function() {
+        setupWithState();
+        $rootScope.stack = DEFAULT_WEBSAFE_FONTS[2].stack;
+        $rootScope.$digest();
+        expect($rootScope.state.font).toBe(DEFAULT_WEBSAFE_FONTS[2]);
       });
     });
 

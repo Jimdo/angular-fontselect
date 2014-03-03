@@ -3,7 +3,7 @@
 var id = 1;
 
 /** @const */
-var PLEASE_SET_FONT_BY_KEY = '_PSFBY';
+var PLEASE_SET_FONT_BY_STACK = '_PSFBS';
 
 fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsService) {
   return {
@@ -139,7 +139,7 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsSer
       }
 
       if ($scope.stack.length) {
-        $scope[PLEASE_SET_FONT_BY_KEY] = $scope.stack;
+        $scope[PLEASE_SET_FONT_BY_STACK] = $scope.stack;
       }
 
       $scope.onInit({$scope: $scope, $element: $element});
@@ -179,14 +179,32 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsSer
         }
       }, true);
 
-      if (scope[PLEASE_SET_FONT_BY_KEY]) {
+      scope.$watch('stack', function(newStack, oldStack) {
+        var font;
+
+        if (newStack === oldStack || (scope.current.font && newStack === scope.current.font.stack)) {
+          return;
+        }
+
+        if (newStack && newStack.length) {
+          font = fontsService.getFontByStack(newStack);
+        }
+
+        if (font) {
+          scope.current.font = font;
+        } else {
+          scope.reset();
+        }
+      });
+
+      if (scope[PLEASE_SET_FONT_BY_STACK]) {
         var destroy = scope.$watch('fonts', function() {
           var current = scope.current;
           try {
-            var font = fontsService.getFontByStack(scope[PLEASE_SET_FONT_BY_KEY]);
+            var font = fontsService.getFontByStack(scope[PLEASE_SET_FONT_BY_STACK]);
             if (font) {
               current.font = font;
-              delete scope[PLEASE_SET_FONT_BY_KEY];
+              delete scope[PLEASE_SET_FONT_BY_STACK];
               destroy();
             }
           } catch (e) {}
