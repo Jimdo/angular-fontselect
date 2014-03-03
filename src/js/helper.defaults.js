@@ -297,6 +297,7 @@ var TEXT_DEFAULTS = {
   styleLabel: 'Font Styles',
   pageLabel: 'Page: ',
   fontFabel: 'Fonts: ',
+  closeButton: 'Close',
   page: {
     prev: '◄',
     next: '►'

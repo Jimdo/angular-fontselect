@@ -21,6 +21,12 @@ describe('fontselect directive', function() {
     expect(element(by.className('jdfs-window')).isDisplayed()).toBe(true);
   });
 
+  it('should become invisible when we click the close button', function() {
+    Helpers.toggle();
+    element(by.css('button.jdfs-close')).click();
+    expect(element(by.className('jdfs-window')).isDisplayed()).toBe(false);
+  });
+
   it('should have a list of checkboxes', function() {
     expect(element.all(by.css('li input')).count()).toBe(Helpers.PAGE_SIZE_DEFAULT);
   });

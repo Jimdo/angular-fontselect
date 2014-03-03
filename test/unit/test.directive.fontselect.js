@@ -4,10 +4,11 @@
 describe('fontselect directive', function() {
   'use strict';
 
-  var mainToggleButton;
+  var mainToggleButton, closeButton;
 
   beforeEach(function() {
-    mainToggleButton = elm.find('button[ng-click="toggle()"]');
+    mainToggleButton = elm.find('button.jdfs-toggle');
+    closeButton = elm.find('button.jdfs-close');
   });
 
   it('should add an wrapper element with fs-main class.', function() {
@@ -20,6 +21,11 @@ describe('fontselect directive', function() {
 
   it('should have a toggle button', function() {
     expect(mainToggleButton.length).toBe(1);
+  });
+
+  it('should have a close button', function() {
+    mainToggleButton.click();
+    expect(closeButton.length).toBe(1);
   });
 
   it('should become active when button is clicked', function() {
