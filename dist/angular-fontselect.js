@@ -1,5 +1,5 @@
 /*!
- * angular-fontselect v0.6.2
+ * angular-fontselect v0.6.3
  * https://github.com/Jimdo/angular-fontselect
  *
  * A fontselect directive for AngularJS
@@ -311,6 +311,7 @@
     styleLabel: 'Font Styles',
     pageLabel: 'Page: ',
     fontFabel: 'Fonts: ',
+    closeButton: 'Close',
     page: {
       prev: '◄',
       next: '►'
@@ -1071,6 +1072,17 @@
   
     return words.join(' ');
   }
+  
+  function _objLength(object) {
+    var size = 0, key;
+    for (key in object) {
+      if (object.hasOwnProperty(key)) {
+        size++;
+      }
+    }
+  
+    return size;
+  }
 
   // src/js/filter.start-from.js
   /* From: http://tech.small-improvements.com/2013/09/10/angularjs-performance-with-large-lists/ */
@@ -1388,7 +1400,7 @@
     },
   
     getProviders: function() {
-      return this._subsets;
+      return this._providers;
     },
   
     setSubsets: function(subsets, additive) {
@@ -1637,7 +1649,7 @@
   var id = 1;
   
   /** @const */
-  var PLEASE_SET_FONT_BY_KEY = '_PSFBY';
+  var PLEASE_SET_FONT_BY_STACK = '_PSFBS';
   
   fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsService) {
     return {
@@ -1669,6 +1681,7 @@
         }
   
         function setState(extend) {
+          var globalSubsets, globalProviders;
           $scope.current = angular.extend(
             angular.copy(STATE_DEFAULTS),
             extend || {}
@@ -1683,8 +1696,13 @@
             $scope.name = $scope.current.font.name;
           }
   
-          $scope.current.subsets = fontsService.setSubsets($scope.current.subsets);
-          $scope.current.providers = fontsService.setProviders($scope.current.providers);
+          globalSubsets = fontsService.getSubsets();
+          $scope.current.subsets = _objLength(globalSubsets) ?
+            globalSubsets : fontsService.setSubsets($scope.current.subsets);
+  
+          globalProviders = fontsService.getProviders();
+          $scope.current.providers = _objLength(globalProviders) ?
+            globalProviders : fontsService.setProviders($scope.current.providers);
         }
   
         function isDescendant(parent, child) {
@@ -1767,7 +1785,7 @@
         }
   
         if ($scope.stack.length) {
-          $scope[PLEASE_SET_FONT_BY_KEY] = $scope.stack;
+          $scope[PLEASE_SET_FONT_BY_STACK] = $scope.stack;
         }
   
         $scope.onInit({$scope: $scope, $element: $element});
@@ -1807,14 +1825,32 @@
           }
         }, true);
   
-        if (scope[PLEASE_SET_FONT_BY_KEY]) {
+        scope.$watch('stack', function(newStack, oldStack) {
+          var font;
+  
+          if (newStack === oldStack || (scope.current.font && newStack === scope.current.font.stack)) {
+            return;
+          }
+  
+          if (newStack && newStack.length) {
+            font = fontsService.getFontByStack(newStack);
+          }
+  
+          if (font) {
+            scope.current.font = font;
+          } else {
+            scope.reset();
+          }
+        });
+  
+        if (scope[PLEASE_SET_FONT_BY_STACK]) {
           var destroy = scope.$watch('fonts', function() {
             var current = scope.current;
             try {
-              var font = fontsService.getFontByStack(scope[PLEASE_SET_FONT_BY_KEY]);
+              var font = fontsService.getFontByStack(scope[PLEASE_SET_FONT_BY_STACK]);
               if (font) {
                 current.font = font;
-                delete scope[PLEASE_SET_FONT_BY_KEY];
+                delete scope[PLEASE_SET_FONT_BY_STACK];
                 destroy();
               }
             } catch (e) {}
@@ -2161,7 +2197,7 @@
   
   
     $templateCache.put('src/partials/fontselect.html',
-      "<div class=jdfs-main id=jd-fontselect-{{id}}><button ng-click=toggle() class=jdfs-toggle style=\"font-family: {{current.font.stack}}\" ng-show=!active><span>{{current.font.name || text.button}}</span></button><input class=jdfs-search placeholder={{text.search}} name=jdfs-{{id}}-search ng-show=active ng-model=current.search><div class=jdfs-window ng-show=active><jd-fontlist fsid=id text=text current=current fonts=fonts active=active></jd-fontlist><div class=jdfs-filter><div class=jdfs-styles><h4 class=jdfs-filter-headline>{{text.styleLabel}}</h4><button class=\"jdfs-filterbtn jdfs-fontstyle-{{category.key}}\" ng-repeat=\"category in categories\" ng-class=\"{'jdfs-active jdfs-highlight': category.key == current.category}\" ng-click=setCategoryFilter(category.key) ng-model=current.category>{{text.category[category.key] || toName(category.key)}}</button></div><div class=jdfs-providers><h4 class=jdfs-filter-headline>{{text.providerLabel}}</h4><div ng-repeat=\"(provider, active) in providers\" class=jdfs-provider ng-class=\"{'jdfs-active jdfs-highlight': current.providers[provider]}\"><input ng-model=current.providers[provider] type=checkbox id=jdfs-{{id}}-provider-{{provider}}><label for=jdfs-{{id}}-provider-{{provider}}>{{text.provider[provider] || toName(provider)}}</label></div></div><div class=jdfs-subsets><h4 class=jdfs-filter-headline>{{text.subsetLabel}}</h4><div ng-repeat=\"(key, name) in subsets\" class=jdfs-subset ng-class=\"{'jdfs-active jdfs-highlight': current.subsets[key]}\"><input ng-model=current.subsets[key] type=checkbox id=jdfs-{{id}}-subset-{{key}}><label for=jdfs-{{id}}-subset-{{key}}>{{text.subset[key] || toName(key)}}</label></div></div></div></div></div>"
+      "<div class=jdfs-main id=jd-fontselect-{{id}}><button ng-click=toggle() class=jdfs-toggle style=\"font-family: {{current.font.stack}}\" ng-show=!active><span>{{current.font.name || text.button}}</span></button><input class=jdfs-search placeholder={{text.search}} name=jdfs-{{id}}-search ng-show=active ng-model=current.search><div class=jdfs-window ng-show=active><jd-fontlist fsid=id text=text current=current fonts=fonts active=active></jd-fontlist><div class=jdfs-filter><div class=jdfs-styles><h4 class=jdfs-filter-headline>{{text.styleLabel}}</h4><button class=\"jdfs-filterbtn jdfs-fontstyle-{{category.key}}\" ng-repeat=\"category in categories\" ng-class=\"{'jdfs-active jdfs-highlight': category.key == current.category}\" ng-click=setCategoryFilter(category.key) ng-model=current.category>{{text.category[category.key] || toName(category.key)}}</button></div><div class=jdfs-providers><h4 class=jdfs-filter-headline>{{text.providerLabel}}</h4><div ng-repeat=\"(provider, active) in providers\" class=jdfs-provider ng-class=\"{'jdfs-active jdfs-highlight': current.providers[provider]}\"><input ng-model=current.providers[provider] type=checkbox id=jdfs-{{id}}-provider-{{provider}}><label for=jdfs-{{id}}-provider-{{provider}}>{{text.provider[provider] || toName(provider)}}</label></div></div><div class=jdfs-subsets><h4 class=jdfs-filter-headline>{{text.subsetLabel}}</h4><div ng-repeat=\"(key, name) in subsets\" class=jdfs-subset ng-class=\"{'jdfs-active jdfs-highlight': current.subsets[key]}\"><input ng-model=current.subsets[key] type=checkbox id=jdfs-{{id}}-subset-{{key}}><label for=jdfs-{{id}}-subset-{{key}}>{{text.subset[key] || toName(key)}}</label></div></div><button ng-click=toggle() class=jdfs-close><span>{{text.closeButton}}</span></button></div></div></div>"
     );
   
   }]);

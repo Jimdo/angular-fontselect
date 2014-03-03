@@ -1,5 +1,5 @@
 /*!
- * angular-fontselect v0.6.2
+ * angular-fontselect v0.6.3
  * https://github.com/Jimdo/angular-fontselect
  *
  * A fontselect directive for AngularJS
@@ -89,6 +89,11 @@
 }
 .jdfs-filter h4 {
   margin: 0 0 .5em;
+}
+.jdfs-close {
+  position: absolute;
+  right: 1em;
+  top: 1.45em;
 }
 .jdfs-filter .jdfs-styles,
 .jdfs-filter .jdfs-providers,
