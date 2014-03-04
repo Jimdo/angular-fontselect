@@ -1,7 +1,9 @@
 /* global $rootScope, DEFAULT_WEBSAFE_FONTS, PROVIDER_GOOGLE, STATE_DEFAULTS,
-          createNewDirective, fontsService, NAME_FONTSSERVICE, PROVIDERS */
+          createNewDirective, fontsService, NAME_FONTSSERVICE, PROVIDERS,
+          VALUE_NO_FONT_STACK */
 describe('api', function() {
   var elm, $scope;
+
   function setupWithState(defaults) {
 
     if (!angular.isObject(defaults)) {
@@ -101,14 +103,14 @@ describe('api', function() {
         setupWithState();
 
         expect($scope.name).toBe('');
-        expect($scope.stack).toBe('');
+        expect($scope.stack).toBe(VALUE_NO_FONT_STACK);
         $scope.current.font = DEFAULT_WEBSAFE_FONTS[0];
         $scope.$digest();
       });
 
       it('should set name and stack when we init with state', function() {
         expect($scope.name).not.toBe('');
-        expect($scope.stack).not.toBe('');
+        expect($scope.stack).not.toBe(VALUE_NO_FONT_STACK);
       });
 
       it('should not fail when setting current to something invalid', function() {
@@ -136,10 +138,10 @@ describe('api', function() {
       });
 
       it('should unset the currently selected font stack on reset', function() {
-        expect($rootScope.stack).not.toBe('');
+        expect($rootScope.stack).not.toBe(VALUE_NO_FONT_STACK);
         $scope.reset();
         $scope.$digest();
-        expect($rootScope.stack).toBe('');
+        expect($rootScope.stack).toBe(VALUE_NO_FONT_STACK);
       });
     });
 
@@ -153,6 +155,7 @@ describe('api', function() {
       });
 
       it('should also trigger reset method when stack gets false', function() {
+        $rootScope.stack = DEFAULT_WEBSAFE_FONTS[1].stack;
         setupWithState();
         spyOn($scope, 'reset').andCallThrough();
         $rootScope.stack = false;

@@ -1,5 +1,5 @@
 /* global PROVIDERS, STATE_DEFAULTS, NAME_FONTSSERVICE, DIR_PARTIALS, SORT_ATTRIBUTES, TEXT_DEFAULTS */
-/* global KEY_ESCAPE */
+/* global KEY_ESCAPE, VALUE_NO_FONT_STACK */
 var id = 1;
 
 /** @const */
@@ -27,7 +27,9 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsSer
       $scope.subsets = fontsService.getSubsetNames();
       $scope.sortAttrs = SORT_ATTRIBUTES;
       $scope.name = '';
-      $scope.stack = $scope.stack || '';
+      if (angular.isUndefined($scope.stack)) {
+        $scope.stack = VALUE_NO_FONT_STACK;
+      }
 
       $scope.text = angular.extend(angular.copy(TEXT_DEFAULTS), $scope.text || {});
       if ($scope.rawText) {
@@ -129,7 +131,7 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsSer
           $scope.stack = font.stack;
         } else {
           $scope.name = '';
-          $scope.stack = '';
+          $scope.stack = VALUE_NO_FONT_STACK;
         }
       };
 

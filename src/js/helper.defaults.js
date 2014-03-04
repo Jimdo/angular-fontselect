@@ -213,6 +213,9 @@ var SUBSET_PRIORITY = [
 ];
 
 /** @const */
+var VALUE_NO_FONT_STACK = false;
+
+/** @const */
 var VARIANTS_REGULAR = ['regular', '400', '300', '500'];
 
 /** @const */
