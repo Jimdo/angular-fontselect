@@ -1,5 +1,5 @@
 /*!
- * angular-fontselect v0.6.3
+ * angular-fontselect v0.6.4
  * https://github.com/Jimdo/angular-fontselect
  *
  * A fontselect directive for AngularJS
@@ -225,6 +225,9 @@
     SUBSET_CYRILLIC_EXT,
     SUBSET_VIETNAMESE
   ];
+  
+  /** @const */
+  var VALUE_NO_FONT_STACK = false;
   
   /** @const */
   var VARIANTS_REGULAR = ['regular', '400', '300', '500'];
@@ -1673,7 +1676,9 @@
         $scope.subsets = fontsService.getSubsetNames();
         $scope.sortAttrs = SORT_ATTRIBUTES;
         $scope.name = '';
-        $scope.stack = $scope.stack || '';
+        if (angular.isUndefined($scope.stack)) {
+          $scope.stack = VALUE_NO_FONT_STACK;
+        }
   
         $scope.text = angular.extend(angular.copy(TEXT_DEFAULTS), $scope.text || {});
         if ($scope.rawText) {
@@ -1775,7 +1780,7 @@
             $scope.stack = font.stack;
           } else {
             $scope.name = '';
-            $scope.stack = '';
+            $scope.stack = VALUE_NO_FONT_STACK;
           }
         };
   
