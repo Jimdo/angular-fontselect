@@ -194,4 +194,35 @@ describe('fontsService', function() {
       expect(returnedObj).toEqual(input);
     });
   });
+
+  describe('ready method', function() {
+    it('should exist', function() {
+      expect(fontsService.ready).toBeInstanceOf(Function);
+    });
+
+    it('should return a promise', function() {
+      expect(fontsService.ready()).toBeInstanceOf(Object);
+      expect(fontsService.ready().then).toBeInstanceOf(Function);
+    });
+
+    it('should have an internal promise for the google api request', function() {
+      expect(fontsService._initPromises.length).toBe(1);
+    });
+
+    it('should have been resolved since we have google fonts now.', function() {
+      var spy = jasmine.createSpy('fontsService ready');
+      fontsService.ready().then(spy);
+      fontsService.ready().finally(function() {
+        expect(spy).toHaveBeenCalled();
+      });
+    });
+
+    it('should also handle callbacks passed as parameter.', function() {
+      var spy = jasmine.createSpy('fontsService ready');
+      fontsService.ready(spy);
+      fontsService.ready().finally(function() {
+        expect(spy).toHaveBeenCalled();
+      });
+    });
+  });
 });
