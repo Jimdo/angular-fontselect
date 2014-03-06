@@ -1,7 +1,7 @@
 /* global DEFAULT_WEBSAFE_FONTS, PROVIDER_WEBSAFE, PROVIDER_GOOGLE, REQUIRED_FONT_OBJECT_KEYS */
 /* global GOOGLE_FONT_CATEGORIES, NAME_FONTSSERVICE, DEFAULT_CATEGORIES, URL_GOOGLE_FONTS_CSS */
 /* global VARIANT_PRIORITY, SUBSET_PRIORITY, METHOD_GET, SUPPORT_KHMER, URL_GOOGLE_FONTS_API  */
-
+/* global STATE_DEFAULTS  */
 
 var _fontsServiceDeps = ['$http', '$q', 'jdFontselectConfig', '$filter'];
 
@@ -28,8 +28,8 @@ FontsService.prototype = {
     self._fonts = self._fonts || [];
     self._map = {};
     self._allSubsets = [];
-    self._subsets = {};
-    self._providers = {};
+    self._subsets = angular.copy(STATE_DEFAULTS.subsets);
+    self._providers = angular.copy(STATE_DEFAULTS.providers);
     self._imports = {};
     self._initPromises = [];
     self._subsetNames = {};
@@ -201,6 +201,10 @@ FontsService.prototype = {
   },
 
   _setSelects: function(target, srcs, additive) {
+    if (angular.isUndefined(srcs)) {
+      return target;
+    }
+
     /* If we aren't additive, remove all keys that are not present in srcs */
     if (!additive && !angular.isUndefined(additive)) {
       angular.forEach(target, function(active, src) {
