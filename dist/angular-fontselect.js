@@ -1,5 +1,5 @@
 /*!
- * angular-fontselect v0.6.4
+ * angular-fontselect v0.6.5
  * https://github.com/Jimdo/angular-fontselect
  *
  * A fontselect directive for AngularJS
@@ -1240,7 +1240,7 @@
     for (var i = 0, l = _fontsServiceDeps.length; i <l; i++) {
       self[_fontsServiceDeps[i]] = arguments[i];
     }
-    
+  
     self._init();
   
     return self;
@@ -1251,20 +1251,29 @@
   FontsService.prototype = {
     _init: function() {
       var self = this;
-      
+  
       self._fonts = self._fonts || [];
       self._map = {};
       self._allSubsets = [];
-      self._subsets = {};
-      self._providers = {};
+      self._subsets = angular.copy(STATE_DEFAULTS.subsets);
+      self._providers = angular.copy(STATE_DEFAULTS.providers);
       self._imports = {};
-  
+      self._initPromises = [];
       self._subsetNames = {};
+  
       self._addDefaultFonts();
     },
   
     getAllFonts: function() {
       return this._fonts;
+    },
+  
+    ready: function(callback) {
+      var promise = this.$q.all(this._initPromises);
+      if (angular.isFunction(callback)) {
+        promise.then(callback);
+      }
+      return promise;
     },
   
     add: function(fontObj, provider) {
@@ -1304,7 +1313,7 @@
       var self = this;
   
       var fonts = self.searchFonts(object);
-      
+  
       if (fonts.length > 0) {
         fonts = fonts[0];
       } else {
@@ -1419,6 +1428,10 @@
     },
   
     _setSelects: function(target, srcs, additive) {
+      if (angular.isUndefined(srcs)) {
+        return target;
+      }
+  
       /* If we aren't additive, remove all keys that are not present in srcs */
       if (!additive && !angular.isUndefined(additive)) {
         angular.forEach(target, function(active, src) {
@@ -1459,7 +1472,7 @@
       var self = this;
       var googleUrl = self.getGoogleUrl();
       var urls = {};
-      
+  
       if (googleUrl) {
         urls[PROVIDER_GOOGLE] = googleUrl;
       }
@@ -1546,6 +1559,9 @@
   
       _googleFontsInitiated = true;
   
+      var deferred = self.$q.defer();
+      self._initPromises.push(deferred.promise);
+  
       self.$http({
         method: METHOD_GET,
         url: URL_GOOGLE_FONTS_API,
@@ -1555,6 +1571,7 @@
         }
       }).success(function(response) {
         var amount = response.items.length;
+        var ready = amount - 1;
   
         angular.forEach(response.items, function(font, i) {
           var category = self._getGoogleFontCat(font.family);
@@ -1572,8 +1589,12 @@
             stack: '"' + font.family + '", ' + category.fallback,
             category: category.key
           }, PROVIDER_GOOGLE);
+  
+          if (ready === i) {
+            deferred.resolve();
+          }
         });
-      });
+      }).error(deferred.reject);
     },
   
     _addSubsets: function(subsets) {
