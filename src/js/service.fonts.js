@@ -215,9 +215,7 @@ FontsService.prototype = {
     }
 
     angular.forEach(srcs, function(active, src) {
-      if (active) {
-        target[src] = active;
-      }
+      target[src] = active;
     });
 
     return target;

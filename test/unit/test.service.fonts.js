@@ -193,6 +193,11 @@ describe('fontsService', function() {
       expect(returnedObj).not.toBe(input);
       expect(returnedObj).toEqual(input);
     });
+
+    it('should allow adding of unselected options', function() {
+      fontsService._setSelects(fixture, {mooh: false});
+      expect(fixture.mooh).toBe(false);
+    });
   });
 
   describe('ready method', function() {
