@@ -1,5 +1,5 @@
 /*!
- * angular-fontselect v0.6.5
+ * angular-fontselect v0.6.6
  * https://github.com/Jimdo/angular-fontselect
  *
  * A fontselect directive for AngularJS
@@ -1442,9 +1442,7 @@
       }
   
       angular.forEach(srcs, function(active, src) {
-        if (active) {
-          target[src] = active;
-        }
+        target[src] = active;
       });
   
       return target;
