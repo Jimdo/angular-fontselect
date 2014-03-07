@@ -27,12 +27,10 @@ FontsService.prototype = {
 
     self._fonts = self._fonts || [];
     self._map = {};
-    self._allSubsets = [];
     self._subsets = angular.copy(STATE_DEFAULTS.subsets);
     self._providers = angular.copy(STATE_DEFAULTS.providers);
     self._imports = {};
     self._initPromises = [];
-    self._subsetNames = {};
 
     self._addDefaultFonts();
   },
@@ -70,7 +68,7 @@ FontsService.prototype = {
     }
 
     if (angular.isArray(fontObj.subsets)) {
-      self._addSubsets(fontObj.subsets);
+      self.setSubsets(fontObj.subsets);
     }
 
     self._fonts.push(fontObj);
@@ -168,14 +166,6 @@ FontsService.prototype = {
     return DEFAULT_CATEGORIES;
   },
 
-  getAllSubsets: function() {
-    return this._allSubsets;
-  },
-
-  getSubsetNames: function() {
-    return this._subsetNames;
-  },
-
   getImports: function() {
     return this._imports;
   },
@@ -188,25 +178,69 @@ FontsService.prototype = {
     return this._providers;
   },
 
-  setSubsets: function(subsets, additive) {
-    return this._setSelects(this._subsets, subsets, additive);
+  setSubsets: function(subsets, options) {
+    var self = this;
+    return self._setSelects(
+      self._subsets,
+      subsets,
+      self._setSelectOptions(options)
+    );
   },
 
-  setProviders: function(providers, additive) {
-    return this._setSelects(this._providers, providers, additive);
+  setProviders: function(providers, options) {
+    var self = this;
+    return self._setSelects(
+      self._providers,
+      providers,
+      self._setSelectOptions(options)
+    );
   },
 
-  setImports: function(imports, additive) {
-    return this._setSelects(this._imports, imports, additive);
+  setImports: function(imports, options) {
+    var self = this;
+    return self._setSelects(
+      self._imports,
+      imports,
+      self._setSelectOptions(options, {update: true})
+    );
   },
 
-  _setSelects: function(target, srcs, additive) {
+  _setSelectOptions: function(options, additional) {
+    if (typeof options === 'boolean') {
+      options = {additive: options};
+    }
+
+    if (!angular.isObject(additional)) {
+      additional = {};
+    }
+
+    options = angular.extend({
+      additive: true,
+      update: false
+    }, options, additional);
+
+    return options;
+  },
+
+  _setSelects: function(target, srcs, options) {
     if (angular.isUndefined(srcs)) {
       return target;
     }
 
+    if (!angular.isObject(options)) {
+      options = this._setSelectOptions(options);
+    }
+
+    if (angular.isArray(srcs)) {
+      var srcsObj = {};
+      for (var i = 0, l = srcs.length; i < l; i++) {
+        srcsObj[srcs[i]] = false;
+      }
+      srcs = srcsObj;
+    }
+
     /* If we aren't additive, remove all keys that are not present in srcs */
-    if (!additive && !angular.isUndefined(additive)) {
+    if (!options.additive) {
       angular.forEach(target, function(active, src) {
         if (!srcs[src]) {
           delete target[src];
@@ -215,7 +249,9 @@ FontsService.prototype = {
     }
 
     angular.forEach(srcs, function(active, src) {
-      target[src] = active;
+      if (options.update || angular.isUndefined(target[src])) {
+        target[src] = active;
+      }
     });
 
     return target;
@@ -366,27 +402,6 @@ FontsService.prototype = {
         }
       });
     }).error(deferred.reject);
-  },
-
-  _addSubsets: function(subsets) {
-    for (var i = 0, l = subsets.length; i < l; i++) {
-      this._addSubset(subsets[i]);
-    }
-  },
-
-  _addSubset: function(subset) {
-    var self = this;
-
-    if (self._allSubsets.indexOf(subset) < 0) {
-      var fragments = subset.split('-');
-
-      for (var i = 0, l = fragments.length; i < l; i++) {
-        fragments[i] = fragments[i].charAt(0).toUpperCase() + fragments[i].slice(1);
-      }
-
-      self._subsetNames[subset] = fragments.join(' ');
-      self._allSubsets.push(subset);
-    }
   },
 
   _getGoogleFontCat: function(font) {

@@ -165,33 +165,23 @@ describe('fontselect directive', function() {
 
   describe('character sets', function() {
     it('should have a list of subsets', function() {
-      expect(fontsService.getAllSubsets()).toBeInstanceOf(Array);
+      expect(fontsService.getSubsets()).toBeInstanceOf(Object);
     });
 
     it('should try to add new subsets when we add a new font', function() {
-      spyOn(fontsService, '_addSubsets');
+      spyOn(fontsService, 'setSubsets');
       fontsService.add(ANOTHER_FONT);
-      expect(fontsService._addSubsets).toHaveBeenCalled();
+      expect(fontsService.setSubsets).toHaveBeenCalled();
     });
 
     it('should expand the list of subsets if new are present', function() {
-      var listBefore = fontsService._allSubsets.length;
+      var listBefore = _objLength(fontsService._subsets);
       fontsService.add(AND_SOME_FONT_MORE);
-      expect(fontsService._allSubsets.length).toBe(listBefore + 1);
-    });
-
-    it('should not add existing subsets', function() {
-      var listBefore = fontsService._subsets.length;
-      fontsService.add(ANOTHER_FONT);
-      expect(fontsService._subsets.length).toBe(listBefore);
-    });
-
-    it('should generate a name from given subset key', function() {
-      expect(fontsService._subsetNames['latin-ext']).toBe('Latin Ext');
+      expect(_objLength(fontsService._subsets)).toBe(listBefore + 1);
     });
 
     it('should have checkboxes for all subsets', function() {
-      expect(elm.find('.jdfs-subsets input').length).toBe(fontsService._allSubsets.length);
+      expect(elm.find('.jdfs-subsets input').length).toBe(_objLength(fontsService._subsets));
     });
   });
 

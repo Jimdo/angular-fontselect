@@ -181,7 +181,11 @@ describe('fontsService', function() {
     });
 
     it('should delete keys from original in non-additive mode', function() {
-      fontsService._setSelects(fixture, input, false);
+      fontsService._setSelects(
+        fixture,
+        input,
+        fontsService._setSelectOptions(false)
+      );
       expect(fixture.foo).toBeUndefined();
     });
 

@@ -45,7 +45,7 @@
 			<div class="jdfs-providers">
 				<h4 class="jdfs-filter-headline">{{text.providerLabel}}</h4>
 				<div
-					ng-repeat="(provider, active) in providers"
+					ng-repeat="(provider, active) in current.providers"
 					class='jdfs-provider'
 					ng-class="{'jdfs-active jdfs-highlight': current.providers[provider]}"
 				>
@@ -57,7 +57,7 @@
 			<div class="jdfs-subsets">
 				<h4 class="jdfs-filter-headline">{{text.subsetLabel}}</h4>
 				<div
-					ng-repeat="(key, name) in subsets"
+					ng-repeat="(key, name) in current.subsets"
 					class='jdfs-subset'
 					ng-class="{'jdfs-active jdfs-highlight': current.subsets[key]}"
 				>

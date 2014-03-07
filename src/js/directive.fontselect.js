@@ -1,4 +1,4 @@
-/* global PROVIDERS, STATE_DEFAULTS, NAME_FONTSSERVICE, DIR_PARTIALS, SORT_ATTRIBUTES, TEXT_DEFAULTS */
+/* global STATE_DEFAULTS, NAME_FONTSSERVICE, DIR_PARTIALS, SORT_ATTRIBUTES, TEXT_DEFAULTS */
 /* global KEY_ESCAPE, VALUE_NO_FONT_STACK */
 var id = 1;
 
@@ -21,10 +21,8 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsSer
     controller: ['$scope', '$element', '$timeout', function($scope, $element, $timeout) {
       $scope.fonts = fontsService.getAllFonts();
       $scope.id = id++;
-      $scope.providers = angular.copy(PROVIDERS);
       $scope.active = false;
       $scope.categories = fontsService.getCategories();
-      $scope.subsets = fontsService.getSubsetNames();
       $scope.sortAttrs = SORT_ATTRIBUTES;
       $scope.name = '';
       if (angular.isUndefined($scope.stack)) {
