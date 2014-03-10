@@ -1,5 +1,5 @@
 /*!
- * angular-fontselect v0.6.6
+ * angular-fontselect v0.6.7
  * https://github.com/Jimdo/angular-fontselect
  *
  * A fontselect directive for AngularJS
@@ -1254,12 +1254,10 @@
   
       self._fonts = self._fonts || [];
       self._map = {};
-      self._allSubsets = [];
       self._subsets = angular.copy(STATE_DEFAULTS.subsets);
       self._providers = angular.copy(STATE_DEFAULTS.providers);
       self._imports = {};
       self._initPromises = [];
-      self._subsetNames = {};
   
       self._addDefaultFonts();
     },
@@ -1297,7 +1295,7 @@
       }
   
       if (angular.isArray(fontObj.subsets)) {
-        self._addSubsets(fontObj.subsets);
+        self.setSubsets(fontObj.subsets);
       }
   
       self._fonts.push(fontObj);
@@ -1395,14 +1393,6 @@
       return DEFAULT_CATEGORIES;
     },
   
-    getAllSubsets: function() {
-      return this._allSubsets;
-    },
-  
-    getSubsetNames: function() {
-      return this._subsetNames;
-    },
-  
     getImports: function() {
       return this._imports;
     },
@@ -1415,25 +1405,69 @@
       return this._providers;
     },
   
-    setSubsets: function(subsets, additive) {
-      return this._setSelects(this._subsets, subsets, additive);
+    setSubsets: function(subsets, options) {
+      var self = this;
+      return self._setSelects(
+        self._subsets,
+        subsets,
+        self._setSelectOptions(options)
+      );
     },
   
-    setProviders: function(providers, additive) {
-      return this._setSelects(this._providers, providers, additive);
+    setProviders: function(providers, options) {
+      var self = this;
+      return self._setSelects(
+        self._providers,
+        providers,
+        self._setSelectOptions(options)
+      );
     },
   
-    setImports: function(imports, additive) {
-      return this._setSelects(this._imports, imports, additive);
+    setImports: function(imports, options) {
+      var self = this;
+      return self._setSelects(
+        self._imports,
+        imports,
+        self._setSelectOptions(options, {update: true})
+      );
     },
   
-    _setSelects: function(target, srcs, additive) {
+    _setSelectOptions: function(options, additional) {
+      if (typeof options === 'boolean') {
+        options = {additive: options};
+      }
+  
+      if (!angular.isObject(additional)) {
+        additional = {};
+      }
+  
+      options = angular.extend({
+        additive: true,
+        update: false
+      }, options, additional);
+  
+      return options;
+    },
+  
+    _setSelects: function(target, srcs, options) {
       if (angular.isUndefined(srcs)) {
         return target;
       }
   
+      if (!angular.isObject(options)) {
+        options = this._setSelectOptions(options);
+      }
+  
+      if (angular.isArray(srcs)) {
+        var srcsObj = {};
+        for (var i = 0, l = srcs.length; i < l; i++) {
+          srcsObj[srcs[i]] = false;
+        }
+        srcs = srcsObj;
+      }
+  
       /* If we aren't additive, remove all keys that are not present in srcs */
-      if (!additive && !angular.isUndefined(additive)) {
+      if (!options.additive) {
         angular.forEach(target, function(active, src) {
           if (!srcs[src]) {
             delete target[src];
@@ -1442,7 +1476,9 @@
       }
   
       angular.forEach(srcs, function(active, src) {
-        target[src] = active;
+        if (options.update || angular.isUndefined(target[src])) {
+          target[src] = active;
+        }
       });
   
       return target;
@@ -1595,27 +1631,6 @@
       }).error(deferred.reject);
     },
   
-    _addSubsets: function(subsets) {
-      for (var i = 0, l = subsets.length; i < l; i++) {
-        this._addSubset(subsets[i]);
-      }
-    },
-  
-    _addSubset: function(subset) {
-      var self = this;
-  
-      if (self._allSubsets.indexOf(subset) < 0) {
-        var fragments = subset.split('-');
-  
-        for (var i = 0, l = fragments.length; i < l; i++) {
-          fragments[i] = fragments[i].charAt(0).toUpperCase() + fragments[i].slice(1);
-        }
-  
-        self._subsetNames[subset] = fragments.join(' ');
-        self._allSubsets.push(subset);
-      }
-    },
-  
     _getGoogleFontCat: function(font) {
       var self = this;
   
@@ -1689,10 +1704,8 @@
       controller: ['$scope', '$element', '$timeout', function($scope, $element, $timeout) {
         $scope.fonts = fontsService.getAllFonts();
         $scope.id = id++;
-        $scope.providers = angular.copy(PROVIDERS);
         $scope.active = false;
         $scope.categories = fontsService.getCategories();
-        $scope.subsets = fontsService.getSubsetNames();
         $scope.sortAttrs = SORT_ATTRIBUTES;
         $scope.name = '';
         if (angular.isUndefined($scope.stack)) {
@@ -2221,7 +2234,7 @@
   
   
     $templateCache.put('src/partials/fontselect.html',
-      "<div class=jdfs-main id=jd-fontselect-{{id}}><button ng-click=toggle() class=jdfs-toggle style=\"font-family: {{current.font.stack}}\" ng-show=!active><span>{{current.font.name || text.button}}</span></button><input class=jdfs-search placeholder={{text.search}} name=jdfs-{{id}}-search ng-show=active ng-model=current.search><div class=jdfs-window ng-show=active><jd-fontlist fsid=id text=text current=current fonts=fonts active=active></jd-fontlist><div class=jdfs-filter><div class=jdfs-styles><h4 class=jdfs-filter-headline>{{text.styleLabel}}</h4><button class=\"jdfs-filterbtn jdfs-fontstyle-{{category.key}}\" ng-repeat=\"category in categories\" ng-class=\"{'jdfs-active jdfs-highlight': category.key == current.category}\" ng-click=setCategoryFilter(category.key) ng-model=current.category>{{text.category[category.key] || toName(category.key)}}</button></div><div class=jdfs-providers><h4 class=jdfs-filter-headline>{{text.providerLabel}}</h4><div ng-repeat=\"(provider, active) in providers\" class=jdfs-provider ng-class=\"{'jdfs-active jdfs-highlight': current.providers[provider]}\"><input ng-model=current.providers[provider] type=checkbox id=jdfs-{{id}}-provider-{{provider}}><label for=jdfs-{{id}}-provider-{{provider}}>{{text.provider[provider] || toName(provider)}}</label></div></div><div class=jdfs-subsets><h4 class=jdfs-filter-headline>{{text.subsetLabel}}</h4><div ng-repeat=\"(key, name) in subsets\" class=jdfs-subset ng-class=\"{'jdfs-active jdfs-highlight': current.subsets[key]}\"><input ng-model=current.subsets[key] type=checkbox id=jdfs-{{id}}-subset-{{key}}><label for=jdfs-{{id}}-subset-{{key}}>{{text.subset[key] || toName(key)}}</label></div></div><button ng-click=toggle() class=jdfs-close><span>{{text.closeButton}}</span></button></div></div></div>"
+      "<div class=jdfs-main id=jd-fontselect-{{id}}><button ng-click=toggle() class=jdfs-toggle style=\"font-family: {{current.font.stack}}\" ng-show=!active><span>{{current.font.name || text.button}}</span></button><input class=jdfs-search placeholder={{text.search}} name=jdfs-{{id}}-search ng-show=active ng-model=current.search><div class=jdfs-window ng-show=active><jd-fontlist fsid=id text=text current=current fonts=fonts active=active></jd-fontlist><div class=jdfs-filter><div class=jdfs-styles><h4 class=jdfs-filter-headline>{{text.styleLabel}}</h4><button class=\"jdfs-filterbtn jdfs-fontstyle-{{category.key}}\" ng-repeat=\"category in categories\" ng-class=\"{'jdfs-active jdfs-highlight': category.key == current.category}\" ng-click=setCategoryFilter(category.key) ng-model=current.category>{{text.category[category.key] || toName(category.key)}}</button></div><div class=jdfs-providers><h4 class=jdfs-filter-headline>{{text.providerLabel}}</h4><div ng-repeat=\"(provider, active) in current.providers\" class=jdfs-provider ng-class=\"{'jdfs-active jdfs-highlight': current.providers[provider]}\"><input ng-model=current.providers[provider] type=checkbox id=jdfs-{{id}}-provider-{{provider}}><label for=jdfs-{{id}}-provider-{{provider}}>{{text.provider[provider] || toName(provider)}}</label></div></div><div class=jdfs-subsets><h4 class=jdfs-filter-headline>{{text.subsetLabel}}</h4><div ng-repeat=\"(key, name) in current.subsets\" class=jdfs-subset ng-class=\"{'jdfs-active jdfs-highlight': current.subsets[key]}\"><input ng-model=current.subsets[key] type=checkbox id=jdfs-{{id}}-subset-{{key}}><label for=jdfs-{{id}}-subset-{{key}}>{{text.subset[key] || toName(key)}}</label></div></div><button ng-click=toggle() class=jdfs-close><span>{{text.closeButton}}</span></button></div></div></div>"
     );
   
   }]);
