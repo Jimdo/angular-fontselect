@@ -1,5 +1,5 @@
 /*!
- * angular-fontselect v0.6.7
+ * angular-fontselect v0.6.8
  * https://github.com/Jimdo/angular-fontselect
  *
  * A fontselect directive for AngularJS
@@ -1258,6 +1258,10 @@
       self._providers = angular.copy(STATE_DEFAULTS.providers);
       self._imports = {};
       self._initPromises = [];
+      self._fontInitiators = [];
+  
+      self.registerProvider(PROVIDER_GOOGLE, angular.bind(self, self._loadGoogleFont));
+      self.registerProvider(PROVIDER_WEBSAFE, function() {});
   
       self._addDefaultFonts();
     },
@@ -1432,6 +1436,15 @@
       );
     },
   
+    registerProvider: function(name, fontInitiator) {
+      var self = this;
+  
+      var provider = {};
+      provider[name] = false;
+      self.setProviders(provider);
+      self._fontInitiators[name] = fontInitiator;
+    },
+  
     _setSelectOptions: function(options, additional) {
       if (typeof options === 'boolean') {
         options = {additive: options};
@@ -1494,12 +1507,7 @@
       }
   
       font.loaded = true;
-  
-      if (font.provider === PROVIDER_WEBSAFE) {
-        return;
-      }
-  
-      this['_load' + font.provider](font);
+      this._fontInitiators[font.provider](font);
     },
   
     getUrls: function() {
@@ -1657,24 +1665,23 @@
       angular.forEach(DEFAULT_WEBSAFE_FONTS, function(font) {
         self.add(font);
       });
-    }
-  };
+    },
   
+    _loadGoogleFont: function(font) {
+      var self = this;
   
-  FontsService.prototype['_load' + PROVIDER_GOOGLE] = function(font) {
-    var self = this;
-  
-    try {
-      WebFont.load({
-        google: {
-          families: [font.name + ':' + self._getBestVariantOf(font.variants)],
-          text: font.name,
-          subsets: font.subsets,
-          subset: self._getBestSubsetOf(font.subsets)
-        }
-      });
-    } catch (e) {
-      self.removeFont(font, PROVIDER_GOOGLE);
+      try {
+        WebFont.load({
+          google: {
+            families: [font.name + ':' + self._getBestVariantOf(font.variants)],
+            text: font.name,
+            subsets: font.subsets,
+            subset: self._getBestSubsetOf(font.subsets)
+          }
+        });
+      } catch (e) {
+        self.removeFont(font, PROVIDER_GOOGLE);
+      }
     }
   };
   
