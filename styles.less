@@ -1,0 +1,90 @@
+body,html{
+  margin: 0;
+  padding: 0;
+}
+
+*,*:before,*:after{
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+@bodybgcolor: #e8e8e8;
+@jimdocolor: #0099ee;
+@contentbgcolor: #f7f7f9;
+
+.relacon{
+  position: relative;
+}
+body {
+  background: @bodybgcolor;
+  font-family: "Open Sans";
+}
+.mw{
+  margin: 0 auto;
+  max-width: 30em;
+  padding-left: 1em;
+  padding-right: 1em;
+}
+.wrap{
+}
+header{
+    padding: 3em 0;
+    text-align: center;
+    text-transform: uppercase;
+  h1{
+    color: @jimdocolor;
+
+  }
+  h2{
+    font-weight: 300;
+  }
+  h1,h2{
+    padding: 0;
+    margin: 0;
+  }
+}
+
+
+.contentwrap {
+  padding: 2em 0;
+  background: @contentbgcolor;
+}
+
+
+.fontselect{
+  justify-content: center;
+  align-items: center;
+  left: 1em;
+  top: 1em;
+}
+
+h1{
+  display: inline-block;
+  flex: 1 1;
+  margin: 1em;
+}
+
+.jdfs-main{
+  margin: 1em;
+  display: inline-block;
+}
+.footerwrap{
+  background: #393939;
+}
+footer{
+  text-align: center;
+  padding: 5em 0;
+  a {
+    color: @contentbgcolor;
+  }
+}
+a{
+  color: black;
+  display: inline-block;
+  margin: 0 .5em;
+  text-decoration: none;
+  &:hover{
+    color: @jimdocolor;
+  }
+}

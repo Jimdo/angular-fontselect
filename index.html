@@ -9,14 +9,65 @@
         <title></title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" type="text/css" jd-fontselect-current-href />
+        <link rel="stylesheet" type="text/css" href="dist/angular-fontselect.css">
+        <link rel="stylesheet/less" type="text/css" href="styles.less">
     </head>
-    <body ng-app="jdFontselect">
+    <body ng-cloak>
         <!--[if lt IE 7]>
             <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
 
-        <jd-fontselect></jd-fontselect>
-        
+        <div class="wrap">
+            <div class="headwrap relacon">
+                <div class="fontselect">
+                    <jd-fontselect stack="header"></jd-fontselect>
+                </div>
+                <header style="font-family: {{header}};">
+                    <h1>Angular Fontselection, by Jimdo</h1>
+                    <h3><a href="https://github.com/Jimdo/angular-fontselect/tree/v0.6.8">v0.6.8</a></h3>
+                </header>
+            </div>
+
+            <div class="contentwrap relacon">
+                <div class="fontselect">
+                    <jd-fontselect stack="content"></jd-fontselect>
+                </div>
+                <section class="content mw" style="font-family: {{content}};">
+                    <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</p>
+
+                    <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</p>
+                </section>
+            </div>
+            <div class="footerwrap relacon">
+                <div class="fontselect">
+                    <jd-fontselect stack="footer"></jd-fontselect>
+                </div>
+
+                <footer class='mw' style="font-family: {{footer}};">
+                    <a href="https://github.com/Jimdo/angular-fontselect">github repo</a>
+                    <a href="http://jimdo.com">Jimdo</a>
+                </footer>
+            </div>
+        </div>
+
         <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.10/angular.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/less.js/1.6.3/less.min.js"></script>
+        <script src="dist/libs/webfontloader.js"></script>
+        <script src="dist/angular-fontselect.js"></script>
+        <script type="text/javascript">
+            /* global angular */ /* jshint indent: false */
+            angular.module('jdFontselectDemoApp', ['jdFontselect']).constant('jdFontselectConfig', {
+              // googleApiKey: 'AIzaSyDTZJrLVoNqsFhMRT2qtrbRbmjEAkmgb0A'
+              googleApiKey: 'AIzaSyDj4SNEhYFlyj3574soB5IR1GkA9SzteLg'
+            })
+            .run(function($rootScope) {
+              $rootScope.header = '"The Girl Next Door", cursive, "google"';
+              $rootScope.content = '"Open Sans", sans-serif, "google"';
+              $rootScope.footer = '"Marcellus SC", serif, "google';
+            })
+            ;
+            angular.bootstrap(document, ['jdFontselectDemoApp']);
+        </script>
     </body>
 </html>
