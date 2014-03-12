@@ -1,3 +1,4 @@
+@import url("lesshat.less");
 
 @tabBg:            #eee;
 @activeTab:           #939393;
@@ -40,14 +41,10 @@
 
   width: 500px;
 
-  display: -webkit-box;
-  display: -moz-box;
-  display: -ms-flexbox;
-  display: -webkit-flex;
-  display: flex;
 
-  flex-direction: row;
-  align-items: flex-start;
+  .display(flex);
+  .flex-direction(row);
+  .align-items(flex-start);
 }
 .jdfs-toggle{
   margin: 0;
@@ -70,7 +67,7 @@
   border-radius: @outerBorderRadius 0 0 @outerBorderRadius;
   background: @containerBg;
   width: 60%;
-  flex: 1 0;
+  .flex(1 0);
 
 }
 
@@ -129,21 +126,18 @@
 }
 
 .jdfs-styles {
-  display: -webkit-box;
-  display: -moz-box;
-  display: -ms-flexbox;
-  display: -webkit-flex;
-  display: flex;
+  .display(flex);
 
-  justify-content: space-between;
-  flex-wrap: wrap;
+
+  .justify-content(space-between);
+  .flex-wrap(wrap);
   h4 {
-    flex: 100%;
+    .flex(100%);
   }
 }
 
 .jdfs-filterbtn {
-  
+
   border-radius: @innerBorderRadius;
   margin: 0 .3rem .3rem 0;
   width: 5em;
