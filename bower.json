@@ -31,6 +31,7 @@
     "package.json"
   ],
   "dependencies": {
+    "lesshat": "2.0.15",
     "angular": "~1.2.8"
   }
 }
