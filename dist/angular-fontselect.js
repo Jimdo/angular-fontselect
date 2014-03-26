@@ -1,5 +1,5 @@
 /*!
- * angular-fontselect v0.6.8
+ * angular-fontselect v0.6.9
  * https://github.com/Jimdo/angular-fontselect
  *
  * A fontselect directive for AngularJS
@@ -1257,8 +1257,10 @@
       self._subsets = angular.copy(STATE_DEFAULTS.subsets);
       self._providers = angular.copy(STATE_DEFAULTS.providers);
       self._imports = {};
+      self._usedProviders = {};
       self._initPromises = [];
       self._fontInitiators = [];
+      self._asyncFontSearches = {};
   
       self.registerProvider(PROVIDER_GOOGLE, angular.bind(self, self._loadGoogleFont));
       self.registerProvider(PROVIDER_WEBSAFE, function() {});
@@ -1300,6 +1302,13 @@
   
       if (angular.isArray(fontObj.subsets)) {
         self.setSubsets(fontObj.subsets);
+      }
+  
+      if (angular.isObject(self._asyncFontSearches[fontObj.stack])) {
+        self._asyncFontSearches[fontObj.stack].forEach(function(callback) {
+          callback(fontObj);
+        });
+        delete self._asyncFontSearches[fontObj.stack];
       }
   
       self._fonts.push(fontObj);
@@ -1347,10 +1356,28 @@
       var font = self.searchFont({stack: stack});
   
       if (!font) {
-        throw 'Font with stack "' + stack + '" not found.';
+        throw new Error ('Font with stack "' + stack + '" not found.');
       }
   
       return font;
+    },
+  
+    getFontByStackAsync: function(stack) {
+      var self = this;
+      var d = self.$q.defer();
+  
+      try {
+        var font = self.getFontByStack(stack);
+        d.resolve(font);
+      } catch (e) {
+        if (!angular.isArray(self._asyncFontSearches[stack])) {
+          self._asyncFontSearches[stack] = [];
+        }
+        self._asyncFontSearches[stack].push(d.resolve);
+      }
+  
+      self._initPromises.push(d.promise);
+      return d.promise;
     },
   
     removeFont: function(font, provider) {
@@ -1409,6 +1436,10 @@
       return this._providers;
     },
   
+    getUsage: function() {
+      return this._usedProviders;
+    },
+  
     setSubsets: function(subsets, options) {
       var self = this;
       return self._setSelects(
@@ -1436,12 +1467,22 @@
       );
     },
   
+    setUsage: function(usage, options) {
+      var self = this;
+      return self._setSelects(
+        self._usedProviders,
+        usage,
+        self._setSelectOptions(options, {update: true})
+      );
+    },
+  
     registerProvider: function(name, fontInitiator) {
       var self = this;
   
       var provider = {};
       provider[name] = false;
       self.setProviders(provider);
+      self._usedProviders[name] = false;
       self._fontInitiators[name] = fontInitiator;
     },
   
@@ -1520,6 +1561,20 @@
       }
   
       return urls;
+    },
+  
+    updateUsage: function(font, wasActivated) {
+      var self = this;
+  
+      if (!angular.isNumber(font.used) || font.used < 0) {
+        font.used = 0;
+      }
+      font.used += wasActivated === false ? -1 : 1;
+  
+      self._usedProviders[font.provider] = !!self.$filter('filter')(
+        self.getUsedFonts(),
+        {provider: font.provider}
+      ).length;
     },
   
     getUsedFonts: function() {
@@ -1692,9 +1747,6 @@
   // src/js/directive.fontselect.js
   var id = 1;
   
-  /** @const */
-  var PLEASE_SET_FONT_BY_STACK = '_PSFBS';
-  
   fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsService) {
     return {
       scope: {
@@ -1829,14 +1881,22 @@
         }
   
         if ($scope.stack.length) {
-          $scope[PLEASE_SET_FONT_BY_STACK] = $scope.stack;
+          try {
+            var font = fontsService.getFontByStack($scope.stack);
+            /* Since we're setting the font now before watchers are initiated, we need to update usage by ourself. */
+            fontsService.updateUsage(font);
+            setState({font: font});
+          } catch (e) {
+            fontsService.getFontByStackAsync($scope.stack).then(function(font) {
+              setState({font: font});
+            });
+          }
         }
   
         $scope.onInit({$scope: $scope, $element: $element});
       }],
   
       link: function(scope) {
-  
         scope.$watch('current.font', function(newFont, oldFont) {
           if (!angular.isObject(scope.current)) {
             scope.reset();
@@ -1848,14 +1908,10 @@
             }
   
             if (angular.isObject(oldFont) && oldFont.used) {
-              oldFont.used--;
+              fontsService.updateUsage(oldFont, false);
             }
             if (angular.isObject(newFont)) {
-              if (!newFont.used) {
-                newFont.used = 1;
-              } else {
-                newFont.used++;
-              }
+              fontsService.updateUsage(newFont);
             }
   
             scope._setSelected(newFont);
@@ -1886,20 +1942,6 @@
             scope.reset();
           }
         });
-  
-        if (scope[PLEASE_SET_FONT_BY_STACK]) {
-          var destroy = scope.$watch('fonts', function() {
-            var current = scope.current;
-            try {
-              var font = fontsService.getFontByStack(scope[PLEASE_SET_FONT_BY_STACK]);
-              if (font) {
-                current.font = font;
-                delete scope[PLEASE_SET_FONT_BY_STACK];
-                destroy();
-              }
-            } catch (e) {}
-          }, true);
-        }
       }
     };
   }]);
@@ -2236,7 +2278,7 @@
   
   
     $templateCache.put('src/partials/fontlist.html',
-      "<div class=jdfs-fontlistcon ng-class=\"{'jdfs-active': isActive()}\"><div><ul class=jdfs-fontlist><jd-font ng-repeat=\"font in getFilteredFonts() | startFrom: page.current * page.size | limitTo: page.size\"></ul><div class=jdfs-paginationcon><button ng-repeat=\"dir in ['prev', 'next']\" class=\"jdfs-fontpagination jdfs-fontpagination-{{dir}}\" ng-click=paginate(dir) ng-class=\"{'jdfs-disabled': !paginationButtonActive(dir)}\" ng-disabled=!paginationButtonActive(dir)>{{text.page[dir]}}</button></div><div class=jdfs-pagecon>{{text.pageLabel}}<span class=jdfs-page-current>{{page.current + 1}}</span>/<span class=jdfs-page-count>{{page.count}}</span></div><div class=jdfs-fontcount>{{text.fontFabel}}<span ng-if=\"getFilteredFonts().length == fonts.length\">{{fonts.length}}</span><span ng-if=\"fonts.length && getFilteredFonts().length != fonts.length\">{{getFilteredFonts().length}}/{{fonts.length}}</span><span ng-if=!fonts.length>…</span></div></div></div>"
+      "<div class=jdfs-fontlistcon ng-class=\"{'jdfs-active': isActive()}\"><div><ul class=jdfs-fontlist><jd-font ng-repeat=\"font in getFilteredFonts() | startFrom: page.current * page.size | limitTo: page.size\"></ul><div class=jdfs-paginationcon><button ng-repeat=\"dir in ['prev', 'next']\" class=\"jdfs-fontpagination jdfs-fontpagination-{{dir}}\" ng-click=paginate(dir) ng-class=\"{'jdfs-disabled': !paginationButtonActive(dir)}\" ng-disabled=!paginationButtonActive(dir)>{{text.page[dir]}}</button></div><div class=jdfs-pagecon>{{text.pageLabel}} <span class=jdfs-page-current>{{page.current + 1}}</span>/<span class=jdfs-page-count>{{page.count}}</span></div><div class=jdfs-fontcount>{{text.fontFabel}} <span ng-if=\"getFilteredFonts().length == fonts.length\">{{fonts.length}}</span> <span ng-if=\"fonts.length && getFilteredFonts().length != fonts.length\">{{getFilteredFonts().length}}/{{fonts.length}}</span> <span ng-if=!fonts.length>…</span></div></div></div>"
     );
   
   
