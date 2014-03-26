@@ -81,6 +81,7 @@
         "spyOn",
         "runs",
         "waits",
+        "waitsFor",
         "inject",
         "module",
         "require",

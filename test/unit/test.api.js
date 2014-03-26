@@ -1,6 +1,6 @@
 /* global $rootScope, DEFAULT_WEBSAFE_FONTS, PROVIDER_GOOGLE, STATE_DEFAULTS,
-          createNewDirective, fontsService, NAME_FONTSSERVICE, PROVIDERS,
-          VALUE_NO_FONT_STACK */
+          createNewDirective, fontsService, PROVIDERS,
+          VALUE_NO_FONT_STACK, $httpBackend */
 describe('api', function() {
   var elm, $scope;
 
@@ -24,7 +24,7 @@ describe('api', function() {
 
   it('should expand api data into current', function() {
     setupWithState({foo: 'bar'});
-    
+
     expect($scope.current.foo).toBe('bar');
   });
 
@@ -200,13 +200,22 @@ describe('api', function() {
 
       it('should be able to find the used font even though it was preselected', function() {
         var font = angular.copy(DEFAULT_WEBSAFE_FONTS[1]);
-        var fontsService;
-        inject(function($injector) {
-          fontsService = $injector.get(NAME_FONTSSERVICE);
-        });
         expect(fontsService.getUsedFonts().length).toBe(0);
 
         setupWithState({ font: font });
+
+        expect(fontsService.getUsedFonts()[0].name).toEqual(font.name);
+      });
+
+      it('should be able to find a preselected font from google', function() {
+        var font = fontsService.searchFont({provider: PROVIDER_GOOGLE});
+        fontsService._fonts = [];
+        expect(fontsService.getUsedFonts().length).toBe(0);
+
+        setupWithState({ font: font });
+        window._googleFontsInitiated = false;
+        fontsService._initGoogleFonts();
+        $httpBackend.flush(1);
 
         expect(fontsService.getUsedFonts()[0].name).toEqual(font.name);
       });

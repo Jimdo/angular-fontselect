@@ -30,8 +30,10 @@ FontsService.prototype = {
     self._subsets = angular.copy(STATE_DEFAULTS.subsets);
     self._providers = angular.copy(STATE_DEFAULTS.providers);
     self._imports = {};
+    self._usedProviders = {};
     self._initPromises = [];
     self._fontInitiators = [];
+    self._asyncFontSearches = {};
 
     self.registerProvider(PROVIDER_GOOGLE, angular.bind(self, self._loadGoogleFont));
     self.registerProvider(PROVIDER_WEBSAFE, function() {});
@@ -73,6 +75,13 @@ FontsService.prototype = {
 
     if (angular.isArray(fontObj.subsets)) {
       self.setSubsets(fontObj.subsets);
+    }
+
+    if (angular.isObject(self._asyncFontSearches[fontObj.stack])) {
+      self._asyncFontSearches[fontObj.stack].forEach(function(callback) {
+        callback(fontObj);
+      });
+      delete self._asyncFontSearches[fontObj.stack];
     }
 
     self._fonts.push(fontObj);
@@ -120,10 +129,28 @@ FontsService.prototype = {
     var font = self.searchFont({stack: stack});
 
     if (!font) {
-      throw 'Font with stack "' + stack + '" not found.';
+      throw new Error ('Font with stack "' + stack + '" not found.');
     }
 
     return font;
+  },
+
+  getFontByStackAsync: function(stack) {
+    var self = this;
+    var d = self.$q.defer();
+
+    try {
+      var font = self.getFontByStack(stack);
+      d.resolve(font);
+    } catch (e) {
+      if (!angular.isArray(self._asyncFontSearches[stack])) {
+        self._asyncFontSearches[stack] = [];
+      }
+      self._asyncFontSearches[stack].push(d.resolve);
+    }
+
+    self._initPromises.push(d.promise);
+    return d.promise;
   },
 
   removeFont: function(font, provider) {
@@ -182,6 +209,10 @@ FontsService.prototype = {
     return this._providers;
   },
 
+  getUsage: function() {
+    return this._usedProviders;
+  },
+
   setSubsets: function(subsets, options) {
     var self = this;
     return self._setSelects(
@@ -209,12 +240,22 @@ FontsService.prototype = {
     );
   },
 
+  setUsage: function(usage, options) {
+    var self = this;
+    return self._setSelects(
+      self._usedProviders,
+      usage,
+      self._setSelectOptions(options, {update: true})
+    );
+  },
+
   registerProvider: function(name, fontInitiator) {
     var self = this;
 
     var provider = {};
     provider[name] = false;
     self.setProviders(provider);
+    self._usedProviders[name] = false;
     self._fontInitiators[name] = fontInitiator;
   },
 
@@ -293,6 +334,20 @@ FontsService.prototype = {
     }
 
     return urls;
+  },
+
+  updateUsage: function(font, wasActivated) {
+    var self = this;
+
+    if (!angular.isNumber(font.used) || font.used < 0) {
+      font.used = 0;
+    }
+    font.used += wasActivated === false ? -1 : 1;
+
+    self._usedProviders[font.provider] = !!self.$filter('filter')(
+      self.getUsedFonts(),
+      {provider: font.provider}
+    ).length;
   },
 
   getUsedFonts: function() {

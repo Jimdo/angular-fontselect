@@ -137,6 +137,19 @@ describe('fontsService', function() {
       expect(fontsService.getUsedFonts()[0].used).toBe(2);
       expect($scope.fonts[1].used).toBe(0);
     });
+
+    it('should update _usedProviders object, according to the font usage', function() {
+      expect(fontsService._usedProviders[PROVIDER_WEBSAFE]).toBe(false);
+      $scope.current.font = $scope.fonts[2];
+      $scope.$digest();
+      expect(fontsService._usedProviders[PROVIDER_WEBSAFE]).toBe(true);
+      $scope.fonts[4].provider = 'foo';
+      $scope.current.font = $scope.fonts[4];
+
+      $scope.$digest();
+      expect(fontsService._usedProviders[PROVIDER_WEBSAFE]).toBe(false);
+      expect(fontsService._usedProviders.foo).toBe(true);
+    });
   });
 
   describe('subsets', function() {

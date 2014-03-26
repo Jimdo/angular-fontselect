@@ -3,7 +3,7 @@
  *
  * Structure seen in [rprtr](https://github.com/mrmrs/rprtr)
  * by [aputinski](https://github.com/aputinski)
- * 
+ *
  * @param  {Object} grunt
  * @return {void}
  */
@@ -22,7 +22,8 @@ module.exports = function(grunt) {
 
   /* "Helper" Tasks */
 
-  grunt.registerTask('_test:beforeEach', ['jshint', 'ngtemplates', '_build:apikeys']);
+  grunt.registerTask('_test:beforeEach', ['ngtemplates', '_build:apikeys']);
+  grunt.registerTask('_test:beforeEachWithHint', ['jshint', '_test:beforeEach']);
   grunt.registerTask('_build:less', [
     'less:dist',
     'less:distmin',
@@ -45,16 +46,16 @@ module.exports = function(grunt) {
   grunt.registerTask('test', [
     '_build:apikeys',
     '_build:ensureApiKeyFileExists',
-    '_test:beforeEach',
+    '_test:beforeEachWithHint',
     'karma:all',
     '_protractor:start'
   ]);
   /* Execute e2e tests. */
-  grunt.registerTask('test:e2e', ['_test:beforeEach', '_protractor:start']);
+  grunt.registerTask('test:e2e', ['_test:beforeEachWithHint', '_protractor:start']);
   /* Execute unit tests. */
-  grunt.registerTask('test:unit', ['_test:beforeEach', 'karma:all']);
+  grunt.registerTask('test:unit', ['_test:beforeEachWithHint', 'karma:all']);
   /* Execute karma tests with Firefox and PhantomJS. */
-  grunt.registerTask('test:travis', ['_test:beforeEach', 'karma:travis']);
+  grunt.registerTask('test:travis', ['_test:beforeEachWithHint', 'karma:travis']);
 
   /* Build dist files. */
   grunt.registerTask('build', [

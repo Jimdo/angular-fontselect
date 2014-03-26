@@ -2,9 +2,6 @@
 /* global KEY_ESCAPE, VALUE_NO_FONT_STACK */
 var id = 1;
 
-/** @const */
-var PLEASE_SET_FONT_BY_STACK = '_PSFBS';
-
 fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsService) {
   return {
     scope: {
@@ -139,14 +136,22 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsSer
       }
 
       if ($scope.stack.length) {
-        $scope[PLEASE_SET_FONT_BY_STACK] = $scope.stack;
+        try {
+          var font = fontsService.getFontByStack($scope.stack);
+          /* Since we're setting the font now before watchers are initiated, we need to update usage by ourself. */
+          fontsService.updateUsage(font);
+          setState({font: font});
+        } catch (e) {
+          fontsService.getFontByStackAsync($scope.stack).then(function(font) {
+            setState({font: font});
+          });
+        }
       }
 
       $scope.onInit({$scope: $scope, $element: $element});
     }],
 
     link: function(scope) {
-
       scope.$watch('current.font', function(newFont, oldFont) {
         if (!angular.isObject(scope.current)) {
           scope.reset();
@@ -158,14 +163,10 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsSer
           }
 
           if (angular.isObject(oldFont) && oldFont.used) {
-            oldFont.used--;
+            fontsService.updateUsage(oldFont, false);
           }
           if (angular.isObject(newFont)) {
-            if (!newFont.used) {
-              newFont.used = 1;
-            } else {
-              newFont.used++;
-            }
+            fontsService.updateUsage(newFont);
           }
 
           scope._setSelected(newFont);
@@ -196,20 +197,6 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsSer
           scope.reset();
         }
       });
-
-      if (scope[PLEASE_SET_FONT_BY_STACK]) {
-        var destroy = scope.$watch('fonts', function() {
-          var current = scope.current;
-          try {
-            var font = fontsService.getFontByStack(scope[PLEASE_SET_FONT_BY_STACK]);
-            if (font) {
-              current.font = font;
-              delete scope[PLEASE_SET_FONT_BY_STACK];
-              destroy();
-            }
-          } catch (e) {}
-        }, true);
-      }
     }
   };
 }]);
