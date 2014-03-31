@@ -1,5 +1,5 @@
 /*!
- * angular-fontselect v0.6.9
+ * angular-fontselect v0.6.10
  * https://github.com/Jimdo/angular-fontselect
  *
  * A fontselect directive for AngularJS
@@ -1571,10 +1571,21 @@
       }
       font.used += wasActivated === false ? -1 : 1;
   
-      self._usedProviders[font.provider] = !!self.$filter('filter')(
-        self.getUsedFonts(),
-        {provider: font.provider}
-      ).length;
+      self._updateProvicerUsage();
+    },
+  
+  
+    _updateProvicerUsage: function() {
+      var self = this;
+      var filter = self.$filter('filter');
+      var usedFonts = self.getUsedFonts();
+  
+      angular.forEach(self._providers, function(active, provider) {
+        self._usedProviders[provider] = !!filter(
+          usedFonts,
+          {provider: provider}
+        ).length;
+      });
     },
   
     getUsedFonts: function() {
