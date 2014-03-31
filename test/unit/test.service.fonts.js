@@ -1,4 +1,4 @@
-/* global PROVIDER_WEBSAFE, $scope, $rootScope, createNewDirective, fontsService */
+/* global PROVIDER_WEBSAFE, PROVIDER_GOOGLE, $scope, $rootScope, createNewDirective, fontsService */
 
 describe('fontsService', function() {
   'use strict';
@@ -143,12 +143,28 @@ describe('fontsService', function() {
       $scope.current.font = $scope.fonts[2];
       $scope.$digest();
       expect(fontsService._usedProviders[PROVIDER_WEBSAFE]).toBe(true);
-      $scope.fonts[4].provider = 'foo';
+      $scope.fonts[4].provider = PROVIDER_GOOGLE;
       $scope.current.font = $scope.fonts[4];
 
       $scope.$digest();
       expect(fontsService._usedProviders[PROVIDER_WEBSAFE]).toBe(false);
-      expect(fontsService._usedProviders.foo).toBe(true);
+      expect(fontsService._usedProviders[PROVIDER_GOOGLE]).toBe(true);
+    });
+
+    it('should update _usedProviders object when we reset', function() {
+      $scope.current.font = $scope.fonts[2];
+      $scope.$digest();
+      expect(fontsService._usedProviders[PROVIDER_WEBSAFE]).toBe(true);
+      $scope.reset();
+      $scope.$digest();
+      expect(fontsService._usedProviders[PROVIDER_WEBSAFE]).toBe(false);
+    });
+
+    it('should repair _usedProviders on update', function() {
+      fontsService._usedProviders[PROVIDER_GOOGLE] = true;
+      $scope.current.font = $scope.fonts[2];
+      $scope.$digest();
+      expect(fontsService._usedProviders[PROVIDER_GOOGLE]).toBe(false);
     });
   });
 
