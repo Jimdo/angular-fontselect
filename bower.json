@@ -16,6 +16,7 @@
   "devDependencies": {
     "angular-mocks": "~1.2.9",
     "webfontloader": "~1.5.2",
+    "lesshat": "2.0.15",
     "jquery": "~2.0.3",
     "less": "~1.6.1"
   },
@@ -31,7 +32,6 @@
     "package.json"
   ],
   "dependencies": {
-    "lesshat": "2.0.15",
     "angular": "~1.2.8"
   }
 }
