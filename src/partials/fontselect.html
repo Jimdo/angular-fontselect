@@ -1,21 +1,49 @@
 <div class="jdfs-main" id="jd-fontselect-{{id}}">
-	<button
-		ng-click="toggle()"
-		class="jdfs-toggle"
-		style="font-family: {{current.font.stack}};"
-		ng-show="!active"
+
+		<button
+			ng-click="toggleSearch()"
+			ng-class="{'jdfs-highlight': searching}"
+			class="jdfs-search-indicator"
 		>
-		<span>
-			{{current.font.name || text.button}}
-		</span>
-	</button>
-	<input
-		type="text"
-		class="jdfs-search"
-		placeholder="{{text.search}}"
-		name="jdfs-{{id}}-search"
-		ng-show="active"
-		ng-model="current.search" />
+		{{text.searchToggleLabel}}
+
+		</button>
+		<button
+			ng-click="toggleSearch()"
+			class="jdfs-toggle-search"
+			ng-show="!searching"
+			>
+
+			<span class="jdfs-font-name" style="font-family: {{current.font.stack}};">
+				{{current.font.name || text.toggleSearchLabel}}
+			</span>
+
+		</button>
+
+
+		<input
+			type="text"
+			class="jdfs-search"
+			placeholder="{{text.search}}"
+			name="jdfs-{{id}}-search"
+			ng-show="searching"
+			ng-model="current.search" />
+
+		<button
+		class="jdfs-reset-search"
+		ng-click="resetSearch()"
+		ng-show="searching && current.search.length > 0"
+		>
+		x
+		</button>
+	<button
+		class="jdfs-toggle"
+		ng-click="toggle()"
+		ng-class="{'jdfs-highlight': active}"
+	>
+	{{active ? text.toggleCloseLabel : text.toggleOpenLabel}}
+</button>
+
 	<div class="jdfs-window" ng-show="active">
 
 			<!-- <select ng-model="current.sort.attr" ng-options="text.sort[a.key] for a in sortAttrs"></select> -->

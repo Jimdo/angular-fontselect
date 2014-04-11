@@ -285,7 +285,7 @@ var STATE_DEFAULTS = {
   providers: PROVIDERS,
   category: undefined,
   font: undefined,
-  search: undefined,
+  search: '',
   subsets: {
     latin: true
   }
@@ -293,8 +293,11 @@ var STATE_DEFAULTS = {
 
 /** @const */
 var TEXT_DEFAULTS = {
-  button: 'Choose Font',
+  toggleOpenLabel: 'open',
+  toggleCloseLabel: 'close',
+  searchToggleLabel: 'Search',
   search: 'Search by Fontname',
+  toggleSearchLabel: 'Choose Font',
   providerLabel: 'Providers',
   subsetLabel: 'Subsets',
   styleLabel: 'Font Styles',

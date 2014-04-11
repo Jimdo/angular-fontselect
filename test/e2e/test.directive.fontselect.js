@@ -47,6 +47,7 @@ describe('fontselect directive', function() {
     });
 
     it('should be able to clear through helper', function() {
+      Helpers.toggleBySearch();
       Helpers.searchFor('foo');
       Helpers.searchFor();
       expect(element(by.model('current.search')).getAttribute('value')).toBeFalsy();
@@ -54,12 +55,14 @@ describe('fontselect directive', function() {
 
     it('should reduce the length of the results', function() {
       expect(numberOfFonts).toBe(Helpers.PAGE_SIZE_DEFAULT);
+      Helpers.toggleBySearch();
       Helpers.searchFor('verdan');
       expect(Helpers.getLi().count()).toBeLessThan(numberOfFonts);
     });
 
     it('should also reduce the amount of available pages', function() {
       var beforeLength = Helpers.pageCount();
+      Helpers.toggleBySearch();
       Helpers.searchFor('ar');
       expect(Helpers.getPaginator().count()).toBeLessThan(beforeLength);
     });
@@ -220,9 +223,9 @@ describe('fontselect directive', function() {
       expect(element(by.css('.jdfs-toggle')).isDisplayed()).toBe(true);
     });
 
-    it('should be hidden when the directive is active', function() {
+    it('should not be hidden when the directive is active', function() {
       Helpers.toggle();
-      expect(element(by.css('.jdfs-toggle')).isDisplayed()).toBe(false);
+      expect(element(by.css('.jdfs-toggle')).isDisplayed()).toBe(true);
     });
   });
 
@@ -231,13 +234,13 @@ describe('fontselect directive', function() {
       expect(element(by.model('current.search')).isDisplayed()).toBe(false);
     });
 
-    it('should be hidden when the directive is active', function() {
+    it('should be hidden when the directive is active by clicking on toggle.', function() {
       Helpers.toggle();
-      expect(element(by.model('current.search')).isDisplayed()).toBe(true);
+      expect(element(by.model('current.search')).isDisplayed()).toBe(false);
     });
 
-    it('should be focused when the directive gets active', function() {
-      Helpers.toggle();
+    it('should be focused when the directive gets activated by clicking on search', function() {
+      Helpers.toggleBySearch();
 
       prot.actions().sendKeys('foo').perform();
       expect(element(by.model('current.search')).getAttribute('value')).toBe('foo');
@@ -316,6 +319,7 @@ describe('fontselect directive', function() {
     });
 
     it('should not change the page, when the search is focused and has value', function() {
+      Helpers.toggleBySearch();
       prot.actions()
         .sendKeys('D')
         .sendKeys(protractor.Key.ARROW_RIGHT)
@@ -326,6 +330,7 @@ describe('fontselect directive', function() {
     });
 
     it('should change the page when we defocus the search after input', function() {
+      Helpers.toggleBySearch();
       Helpers.searchFor('Fo');
       Helpers.getFontLabel(3).click();
       prot.actions().sendKeys(protractor.Key.ARROW_RIGHT).perform();
@@ -334,6 +339,7 @@ describe('fontselect directive', function() {
     });
 
     it('should not change the page, when re are on the last page and hit right', function() {
+      Helpers.toggleBySearch();
       Helpers.searchFor('Foob');
       Helpers.getPaginator(1).click();
 

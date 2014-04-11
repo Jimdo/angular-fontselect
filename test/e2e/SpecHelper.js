@@ -1,15 +1,16 @@
 /* global browser, element, by, protractor */
 var sandboxUrl = 'http://localhost:8765/test/e2e/';
-var active, prot;
+var active, prot, searching;
 
 beforeEach(function() {
+  searching = false;
   active = false;
   prot = protractor.getInstance();
   browser.get(sandboxUrl);
 });
 
 
-module.exports = {
+var SpecHelper = {
 
   /** @const */
   PAGE_SIZE_DEFAULT: 10,
@@ -28,9 +29,20 @@ module.exports = {
       element(by.css('.jdfs-toggle')).click();
     } else {
       element(by.css('body')).click();
+      searching = false;
     }
 
     active = !active;
+  },
+
+  toggleBySearch: function() {
+    if (!searching) {
+      element(by.css('.jdfs-toggle-search')).click();
+    } else if (searching) {
+      element(by.css('.jdfs-reset-search')).click();
+    }
+
+    searching = !searching;
   },
 
   getFontLabel: function(n) {
@@ -134,3 +146,5 @@ module.exports = {
     search.sendKeys(string);
   }
 };
+
+module.exports = SpecHelper;

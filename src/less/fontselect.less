@@ -15,10 +15,10 @@
 
 
 .jdfs-main{
-  width: 150px;
+  width: 300px;
   height: 50px;
   position: relative;
-  display: inline-flex;
+  .display(inline-flex);
   *, *:after, *:before {
     box-sizing: border-box;
   }
@@ -27,6 +27,12 @@
 
 
   background: white;
+
+  button,input{
+    &:focus{
+      outline: none;
+    }
+  }
 }
 
 
@@ -38,22 +44,40 @@
   padding: .5em 0;
   height: 0;
   border-radius: 4px;
-
-  width: 500px;
-
-
+}
+.jdfs-search-con{
   .display(flex);
-  .flex-direction(row);
-  .align-items(flex-start);
+  height: 50px;
+  width: 300px;
+  position: relative;
+}
+.jdfs-font-name{
+  font-size: 1.3em;
+}
+.jdfs-reset-search{
+  color: white;
+  margin: 0;
+  right: 0;
+  opacity: .5;
+  border: none;
+  background: gray;
 }
 .jdfs-toggle{
   margin: 0;
+  border: none
+}
+.jdfs-search-indicator{
+  border: none;
+  height: 100%;
+  margin: 0;
+}
+.jdfs-toggle-search{
+  cursor: text;
+  margin: 0;
   background: transparent;
 }
-.jdfs-toggle,.jdfs-search{
-  width: 100%;
-  height: 100%;
-
+.jdfs-toggle-search,.jdfs-search{
+  flex: 2 1;
   border: none;
 
 }
@@ -64,10 +88,7 @@
 .jdfs-fontlistcon {
   padding: .5em;
   overflow: hidden;
-  border-radius: @outerBorderRadius 0 0 @outerBorderRadius;
   background: @containerBg;
-  width: 60%;
-  .flex(1 0);
 
 }
 
@@ -101,8 +122,6 @@
 .jdfs-filter {
   border-radius: 0  @outerBorderRadius @outerBorderRadius 0;
   padding: .5em;
-  width: 14em;
-
   background: @containerBg;
   h4 {
     margin: 0 0 .5em;
@@ -111,8 +130,8 @@
 
 .jdfs-close {
   position: absolute;
-  right: 1em;
-  top: 1.45em;
+  top: 0;
+  right: 0;
 }
 
 

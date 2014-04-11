@@ -19,6 +19,7 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsSer
       $scope.fonts = fontsService.getAllFonts();
       $scope.id = id++;
       $scope.active = false;
+      $scope.searching = false;
       $scope.categories = fontsService.getCategories();
       $scope.sortAttrs = SORT_ATTRIBUTES;
       $scope.name = '';
@@ -82,7 +83,30 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsSer
       $scope.toggle = function() {
         $scope.active = !$scope.active;
 
-        if ($scope.active) {
+        if (!$scope.active) {
+          $scope.searching = false;
+        }
+      };
+
+      $scope.toggleSearch = function() {
+        $scope.active = true;
+
+        $scope.searching = !$scope.searching;
+
+        if ($scope.searching) {
+          $scope.setFocus();
+        }
+      };
+
+      $scope.tryUnfocusSearch = function() {
+        if ($scope.searching && $scope.current.search.length === 0) {
+          $scope.searching = false;
+        }
+      };
+
+      $scope.resetSearch = function() {
+        $scope.current.search = '';
+        if ($scope.searching) {
           $scope.setFocus();
         }
       };
@@ -159,6 +183,8 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsSer
         }
 
         if (oldFont !== newFont) {
+          scope.tryUnfocusSearch();
+
           if (angular.isObject(scope.current.font)) {
             newFont = scope.current.font;
           }

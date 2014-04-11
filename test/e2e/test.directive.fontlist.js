@@ -32,6 +32,7 @@ describe('fontlist directive', function() {
 
     it('should adjust the first number when we apply filters', function() {
       var before = element(by.css('.jdfs-fontcount')).getText();
+      Helpers.toggleBySearch();
       Helpers.searchFor('ari');
       expect(element(by.css('.jdfs-fontcount')).getText()).not.toBe(before);
     });
@@ -115,6 +116,8 @@ describe('fontlist directive', function() {
         /* Get Data of the current font */
         Helpers.getLi(6).findElement(by.tagName('label')).getAttribute('for').then(function(forTxt) {
           Helpers.getLi(6).getText().then(function(fontName) {
+
+            Helpers.toggleBySearch();
 
             /* Start to search for our font and ensure we can sill see it. */
             Helpers.searchFor(fontName.substring(0, 1));

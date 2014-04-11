@@ -4,10 +4,12 @@
 describe('fontselect directive', function() {
   'use strict';
 
-  var mainToggleButton, closeButton;
+  var mainToggleButton, closeButton, mainSearchToggleButton, resetSearchButton;
 
   beforeEach(function() {
     mainToggleButton = elm.find('button.jdfs-toggle');
+    mainSearchToggleButton = elm.find('button.jdfs-toggle-search');
+    resetSearchButton = elm.find('button.jdfs-reset-search');
     closeButton = elm.find('button.jdfs-close');
   });
 
@@ -19,19 +21,90 @@ describe('fontselect directive', function() {
     expect(elm.find('jd-fontselect').length).toBe(0);
   });
 
-  it('should have a toggle button', function() {
-    expect(mainToggleButton.length).toBe(1);
-  });
+  describe('toggleing', function() {
+    it('should have a toggle button', function() {
+      expect(mainToggleButton.length).toBe(1);
+    });
 
-  it('should have a close button', function() {
-    mainToggleButton.click();
-    expect(closeButton.length).toBe(1);
-  });
+    it('should have a close button', function() {
+      mainToggleButton.click();
+      expect(closeButton.length).toBe(1);
+    });
 
-  it('should become active when button is clicked', function() {
-    expect($scope.active).toBe(false);
-    mainToggleButton.click();
-    expect($scope.active).toBe(true);
+    it('should become active when button is clicked', function() {
+      expect($scope.active).toBe(false);
+      mainToggleButton.click();
+      expect($scope.active).toBe(true);
+    });
+
+    it('should not trigger searching, on click', function() {
+      mainToggleButton.click();
+      expect($scope.searching).toBe(false);
+    });
+
+    it('should have a togglesearch button', function() {
+      expect(mainSearchToggleButton.length).toBe(1);
+    });
+
+    it('should open the selection on click', function() {
+      mainSearchToggleButton.click();
+      expect($scope.active).toBe(true);
+    });
+
+    it('should trigger the search input', function() {
+      mainSearchToggleButton.click();
+      expect($scope.searching).toBe(true);
+    });
+
+    it('should deactivate searching on close-click', function() {
+      mainSearchToggleButton.click();
+      expect($scope.searching).toBe(true);
+      mainToggleButton.click();
+      expect($scope.searching).toBe(false);
+    });
+
+    it('should deactivate searching on click on fontselection when search is empty', function() {
+      mainSearchToggleButton.click();
+      expect($scope.searching).toBe(true);
+      $scope.current.font = fontsService._fonts[0];
+      $scope.$digest();
+      expect($scope.searching).toBe(false);
+    });
+
+    it('should not deactivate searching on click on fontselection when search is not empty', function() {
+      mainSearchToggleButton.click();
+      expect($scope.searching).toBe(true);
+      $scope.current.search = 'Jimdo is the best Website builder!';
+      $scope.current.font = fontsService._fonts[0];
+      $scope.$digest();
+      expect($scope.searching).toBe(true);
+    });
+
+    describe('reset search button', function() {
+      it('should exist', function() {
+        expect(resetSearchButton.length).toBe(1);
+      });
+
+      it('should not be visible when search is empty', function() {
+        mainSearchToggleButton.click();
+        expect(resetSearchButton.hasClass('ng-hide')).toBe(true);
+      });
+
+      it('should be visible when search is not empty', function() {
+        mainSearchToggleButton.click();
+        $scope.current.search = 'I am serious, it is really good!';
+        $scope.$digest();
+        expect(resetSearchButton.hasClass('ng-hide')).toBe(false);
+      });
+
+      it('should reset the search input value', function() {
+        mainSearchToggleButton.click();
+        $scope.current.search = 'we have cookies!';
+        resetSearchButton.click();
+        expect($scope.current.search).toBe('');
+      });
+
+    });
   });
 
   it('should have no current font on initiation.', function() {
@@ -287,16 +360,17 @@ describe('fontselect directive', function() {
   });
 
   describe('custom text', function() {
-    it('should apply text set as option to the activate button', function() {
+    it('should apply text set as option to the search input', function() {
       $rootScope.text = {
-        button: 'Foo'
+        toggleSearchLabel: 'Foo'
       };
-      expect(jQuery('button', createNewDirective('text-obj="text"').elm).first().text()).toBe('Foo');
+      var d = createNewDirective('text-obj="text"');
+      expect(jQuery('.jdfs-toggle-search', d.elm).first().text()).toBe('Foo');
     });
 
     it('should be able to evaluate raw text, passed to the directive', function() {
-      expect(jQuery('button', createNewDirective('text="{button: \'{{\'Fa\' + \'ra\'}}\'}"').elm).first().text())
-      .toBe('Fara');
+      var d = createNewDirective('text="{toggleSearchLabel: \'{{\'Fa\' + \'ra\'}}\'}"');
+      expect(jQuery('.jdfs-toggle-search', d.elm).first().text()).toBe('Fara');
     });
   });
 });
