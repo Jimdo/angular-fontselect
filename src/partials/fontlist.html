@@ -12,15 +12,5 @@
 				ng-disabled="!paginationButtonActive(dir)"
 			>{{text.page[dir]}}</button>
 		</div>
-		<div class="jdfs-pagecon">
-			{{text.pageLabel}}
-			<span class="jdfs-page-current">{{page.current + 1}}</span>/<span class="jdfs-page-count">{{page.count}}</span>
-		</div>
-		<div class="jdfs-fontcount">
-			{{text.fontFabel}}
-			<span ng-if="getFilteredFonts().length == fonts.length">{{fonts.length}}</span>
-			<span ng-if="fonts.length && getFilteredFonts().length != fonts.length">{{getFilteredFonts().length}}/{{fonts.length}}</span>
-			<span ng-if="!fonts.length">…</span>
-		</div>
 	</div>
 </div>

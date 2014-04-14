@@ -15,7 +15,8 @@ var files = {
     'src/js/directive.fontselect.js',
     'src/js/directive.fontlist.js',
     'src/js/directive.font.js',
-    'src/js/directive.current-href.js'
+    'src/js/directive.current-href.js',
+    'src/js/directive.meta.js'
   ],
   sourceStyle: [
     'src/less/fontselect.less'

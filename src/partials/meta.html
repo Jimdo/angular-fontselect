@@ -1,0 +1,13 @@
+<div class="jdfs-meta">
+	<div class="jdfs-fontcount">
+		{{text.fontFabel}}
+		<span ng-if="meta.fonts.current == meta.fonts.total">{{meta.fonts.total}}</span>
+		<span ng-if="meta.fonts.total && meta.fonts.current != meta.fonts.total">{{meta.fonts.current}}/{{meta.fonts.total}}</span>
+		<span ng-if="!meta.fonts.total">…</span>
+	</div>
+
+	<div class="jdfs-pagecon">
+		{{text.pageLabel}}
+		<span class="jdfs-page-current">{{meta.page.current + 1}}</span>/<span class="jdfs-page-count">{{meta.page.count}}</span>
+	</div>
+</div>

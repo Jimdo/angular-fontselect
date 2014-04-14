@@ -22,6 +22,7 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsSer
       $scope.categories = fontsService.getCategories();
       $scope.sortAttrs = SORT_ATTRIBUTES;
       $scope.name = '';
+      $scope.meta = {};
       if (angular.isUndefined($scope.stack)) {
         $scope.stack = VALUE_NO_FONT_STACK;
       }

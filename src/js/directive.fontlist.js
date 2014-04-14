@@ -8,6 +8,7 @@ fontselectModule.directive(NAME_JDFONTLIST, function() {
     scope: {
       id: '=fsid',
       fonts: '=',
+      meta: '=',
       current: '=',
       text: '=',
       active: '='
@@ -35,21 +36,25 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
     var _lastPageCount = 0;
     var _sortCache = {};
 
-    $scope.page = {
+    var page = $scope.page = $scope.meta.page = {
       size: PAGE_SIZE_DEFAULT,
       count: 0,
       current: 0
     };
+    var fontmeta = $scope.meta.fonts = {
+      total: 0,
+      current: 0
+    };
 
     function isOnCurrentPage(index) {
-      var currentMinIndex = $scope.page.current * $scope.page.size;
+      var currentMinIndex = page.current * page.size;
 
-      return index >= currentMinIndex && index < currentMinIndex + $scope.page.size;
+      return index >= currentMinIndex && index < currentMinIndex + page.size;
     }
 
     $scope.keyfocus = function(direction, amount) {
       var index = _filteredFonts.indexOf($scope.current.font);
-      var pageoffset = $scope.page.size * $scope.page.current;
+      var pageoffset = page.size * page.current;
       var onPage = isOnCurrentPage(index);
 
       if (angular.isUndefined(amount)) {
@@ -65,7 +70,7 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
       if (_filteredFonts[index]) {
         $scope.current.font = _filteredFonts[index];
 
-        $scope.page.current = Math.floor(index / $scope.page.size);
+        page.current = Math.floor(index / page.size);
 
         $rootScope.$digest();
       }
@@ -95,7 +100,7 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
         return;
       }
 
-      var amount = $scope.page.size;
+      var amount = page.size;
       if (key === KEY_RIGHT) {
         if (!$scope.current.font) {
           amount++;
@@ -103,7 +108,7 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
         $scope.keyfocus(DIRECTION_NEXT, amount);
         return prevent();
       } else if (key === KEY_LEFT) {
-        $scope.keyfocus(DIRECTION_PREVIOUS, $scope.page.size);
+        $scope.keyfocus(DIRECTION_PREVIOUS, page.size);
         return prevent();
       }
     });
@@ -115,7 +120,7 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
      * @return {void}
      */
     $scope.setCurrentPage = function(currentPage) {
-      $scope.page.current = currentPage;
+      page.current = currentPage;
     };
 
     /**
@@ -129,7 +134,7 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
         return;
       }
 
-      $scope.page.current += (direction === DIRECTION_PREVIOUS ? -1 : 1);
+      page.current += (direction === DIRECTION_PREVIOUS ? -1 : 1);
     };
 
     /**
@@ -141,7 +146,6 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
     $scope.paginationButtonActive = function(direction) {
       _updatePageCount();
       _updateCurrentPage();
-      var page = $scope.page;
 
       return (
         (direction === DIRECTION_NEXT && page.current < page.count - 1) ||
@@ -159,7 +163,7 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
      */
     $scope.getPages = function() {
       _updatePageCount();
-      var pages = new Array($scope.page.count);
+      var pages = new Array(page.count);
 
       _updateCurrentPage();
 
@@ -248,6 +252,9 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
 
       }
 
+      fontmeta.total = $scope.fonts.length;
+      fontmeta.current = _filteredFonts.length;
+
       return _filteredFonts;
     };
 
@@ -284,14 +291,14 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
      * @return {void}
      */
     function _updatePageCount() {
-      _lastPageCount = $scope.page.count;
+      _lastPageCount = page.count;
 
       if (!angular.isArray($scope.fonts)) {
         return 0;
       }
 
       if (_filteredFonts.length) {
-        $scope.page.count = Math.ceil(_filteredFonts.length / $scope.page.size);
+        page.count = Math.ceil(_filteredFonts.length / page.size);
       }
     }
 
@@ -305,7 +312,7 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
      */
     function _updateCurrentPage() {
       /* do nothing if the amount of pages hasn't change */
-      if (_lastPageCount === $scope.page.count) {
+      if (_lastPageCount === page.count) {
         return;
       }
 
@@ -317,11 +324,11 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
       /* If we have a font selected and it's inside the filter we use */
       if (currentFont && index >= 0) {
         /* go to this page */
-        $scope.page.current = Math.ceil((index + 1) / $scope.page.size) - 1;
+        page.current = Math.ceil((index + 1) / page.size) - 1;
       } else {
         /* Just go to the last page if the current does not exist */
-        if ($scope.page.current > $scope.page.count) {
-          $scope.page.current = 0;
+        if (page.current > page.count) {
+          page.current = 0;
         }
       }
     }
