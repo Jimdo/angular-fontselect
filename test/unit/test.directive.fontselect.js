@@ -202,7 +202,7 @@ describe('fontselect directive', function() {
 
     beforeEach(function() {
       $listScope = elm.find(LIST_CONTAINER_CLASS).scope();
-
+      $scope.current.search = 'a';
       spies.orderBy = jasmine.createSpy('orderBy');
       spies.filter = jasmine.createSpy('filter');
       spies.fuzzySearch = jasmine.createSpy('fuzzySearch');

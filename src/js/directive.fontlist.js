@@ -234,14 +234,49 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
         /* check if the source is the same */
         if (_sortCache.search !== $scope.current.search) {
           _sortCache.search = $scope.current.search;
+          var search = $scope.current.search || '';
 
-          _filteredFonts = $filter('fuzzySearch')(_categorizedFonts, {name: $scope.current.search});
+          if (search.length) {
+            _filteredFonts = _priorize(
+              $filter('fuzzySearch')(_categorizedFonts, {name: search}),
+              search.toLowerCase()
+            );
+          } else {
+            _filteredFonts = _categorizedFonts;
+          }
         }
 
       }
 
       return _filteredFonts;
     };
+
+    function _priorize(fonts, search) {
+      if (fonts.length > 1) {
+        var rgx = new RegExp('[' + search + ']+');
+
+        fonts.sort(function(a, b) {
+          var nameA = a.name.toLowerCase();
+          var nameB = b.name.toLowerCase();
+          var firstCharA = nameA[0];
+          var firstCharB = nameB[0];
+
+          /* Prioritize by first character... */
+          if (firstCharA !== firstCharB) {
+            if (firstCharA === search[0]) {
+              return -1;
+            } else if (firstCharB === search[0]) {
+              return 1;
+            }
+          }
+
+          /* Prioritize by amount of matches. */
+          return (nameA.replace(rgx, '').length < nameB.replace(rgx, '').length) ? -1 : 1;
+        });
+      }
+
+      return fonts;
+    }
 
     /**
      * Calculate the amount of pages we have.
@@ -286,7 +321,7 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
       } else {
         /* Just go to the last page if the current does not exist */
         if ($scope.page.current > $scope.page.count) {
-          $scope.page.current = $scope.page.count-1;
+          $scope.page.current = 0;
         }
       }
     }

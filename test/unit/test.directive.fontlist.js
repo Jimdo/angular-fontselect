@@ -62,4 +62,31 @@ describe('fontlist directive', function() {
 
   });
 
+  describe('search', function() {
+    it('should reduce a list of fonts to those matching our search input', function() {
+      var amountOfFonts = $childScope.getFilteredFonts().length;
+      $scope.current.search = 'arl';
+      expect($childScope.getFilteredFonts().length).toBeLessThan(amountOfFonts);
+    });
+
+    it('should sort results by relevance*', function() {
+      /* *We're doing this by checking the amount of unmatched chars in the font name */
+      $scope.current.search = 'rana';
+      expect($childScope.getFilteredFonts()[0].name).toBe('Verdana');
+    });
+
+    it('should prioritize matches that start with the same char as the search', function() {
+      $scope.current.search = 'dana';
+      expect($childScope.getFilteredFonts()[0].name).toBe('Droid Sans');
+    });
+
+    it('should reset to first page when searching', function() {
+      $childScope.page.size = 1;
+      $childScope.page.current = 8;
+      $scope.current.search = 'a';
+      $scope.$digest();
+      expect($childScope.page.current).toBe(0);
+    });
+  });
+
 });
