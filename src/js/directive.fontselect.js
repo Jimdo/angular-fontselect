@@ -18,6 +18,8 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsSer
     controller: ['$scope', '$element', '$timeout', function($scope, $element, $timeout) {
       $scope.fonts = fontsService.getAllFonts();
       $scope.id = id++;
+      $scope.stylesActive = true;
+      $scope.settingsActive = false;
       $scope.active = false;
       $scope.searching = false;
       $scope.categories = fontsService.getCategories();
@@ -153,6 +155,16 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsSer
           $scope.name = '';
           $scope.stack = VALUE_NO_FONT_STACK;
         }
+      };
+
+      $scope.toggleSettings = function() {
+        $scope.settingsActive = true;
+        $scope.stylesActive = false;
+      };
+
+      $scope.toggleStyles = function() {
+        $scope.stylesActive = true;
+        $scope.settingsActive = false;
       };
 
       /* INITIALIZE */

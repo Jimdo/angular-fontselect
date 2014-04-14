@@ -157,11 +157,11 @@ describe('fontselect directive', function() {
 
   describe('providers', function() {
     it('should have a wrapper for the provider selection', function() {
-      expect(elm.find('.jdfs-providers').length).toBe(1);
+      expect(elm.find('.jdfs-provider-list').length).toBe(1);
     });
 
     it('should have multiple lables for all dem providers', function() {
-      expect(elm.find('.jdfs-providers label').length).toBeGreaterThan(1);
+      expect(elm.find('.jdfs-provider-list label').length).toBeGreaterThan(1);
     });
   });
 
@@ -373,4 +373,42 @@ describe('fontselect directive', function() {
       expect(jQuery('.jdfs-toggle-search', d.elm).first().text()).toBe('Fara');
     });
   });
+
+  describe('footer', function() {
+    var $buttons;
+
+    beforeEach(function() {
+      $buttons = elm.find('.jdfs-footer-tab-toggle');
+    });
+
+    it('should have two tabs', function() {
+      expect($buttons.length).toBe(2);
+    });
+
+    it('should activate the settings tab when we click the second button', function() {
+      expect($scope.settingsActive).toBe(false);
+      $buttons.get(1).click();
+      expect($scope.settingsActive).toBe(true);
+    });
+
+    it('should activate the styles tab when we click the first button', function() {
+      $scope.stylesActive = false;
+      $buttons.get(0).click();
+      expect($scope.stylesActive).toBe(true);
+    });
+
+    it('should deactivate the styles tab when we click the second button', function() {
+      expect($scope.stylesActive).toBe(true);
+      $buttons.get(1).click();
+      expect($scope.stylesActive).toBe(false);
+    });
+
+    it('should deactivate the settings tab when we click the first button', function() {
+      $scope.settingsActive = true;
+      $buttons.get(0).click();
+      expect($scope.settingsActive).toBe(false);
+
+    });
+  });
+
 });

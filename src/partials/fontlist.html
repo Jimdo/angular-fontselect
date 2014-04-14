@@ -1,16 +1,24 @@
 <div class="jdfs-fontlistcon" ng-class="{'jdfs-active': isActive()}">
-	<div>
+		<button
+			class="jdfs-fontpagination jdfs-fontpagination-prev"
+			ng-click="paginate('prev')"
+			ng-class="{'jdfs-disabled': !paginationButtonActive('prev')}"
+			ng-disabled="!paginationButtonActive('prev')"
+		>{{text.page.prev}}</button>
 		<ul class='jdfs-fontlist'>
+			<li ng-if="getFilteredFonts().length === 0" class="jdfs-fontlist-noresults">
+				{{text.noResultsLabel}}
+			</li>
 			<jd-font ng-repeat="font in getFilteredFonts() | startFrom: page.current * page.size | limitTo: page.size" />
 		</ul>
-		<div class="jdfs-paginationcon">
-			<button
-				ng-repeat="dir in ['prev', 'next']"
-				class="jdfs-fontpagination jdfs-fontpagination-{{dir}}"
-				ng-click="paginate(dir)"
-				ng-class="{'jdfs-disabled': !paginationButtonActive(dir)}"
-				ng-disabled="!paginationButtonActive(dir)"
-			>{{text.page[dir]}}</button>
-		</div>
-	</div>
+
+
+		<button
+				class="jdfs-fontpagination jdfs-fontpagination-next"
+				ng-click="paginate('next')"
+				ng-class="{'jdfs-disabled': !paginationButtonActive('next')}"
+				ng-disabled="!paginationButtonActive('next')"
+			>{{text.page.next}}
+		</button>
+
 </div>

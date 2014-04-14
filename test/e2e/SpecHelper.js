@@ -54,7 +54,7 @@ var SpecHelper = {
   },
 
   getPaginator: function(n) {
-    var paginators = element.all(by.repeater('dir in [\'prev\', \'next\']'));
+    var paginators = element.all(by.css('.jdfs-fontpagination'));
     if(typeof n === 'number') {
       return paginators.get(n);
     }
@@ -144,6 +144,14 @@ var SpecHelper = {
     }
 
     search.sendKeys(string);
+  },
+
+  openStyles: function() {
+    element(by.css('.jdfs-styles-label')).click();
+  },
+
+  openSettings: function() {
+    element(by.css('.jdfs-settings-label')).click();
   }
 };
 

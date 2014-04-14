@@ -166,6 +166,7 @@ describe('fontselect directive', function() {
     });
 
     it('s checkboxes should be selectable', function() {
+      Helpers.openSettings();
       var textCheckBox = Helpers.getSubsetCheckbox(2);
       expect(textCheckBox.isSelected()).toBe(false);
       textCheckBox.click();
@@ -175,6 +176,7 @@ describe('fontselect directive', function() {
     });
 
     it('should have labels to click on', function() {
+      Helpers.openSettings();
       var latinBox = element(by.css('#' + latinSelector));
       var latinLabel = element(by.css('[for="' + latinSelector + '"]'));
       latinLabel.click();
@@ -184,6 +186,7 @@ describe('fontselect directive', function() {
     });
 
     it('should reduce the amount of pages when we click a checkbox', function() {
+      Helpers.openSettings();
       var pagesCount = Helpers.pageCount();
       Helpers.getSubsetCheckbox(2).click();
       expect(Helpers.pageCount()).not.toBe(pagesCount);
@@ -208,6 +211,7 @@ describe('fontselect directive', function() {
     it('should reduce the amount of selected fonts when we deselect a checkbox', function() {
       var previousAmount = Helpers.currentFontAmount();
 
+      Helpers.openSettings();
       Helpers.getProviderCheckbox().then(function(checkboxes) {
         checkboxes.forEach(function(checkbox) {
           checkbox.click();
@@ -359,6 +363,23 @@ describe('fontselect directive', function() {
         expect(Helpers.currentPage()).toBe(2);
         expect(label.getAttribute('class')).toContain('jdfs-active');
       });
+    });
+  });
+
+  describe('footer', function() {
+    beforeEach(Helpers.toggle);
+
+    it('should have the styles tab open by default', function() {
+      expect(element(by.className('jdfs-styles')).isDisplayed()).toBe(true);
+    });
+
+    it('should close the styles tab when we click the settings button', function() {
+      Helpers.openSettings();
+      expect(element(by.className('jdfs-styles')).isDisplayed()).toBe(false);
+    });
+    it('should close the settings tab when we click the styles button', function() {
+      Helpers.openStyles();
+      expect(element(by.className('jdfs-settings')).isDisplayed()).toBe(false);
     });
   });
 });

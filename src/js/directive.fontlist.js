@@ -28,7 +28,7 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
   /* jshint maxparams: 4 */
   function($scope, $rootScope, $filter, fontsService) {
   /* jshint maxparams: 3 */
-    var _filteredFonts;
+    var _filteredFonts = [];
     var _sortedFonts;
     var _categorizedFonts;
     var _fontsInSubsets;

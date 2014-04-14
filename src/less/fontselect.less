@@ -3,188 +3,162 @@
 @tabBg:            #eee;
 @activeTab:           #939393;
 
-@fontColor:           #282828;
-@hoverBgColor:        #828282;
-@selectedFontColor:     white;
+@accentColor: #360e6b;
 
-@filterBtnBg:         white;
-@containerBg:         #d6d6d6;
+@bright: #fbfbfb;
+@medium: #bcbcbc;
+@dark: #3e3e3e;
 
-@outerBorderRadius:       4px;
-@innerBorderRadius:       2px;
 
+// ### General
+
+.jdfs-highlight,
+.jdfs-highlight:hover {
+  background: @accentColor;
+  color: white;
+}
+
+.jdfs-fontstyle-other{
+  display: none;
+}
+// ## Searchbar
 
 .jdfs-main{
   width: 300px;
   height: 50px;
   position: relative;
-  .display(inline-flex);
+  .display(flex);
+
   *, *:after, *:before {
     box-sizing: border-box;
   }
+
   font-size: 16px;
-
-
-
-  background: white;
-
-  button,input{
-    &:focus{
-      outline: none;
-    }
-  }
+  background: @bright;
 }
 
-
-.jdfs-window {
-  top: 100%;
-  left: 0;
-  z-index: 3000;
-  position: absolute;
-  padding: .5em 0;
-  height: 0;
-  border-radius: 4px;
-}
-.jdfs-search-con{
-  .display(flex);
-  height: 50px;
-  width: 300px;
-  position: relative;
-}
-.jdfs-font-name{
-  font-size: 1.3em;
-}
-.jdfs-reset-search{
-  color: white;
-  margin: 0;
-  right: 0;
-  opacity: .5;
-  border: none;
-  background: gray;
-}
-.jdfs-toggle{
-  margin: 0;
-  border: none
-}
 .jdfs-search-indicator{
-  border: none;
   height: 100%;
   margin: 0;
 }
+
+.jdfs-toggle{
+  margin: 0;
+}
+
+.jdfs-font-name{
+  font-size: 1.3em;
+}
+
+.jdfs-reset-search{
+  color: @bright;
+  margin: 0;
+  right: 0;
+  background: @medium;
+}
+
 .jdfs-toggle-search{
   cursor: text;
   margin: 0;
   background: transparent;
+  border: none
 }
 .jdfs-toggle-search,.jdfs-search{
-  flex: 2 1;
-  border: none;
-
+  .flex(2 1);
 }
 .jdfs-search {
   padding: 1em;
 }
+// ## Window
+
+.jdfs-window {
+  background: @medium;
+  width: 300px;
+  top: 100%;
+
+  left: 0;
+  z-index: 3000;
+  position: absolute;
+  padding: .5em;
+}
+
+// #fontlist
 
 .jdfs-fontlistcon {
-  padding: .5em;
-  overflow: hidden;
-  background: @containerBg;
-
+  width: 100%;
 }
 
 .jdfs-fontlist {
-  border-radius: @innerBorderRadius;
-  background: white;
+  background: @bright;
   padding: 0;
   margin: 0;
+  height: 330px;
+  position: relative;
+  color: @dark;
+
   li {
+    .display(inline-flex);
+    .justify-content(center);
     padding: 0;
     margin: 0;
     list-style-type: none;
+    height: 10%;
+    width: 100%;
+    border-bottom: 1px solid rgba(0,0,0,.1);
+    &:last-child{
+      border-bottom: none;
+
+    }
   }
   label {
-    padding: .5em 1em;
-    display: block;
+    .display(flex);
+    .align-items(center);
+    .justify-content(center);
     width: 100%;
-
   }
-
   input {
     display: none;
   }
 }
-.jdfs-fontpagination {
-  border: none;
-  background: white;
 
-}
-
-.jdfs-filter {
-  border-radius: 0  @outerBorderRadius @outerBorderRadius 0;
-  padding: .5em;
-  background: @containerBg;
-  h4 {
-    margin: 0 0 .5em;
-  }
-}
-
-.jdfs-close {
+.jdfs-fontlist-noresults{
+  color: @medium;
   position: absolute;
-  top: 0;
-  right: 0;
+  text-align: center;
+  top: 50%;
+  width: 100%;
+  line-height: 0;
 }
 
-
-.jdfs-filter {
-  .jdfs-styles, .jdfs-providers, .jdfs-subsets {
-    margin-top: 1em;
-    &:first-child {
-      margin-top: 0;
-    }
-  }
+.jdfs-fontpagination {
+  width: 100%;
+  display: block;
+  padding: .3em 0;
+  margin: 0;
+  bottom: 0;
 }
 
-.jdfs-styles {
-  .display(flex);
+// ## Footer
 
-
-  .justify-content(space-between);
-  .flex-wrap(wrap);
-  h4 {
-    .flex(100%);
-  }
+.jdfs-footer-con{
+  font-size: .8em;
+  padding: .5em 0;
+}
+.jdfs-footer{
+  padding: .5em .5em .5em .5em;
 }
 
-.jdfs-filterbtn {
+.jdfs-footer-tab-open,.jdfs-footer{
+  background: #646464;
+  color: @bright;
+}
 
-  border-radius: @innerBorderRadius;
-  margin: 0 .3rem .3rem 0;
-  width: 5em;
-  padding: 1em 0;
-  flex: 1 1 45%;
-  font-size: .7em;
-  line-height: 1.2;
-  vertical-align: middle;
+.jdfs-footer-tab-toggle{
   display: inline-block;
-
-  background: @filterBtnBg;
-  border: none;
-
-
-  &:focus, &:active {
-    outline: none;
-  }
-  &:last-child {
-    margin-bottom: 0;
-  }
+  padding: .5em 1em;
 }
 
-.jdfs-highlight,
-.jdfs-highlight:hover {
-  background: #81b4fc;
-  color: white;
-}
-
-.jdfs-fontstyle-other {
-  display: none;
+.jdfs-settings-headline{
+  padding: 0;
+  margin: .2em 0;
 }

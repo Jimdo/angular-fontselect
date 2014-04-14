@@ -300,13 +300,15 @@ var TEXT_DEFAULTS = {
   toggleSearchLabel: 'Choose Font',
   providerLabel: 'Providers',
   subsetLabel: 'Subsets',
-  styleLabel: 'Font Styles',
+  styleLabel: 'Categorys',
+  settingsLabel: 'Settings',
+  noResultsLabel: 'No Fonts found.',
   pageLabel: 'Page: ',
   fontFabel: 'Fonts: ',
   closeButton: 'Close',
   page: {
-    prev: '◄',
-    next: '►'
+    prev: '▲',
+    next: '▼'
   },
   provider: {
     websafe: 'Websafe Fonts',

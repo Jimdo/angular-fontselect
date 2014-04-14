@@ -38,6 +38,7 @@ describe('fontlist directive', function() {
     });
 
     it('should only display the amount of total fonts, when we deactivate all filters', function() {
+      Helpers.openSettings();
       element.all(by.model('current.subsets[key]')).then(function(elms) {
         elms.forEach(function(elm) {
           elm.getAttribute('selected').then(function(attr) {
@@ -135,7 +136,7 @@ describe('fontlist directive', function() {
             /* reset the search */
             Helpers.searchFor();
             expect(getLabel(forTxt).count()).toBe(1);
-            
+
             /* We should be back on the page we started */
             expect(Helpers.currentPage()).toBe(4);
           });

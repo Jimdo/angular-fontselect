@@ -57,54 +57,69 @@
 			active="active"
 		></jd-fontlist>
 
-		<div class="jdfs-filter">
-			<div class="jdfs-styles">
-				<h4 class="jdfs-filter-headline">{{text.styleLabel}}</h4>
-				<button
-					class="jdfs-filterbtn jdfs-fontstyle-{{category.key}}"
-					ng-repeat="category in categories"
-					ng-class="{'jdfs-active jdfs-highlight': category.key == current.category}"
-					ng-click="setCategoryFilter(category.key)"
-					ng-model="current.category"
-				>
-					{{text.category[category.key] || toName(category.key)}}
-				</button>
-			</div>
 
-			<div class="jdfs-providers">
-				<h4 class="jdfs-filter-headline">{{text.providerLabel}}</h4>
-				<div
-					ng-repeat="(provider, active) in current.providers"
-					class='jdfs-provider'
-					ng-class="{'jdfs-active jdfs-highlight': current.providers[provider]}"
-				>
-					<input ng-model="current.providers[provider]" type="checkbox" id="jdfs-{{id}}-provider-{{provider}}" />
-					<label for="jdfs-{{id}}-provider-{{provider}}">{{text.provider[provider] || toName(provider)}}</label>
+		<div class="jdfs-footer-con">
+			<a class="jdfs-footer-tab-toggle jdfs-styles-label"
+				ng-click="toggleStyles()"
+				ng-class="{'jdfs-footer-tab-open': stylesActive}"
+			>{{text.styleLabel}}</a>
+			<a class="jdfs-footer-tab-toggle jdfs-settings-label"
+				ng-click="toggleSettings()"
+				ng-class="{'jdfs-footer-tab-open': settingsActive}"
+			>{{text.settingsLabel}}</a>
+			<div class="jdfs-footer">
+				<div class="jdfs-styles" ng-show="stylesActive">
+					<button
+						class="jdfs-filterbtn jdfs-fontstyle-{{category.key}}"
+						ng-repeat="category in categories"
+						ng-class="{'jdfs-active jdfs-highlight': category.key == current.category}"
+						ng-click="setCategoryFilter(category.key)"
+						ng-model="current.category"
+					>
+						{{text.category[category.key] || toName(category.key)}}
+					</button>
+				</div>
+
+				<div class="jdfs-settings" ng-show="settingsActive">
+
+					<div class="jdfs-provider-list">
+						<h4 class="jdfs-settings-headline">{{text.providerLabel}}</h4>
+						<div
+							ng-repeat="(provider, active) in current.providers"
+							class='jdfs-provider'
+							ng-class="{'jdfs-active jdfs-highlight': current.providers[provider]}"
+						>
+							<input ng-model="current.providers[provider]" type="checkbox" id="jdfs-{{id}}-provider-{{provider}}" />
+							<label for="jdfs-{{id}}-provider-{{provider}}">{{text.provider[provider] || toName(provider)}}</label>
+						</div>
+					</div>
+
+					<div class="jdfs-subsets">
+						<h4 class="jdfs-settings-headline">{{text.subsetLabel}}</h4>
+						<div
+							ng-repeat="(key, name) in current.subsets"
+							class='jdfs-subset'
+							ng-class="{'jdfs-active jdfs-highlight': current.subsets[key]}"
+						>
+							<input ng-model="current.subsets[key]" type="checkbox" id="jdfs-{{id}}-subset-{{key}}" />
+							<label for="jdfs-{{id}}-subset-{{key}}">{{text.subset[key] || toName(key)}}</label>
+						</div>
+					</div>
+
+
 				</div>
 			</div>
-
-			<div class="jdfs-subsets">
-				<h4 class="jdfs-filter-headline">{{text.subsetLabel}}</h4>
-				<div
-					ng-repeat="(key, name) in current.subsets"
-					class='jdfs-subset'
-					ng-class="{'jdfs-active jdfs-highlight': current.subsets[key]}"
-				>
-					<input ng-model="current.subsets[key]" type="checkbox" id="jdfs-{{id}}-subset-{{key}}" />
-					<label for="jdfs-{{id}}-subset-{{key}}">{{text.subset[key] || toName(key)}}</label>
-				</div>
-			</div>
-
-			<button
-				ng-click="toggle()"
-				class="jdfs-close"
-				>
-				<span>
-					{{text.closeButton}}
-				</span>
-			</button>
-
-			<jd-meta meta="meta"></jd-meta>
 		</div>
+
+		<jd-meta meta="meta"></jd-meta>
+
+		<button
+			ng-click="toggle()"
+			class="jdfs-close"
+			>
+			<span>
+				{{text.closeButton}}
+			</span>
+		</button>
 	</div>
 </div>
