@@ -1,12 +1,12 @@
 @import url('lib/reset.less');
 
 *,*:before,*:after{
-  -webkit-box-sizing: border-box; 
-  -moz-box-sizing: border-box; 
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
 
-@bodybgcolor: #e8e8e8;
+@bodybgcolor: #383838;
 @jimdocolor: #0099ee;
 @contentbgcolor: #f7f7f9;
 
@@ -16,20 +16,28 @@
 body {
   background: @bodybgcolor;
   font-family: "Open Sans";
+  color: white
 }
 .mw{
   margin: 0 auto;
-  max-width: 30em;  
+  max-width: 30em;
   padding-left: 1em;
   padding-right: 1em;
 }
 .wrap{
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-flow: row wrap;
+
 }
 header{
     padding: 3em 0;
     text-align: center;
-    text-transform: uppercase;
   h1{
+    text-transform: uppercase;
     color: @jimdocolor;
 
   }
@@ -41,7 +49,9 @@ header{
     margin: 0;
   }
 }
-
+.topbar{
+  width: 100%;
+}
 
 .contentwrap {
   padding: 2em 0;
@@ -49,13 +59,21 @@ header{
 }
 
 
-.fontselect{
-  justify-content: center;
-  align-items: center;
-  left: 1em;
-  top: 1em;
+.fontchange{
+  width: 100%;
 }
-
+.selection-example{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  text-align: center;
+  width: 100%;
+  font-size: 1.8em;
+  background: #676767;
+  color: white;
+  padding: 2em 0;
+}
 h1{
   display: inline-block;
   flex: 1 1;
@@ -69,7 +87,8 @@ h1{
 .footerwrap{
   background: #393939;
 }
-footer{
+.links{
+  width: 100%;
   text-align: center;
   padding: 5em 0;
   a{
