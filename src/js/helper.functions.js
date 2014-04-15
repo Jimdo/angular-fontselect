@@ -23,3 +23,14 @@ function _objLength(object) {
 
   return size;
 }
+
+function _isDescendant(parent, child) {
+  var node = child;
+  while (node !== null) {
+    if (node === parent) {
+      return true;
+    }
+    node = node.parentNode;
+  }
+  return false;
+}

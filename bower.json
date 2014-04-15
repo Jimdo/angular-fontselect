@@ -14,7 +14,7 @@
   ],
   "license": "MIT",
   "devDependencies": {
-    "angular-mocks": "~1.2.9",
+    "angular-mocks": "~1.2.16",
     "webfontloader": "~1.5.2",
     "lesshat": "2.0.15",
     "jquery": "~2.0.3",
@@ -32,6 +32,6 @@
     "package.json"
   ],
   "dependencies": {
-    "angular": "~1.2.8"
+    "angular": "~1.2.16"
   }
 }

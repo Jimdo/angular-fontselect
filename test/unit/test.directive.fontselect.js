@@ -274,7 +274,8 @@ describe('fontselect directive', function() {
     }
 
     beforeEach(function() {
-      $listScope = elm.find(LIST_CONTAINER_CLASS).scope();
+      var listElm = elm.find(LIST_CONTAINER_CLASS);
+      $listScope = listElm.scope();
       $scope.current.search = 'a';
       spies.orderBy = jasmine.createSpy('orderBy');
       spies.filter = jasmine.createSpy('filter');
@@ -284,6 +285,7 @@ describe('fontselect directive', function() {
       var $filter = $injector.get('$filter');
 
       $controller(NAME_JDFONTLIST_CONTROLLER, {
+        $element: listElm,
         $scope: $listScope,
         $filter: function(name) {
           return spies[name].andCallFake($filter(name));

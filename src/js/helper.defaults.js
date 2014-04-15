@@ -261,6 +261,9 @@ var KEY_LEFT = 37;
 var KEY_RIGHT = 39;
 
 /** @const */
+var SCROLL_BUFFER = 30;
+
+/** @const */
 var SORT_ATTRIBUTES = [
   {
     key: 'name',
