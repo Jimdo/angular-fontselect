@@ -134,12 +134,12 @@ var DEFAULT_WEBSAFE_FONTS = [
 /** @const */
 var DEFAULT_CATEGORIES = [
   {
-    key: 'serif',
-    fallback: 'serif'
-  },
-  {
     key: 'sansserif',
     fallback: 'sans-serif'
+  },
+  {
+    key: 'serif',
+    fallback: 'serif'
   },
   {
     key: 'handwriting',
@@ -328,7 +328,8 @@ var TEXT_DEFAULTS = {
     'greek-ext': 'Greek Extended',
     latin: 'Latin',
     'latin-ext': 'Latin Extended',
-    vietnamese: 'Vietnamese'
+    vietnamese: 'Vietnamese',
+    devanagari: 'Devanagari'
   },
   sort: {
     popularity: 'Popularity',
