@@ -1,5 +1,5 @@
 /*!
- * angular-fontselect v0.7.3
+ * angular-fontselect v0.7.4
  * https://github.com/Jimdo/angular-fontselect
  *
  * A fontselect directive for AngularJS
@@ -148,12 +148,12 @@
   /** @const */
   var DEFAULT_CATEGORIES = [
     {
-      key: 'serif',
-      fallback: 'serif'
-    },
-    {
       key: 'sansserif',
       fallback: 'sans-serif'
+    },
+    {
+      key: 'serif',
+      fallback: 'serif'
     },
     {
       key: 'handwriting',
@@ -342,7 +342,8 @@
       'greek-ext': 'Greek Extended',
       latin: 'Latin',
       'latin-ext': 'Latin Extended',
-      vietnamese: 'Vietnamese'
+      vietnamese: 'Vietnamese',
+      devanagari: 'Devanagari'
     },
     sort: {
       popularity: 'Popularity',
