@@ -375,21 +375,7 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
         return;
       }
 
-      var currentFont = $scope.current.font;
-
-      /* check if the current font is anywhere on our current pages */
-      var index = _filteredFonts.indexOf(currentFont);
-
-      /* If we have a font selected and it's inside the filter we use */
-      if (currentFont && index >= 0) {
-        /* go to this page */
-        page.currentAbs = page.current = Math.ceil((index + 1) / page.size) - 1;
-      } else {
-        /* Just go to the last page if the current does not exist */
-        if (page.current > page.count) {
-          page.currentAbs = page.current = 0;
-        }
-      }
+      $scope.setCurrentPage(0);
     }
 
     /* Initiate! */
