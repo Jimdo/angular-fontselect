@@ -1,5 +1,5 @@
 /*!
- * angular-fontselect v0.7.0
+ * angular-fontselect v0.7.1
  * https://github.com/Jimdo/angular-fontselect
  *
  * A fontselect directive for AngularJS
@@ -24,7 +24,6 @@
   display: -webkit-inline-flex;
   display: -ms-inline-flexbox;
   display: inline-flex;
-  font-size: 16px;
   background: #fbfbfb;
 }
 .jdfs-main *,
@@ -38,9 +37,6 @@
 }
 .jdfs-toggle {
   margin: 0;
-}
-.jdfs-font-name {
-  font-size: 1.3em;
 }
 .jdfs-reset-search {
   color: #fbfbfb;
@@ -63,7 +59,7 @@
   flex: 2 1;
 }
 .jdfs-search {
-  padding: 1em;
+  padding: 0 .5em;
 }
 .jdfs-window {
   background: #bcbcbc;
@@ -138,12 +134,11 @@
 .jdfs-fontpagination {
   width: 100%;
   display: block;
-  padding: .3em 0;
+  padding: .2em 0;
   margin: 0;
   bottom: 0;
 }
 .jdfs-footer-con {
-  font-size: .8em;
   padding: .5em 0;
 }
 .jdfs-footer {
@@ -155,6 +150,7 @@
   color: #fbfbfb;
 }
 .jdfs-footer-tab-toggle {
+  vertical-align: bottom;
   display: inline-block;
   padding: .5em 1em;
 }
