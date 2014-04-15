@@ -1,5 +1,5 @@
 /*!
- * angular-fontselect v0.7.1
+ * angular-fontselect v0.7.2
  * https://github.com/Jimdo/angular-fontselect
  *
  * A fontselect directive for AngularJS
@@ -314,7 +314,7 @@
     toggleSearchLabel: 'Choose Font',
     providerLabel: 'Providers',
     subsetLabel: 'Subsets',
-    styleLabel: 'Categorys',
+    styleLabel: 'Categories',
     settingsLabel: 'Settings',
     noResultsLabel: 'No Fonts found.',
     pageLabel: 'Page: ',
