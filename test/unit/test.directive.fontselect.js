@@ -387,25 +387,25 @@ describe('fontselect directive', function() {
 
     it('should activate the settings tab when we click the second button', function() {
       expect($scope.settingsActive).toBe(false);
-      $buttons.get(1).click();
+      $buttons.last().click();
       expect($scope.settingsActive).toBe(true);
     });
 
     it('should activate the styles tab when we click the first button', function() {
       $scope.stylesActive = false;
-      $buttons.get(0).click();
+      $buttons.first().click();
       expect($scope.stylesActive).toBe(true);
     });
 
     it('should deactivate the styles tab when we click the second button', function() {
       expect($scope.stylesActive).toBe(true);
-      $buttons.get(1).click();
+      $buttons.last().click();
       expect($scope.stylesActive).toBe(false);
     });
 
     it('should deactivate the settings tab when we click the first button', function() {
       $scope.settingsActive = true;
-      $buttons.get(0).click();
+      $buttons.first().click();
       expect($scope.settingsActive).toBe(false);
 
     });
