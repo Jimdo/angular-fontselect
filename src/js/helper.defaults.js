@@ -300,7 +300,7 @@ var TEXT_DEFAULTS = {
   toggleSearchLabel: 'Choose Font',
   providerLabel: 'Providers',
   subsetLabel: 'Subsets',
-  styleLabel: 'Categorys',
+  styleLabel: 'Categories',
   settingsLabel: 'Settings',
   noResultsLabel: 'No Fonts found.',
   pageLabel: 'Page: ',
