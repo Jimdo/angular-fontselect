@@ -27,11 +27,6 @@ body {
 .wrap{
   width: 100vw;
   height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-flow: row wrap;
-
 }
 header{
     padding: 3em 0;
@@ -63,9 +58,9 @@ header{
   width: 100%;
 }
 .selection-example{
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  .display(inline-flex);
+  .align-items(center);
+  .justify-content(center);
   margin: 0;
   text-align: center;
   width: 100%;
@@ -76,7 +71,7 @@ header{
 }
 h1{
   display: inline-block;
-  flex: 1 1;
+  .flex(1 1);
   margin: 1em;
 }
 
