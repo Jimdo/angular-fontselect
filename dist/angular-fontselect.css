@@ -1,5 +1,5 @@
 /*!
- * angular-fontselect v0.7.2
+ * angular-fontselect v0.7.3
  * https://github.com/Jimdo/angular-fontselect
  *
  * A fontselect directive for AngularJS
@@ -113,11 +113,12 @@
   -webkit-align-items: center;
   -ms-flex-align: center;
   align-items: center;
-  -webkit-box-pack: center;
-  -moz-box-pack: center;
-  -webkit-justify-content: center;
-  -ms-flex-pack: center;
-  justify-content: center;
+  -webkit-box-pack: flex-start;
+  -moz-box-pack: start;
+  -webkit-justify-content: start;
+  -ms-flex-pack: flex-start;
+  justify-content: flex-start;
+  padding-left: 1.3em;
   width: 100%;
 }
 .jdfs-fontlist input {
@@ -139,7 +140,7 @@
   bottom: 0;
 }
 .jdfs-footer-con {
-  padding: .5em 0;
+  padding: .5em;
 }
 .jdfs-footer {
   padding: .5em .5em .5em .5em;
