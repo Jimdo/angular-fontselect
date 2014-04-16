@@ -1,5 +1,5 @@
 /*!
- * angular-fontselect v0.7.7
+ * angular-fontselect v0.7.8
  * https://github.com/Jimdo/angular-fontselect
  *
  * A fontselect directive for AngularJS
@@ -138,6 +138,18 @@
   padding: .2em 0;
   margin: 0;
   bottom: 0;
+}
+.jdfs-fontstyle-sansserif {
+  font-family: sans-serif;
+}
+.jdfs-fontstyle-serif {
+  font-family: serif;
+}
+.jdfs-fontstyle-display {
+  font-family: fantasy;
+}
+.jdfs-fontstyle-handwriting {
+  font-family: cursive;
 }
 .jdfs-footer-con {
   padding: .5em;
