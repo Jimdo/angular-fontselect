@@ -60,17 +60,6 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsSer
           globalProviders : fontsService.setProviders($scope.current.providers);
       }
 
-      function isDescendant(parent, child) {
-        var node = child;
-        while (node !== null) {
-          if (node === parent) {
-            return true;
-          }
-          node = node.parentNode;
-        }
-        return false;
-      }
-
       function close() {
         $scope.toggle();
         $scope.$digest();
@@ -122,7 +111,7 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsSer
       };
 
       document.addEventListener('click', function(event) {
-        if ($scope.active && !isDescendant($element[0], event.target)) {
+        if ($scope.active && !_isDescendant($element[0], event.target)) {
           close();
         }
       });

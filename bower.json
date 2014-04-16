@@ -1,6 +1,6 @@
 {
   "name": "angular-fontselect",
-  "version": "0.7.4",
+  "version": "0.7.7",
   "authors": [
     "Hannes Diercks <hannes.diercks@jimdo.com>"
   ],
@@ -14,8 +14,8 @@
   ],
   "license": "MIT",
   "devDependencies": {
-    "angular-mocks": "~1.2.9",
-    "webfontloader": "~1.5.2",
+    "angular-mocks": "~1.2.16",
+    "webfontloader": "~1.5.3",
     "lesshat": "2.0.15",
     "jquery": "~2.0.3",
     "less": "~1.6.1"
@@ -32,6 +32,6 @@
     "package.json"
   ],
   "dependencies": {
-    "angular": "~1.2.8"
+    "angular": "~1.2.16"
   }
 }
