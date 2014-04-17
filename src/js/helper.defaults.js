@@ -147,7 +147,7 @@ var DEFAULT_CATEGORIES = [
   },
   {
     key: 'display',
-    fallback: 'cursive'
+    fallback: 'fantasy'
   },
   {
     key: 'other',
