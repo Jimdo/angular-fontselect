@@ -1,5 +1,5 @@
 /*!
- * angular-fontselect v0.7.9
+ * angular-fontselect v0.7.10
  * https://github.com/Jimdo/angular-fontselect
  *
  * A fontselect directive for AngularJS
@@ -181,9 +181,6 @@
     'key',
     'stack'
   ];
-  
-  /** @const */
-  var SUPPORT_KHMER = false;
   
   /** @const */
   var METHOD_GET = 'get';
@@ -1703,9 +1700,6 @@
   
         angular.forEach(response.items, function(font, i) {
           var category = self._getGoogleFontCat(font.family);
-          if (SUPPORT_KHMER || font.subsets.length === 1 && font.subsets[0] === 'khmer') {
-            return;
-          }
   
           self.add({
             subsets: font.subsets,
