@@ -1,6 +1,6 @@
 /* global DEFAULT_WEBSAFE_FONTS, PROVIDER_WEBSAFE, PROVIDER_GOOGLE, REQUIRED_FONT_OBJECT_KEYS */
 /* global GOOGLE_FONT_CATEGORIES, NAME_FONTSSERVICE, DEFAULT_CATEGORIES, URL_GOOGLE_FONTS_CSS */
-/* global VARIANT_PRIORITY, SUBSET_PRIORITY, METHOD_GET, SUPPORT_KHMER, URL_GOOGLE_FONTS_API  */
+/* global VARIANT_PRIORITY, SUBSET_PRIORITY, METHOD_GET, URL_GOOGLE_FONTS_API  */
 /* global STATE_DEFAULTS  */
 
 var _fontsServiceDeps = ['$http', '$q', 'jdFontselectConfig', '$filter'];
@@ -456,9 +456,6 @@ FontsService.prototype = {
 
       angular.forEach(response.items, function(font, i) {
         var category = self._getGoogleFontCat(font.family);
-        if (SUPPORT_KHMER || font.subsets.length === 1 && font.subsets[0] === 'khmer') {
-          return;
-        }
 
         self.add({
           subsets: font.subsets,

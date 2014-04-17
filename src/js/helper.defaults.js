@@ -169,9 +169,6 @@ var REQUIRED_FONT_OBJECT_KEYS = [
 ];
 
 /** @const */
-var SUPPORT_KHMER = false;
-
-/** @const */
 var METHOD_GET = 'get';
 
 /** @const */
