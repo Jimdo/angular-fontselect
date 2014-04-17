@@ -32,7 +32,7 @@ FontsService.prototype = {
     self._imports = {};
     self._usedProviders = {};
     self._initPromises = [];
-    self._fontInitiators = [];
+    self._fontInitiators = {};
     self._asyncFontSearches = {};
 
     self.registerProvider(PROVIDER_GOOGLE, angular.bind(self, self._loadGoogleFont));
