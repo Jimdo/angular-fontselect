@@ -22,6 +22,19 @@ describe('fontlist directive', function() {
     expect(fontlist.find('button').length).toBe(2);
   });
 
+  it('should load the preview fonts when we open the font selection', function() {
+    spyOn(WebFont, 'load');
+    $scope.active = true;
+    $scope.$digest();
+    expect(WebFont.load).toHaveBeenCalled();
+  });
+
+  it('should not load the preview fonts when the font selection is not active', function() {
+    spyOn(WebFont, 'load');
+    $scope.$digest();
+    expect(WebFont.load).not.toHaveBeenCalled();
+  });
+
   describe('pagination', function() {
     var prev, next;
     beforeEach(function() {
