@@ -1,5 +1,5 @@
 /*!
- * angular-fontselect v0.7.10
+ * angular-fontselect v0.7.11
  * https://github.com/Jimdo/angular-fontselect
  *
  * A fontselect directive for AngularJS
@@ -2386,7 +2386,16 @@
       restrict: 'E',
       replace: true,
       controller: ['$scope', function($scope) {
-        fontsService.load($scope.font);
+        if ($scope.active) {
+          fontsService.load($scope.font);
+        } else {
+          var destroy = $scope.$watch('active', function(newActive) {
+            if (newActive) {
+              fontsService.load($scope.font);
+              destroy();
+            }
+          });
+        }
       }]
     };
   }]);
