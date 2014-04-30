@@ -1,5 +1,5 @@
 /*!
- * angular-fontselect v0.7.11
+ * angular-fontselect v0.7.12
  * https://github.com/Jimdo/angular-fontselect
  *
  * A fontselect directive for AngularJS
@@ -26,6 +26,21 @@
   PROVIDERS[PROVIDER_GOOGLE] = true;
   
   /** @const */
+  var CATEGORY_SANS_SERIF = 'sansserif';
+  
+  /** @const */
+  var CATEGORY_SERIF = 'serif';
+  
+  /** @const */
+  var CATEGORY_HANDWRITING = 'handwriting';
+  
+  /** @const */
+  var CATEGORY_DISPLAY = 'display';
+  
+  /** @const */
+  var CATEGORY_OTHER = 'other';
+  
+  /** @const */
   var PAGE_SIZE_DEFAULT = 10;
   
   /** @const */
@@ -42,7 +57,7 @@
     {
       name: 'Arial',
       key: 'arial',
-      category: 'sansserif',
+      category: CATEGORY_SANS_SERIF,
       stack: 'Arial, "Helvetica Neue", Helvetica, sans-serif',
       popularity: 3,
       lastModified: '2014-01-28'
@@ -50,7 +65,7 @@
     {
       name: 'Consolas',
       key: 'consolas',
-      category: 'sans-serif',
+      category: CATEGORY_SANS_SERIF,
       stack: 'Consolas, "Lucida Console", Monaco, monospace',
       popularity: 1,
       lastModified: '2014-02-04'
@@ -58,7 +73,7 @@
     {
       name: 'Courier New',
       key: 'couriernew',
-      category: 'serif',
+      category: CATEGORY_SERIF,
       stack: '"Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace',
       popularity: 1,
       lastModified: '2014-01-28'
@@ -66,7 +81,7 @@
     {
       name: 'Georgia',
       key: 'georgia',
-      category: 'serif',
+      category: CATEGORY_SERIF,
       stack: 'Georgia, Palatino, "Palatino Linotype", Times, "Times New Roman", serif',
       popularity: 2,
       lastModified: '2014-02-04'
@@ -74,7 +89,7 @@
     {
       name: 'Helvetica',
       key: 'helvetica',
-      category: 'sansserif',
+      category: CATEGORY_SANS_SERIF,
       stack: 'Helvetica, "Helvetica Neue", Arial, sans-serif',
       popularity: 3,
       lastModified: '2014-02-04'
@@ -82,7 +97,7 @@
     {
       name: 'Impact',
       key: 'impact',
-      category: 'display',
+      category: CATEGORY_DISPLAY,
       stack: 'Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif',
       popularity: 3,
       lastModified: '2014-02-04'
@@ -90,7 +105,7 @@
     {
       name: 'Lucida Sans',
       key: 'lucidasans',
-      category: 'sansserif',
+      category: CATEGORY_SANS_SERIF,
       stack: '"Lucida Sans", "Lucida Grande", "Lucida Sans Unicode", sans-serif',
       popularity: 3,
       lastModified: '2014-02-04'
@@ -98,7 +113,7 @@
     {
       name: 'Palatino',
       key: 'palatino',
-      category: 'serif',
+      category: CATEGORY_SERIF,
       stack: 'Palatino, "Palatino Linotype", Georgia, Times, "Times New Roman", serif',
       popularity: 2,
       lastModified: '2014-02-04'
@@ -106,7 +121,7 @@
     {
       name: 'Tahoma',
       key: 'tahoma',
-      category: 'sansserif',
+      category: CATEGORY_SANS_SERIF,
       stack: 'Tahoma, Verdana, Geneva, sans-serif',
       popularity: 6,
       lastModified: '2014-02-04'
@@ -114,7 +129,7 @@
     {
       name: 'Trebuchet',
       key: 'trebuchet',
-      category: 'sansserif',
+      category: CATEGORY_SANS_SERIF,
       stack: '"Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande", "Lucida Sans", Arial, sans-serif',
       popularity: 6,
       lastModified: '2014-02-04'
@@ -122,7 +137,7 @@
     {
       name: 'Verdana',
       key: 'verdana',
-      category: 'sansserif',
+      category: CATEGORY_SANS_SERIF,
       stack: 'Verdana, Geneva, sans-serif',
       popularity: 6,
       lastModified: '2014-01-28'
@@ -130,7 +145,7 @@
     {
       name: 'Times New Roman',
       key: 'timesnewroman',
-      category: 'serif',
+      category: CATEGORY_SERIF,
       stack: 'TimesNewRoman, "Times New Roman", Times, Baskerville, Georgia, serif',
       popularity: 2,
       lastModified: '2014-01-28'
@@ -138,7 +153,7 @@
     {
       name: 'Brush Script',
       key: 'brushscript',
-      category: 'handwriting',
+      category: CATEGORY_HANDWRITING,
       stack: '"Brush Script MT", cursive',
       popularity: 5,
       lastModified: '2014-01-29'
@@ -148,23 +163,23 @@
   /** @const */
   var DEFAULT_CATEGORIES = [
     {
-      key: 'sansserif',
+      key: CATEGORY_SANS_SERIF,
       fallback: 'sans-serif'
     },
     {
-      key: 'serif',
+      key: CATEGORY_SERIF,
       fallback: 'serif'
     },
     {
-      key: 'handwriting',
+      key: CATEGORY_HANDWRITING,
       fallback: 'cursive'
     },
     {
-      key: 'display',
+      key: CATEGORY_DISPLAY,
       fallback: 'fantasy'
     },
     {
-      key: 'other',
+      key: CATEGORY_OTHER,
       fallback: 'sans-serif'
     }
   ];
@@ -363,8 +378,8 @@
 
   // src/js/helper.google-font-categories.js
   /** @const */
-  var GOOGLE_FONT_CATEGORIES = {
-    handwriting: [
+  var GOOGLE_FONT_CATEGORIES = {};
+  GOOGLE_FONT_CATEGORIES[CATEGORY_HANDWRITING] = [
       'Patrick Hand SC',
       'Grand Hotel',
       'Calligraffitti',
@@ -486,8 +501,8 @@
       'Zeyada',
       'Domine',
       'Donegal One'
-    ],
-    sansserif: [
+  ];
+  GOOGLE_FONT_CATEGORIES[CATEGORY_SANS_SERIF] = [
       'Wendy One',
       'Tauri',
       'Sintony',
@@ -662,8 +677,8 @@
       'Ubuntu',
       'Ubuntu Condensed',
       'Ubuntu Mono'
-    ],
-    display: [
+  ];
+  GOOGLE_FONT_CATEGORIES[CATEGORY_DISPLAY] = [
       'Vampiro One',
       'Snowburst One',
       'Purple Purse',
@@ -904,8 +919,8 @@
       'Warnes',
       'Wellfleet',
       'Yeseva One'
-    ],
-    serif: [
+  ];
+  GOOGLE_FONT_CATEGORIES[CATEGORY_SERIF] = [
       'Roboto Slab',
       'Noto Serif',
       'Libre Baskerville',
@@ -1037,8 +1052,8 @@
       'Vidaloka',
       'Volkhov',
       'Vollkorn'
-    ],
-    other: [
+  ];
+  GOOGLE_FONT_CATEGORIES[CATEGORY_OTHER] = [
       'Angkor',
       'Battambang',
       'Bayon',
@@ -1064,8 +1079,7 @@
       'Siemreap',
       'Suwannaphum',
       'Taprom'
-    ]
-  };
+  ];
 
   // src/js/helper.functions.js
   function _createKey(name) {
@@ -2026,13 +2040,16 @@
     '$filter',
     'jdFontselect.fonts',
     '$element',  function($scope, $rootScope, $filter, fontsService, $element) {    var _filteredFonts = [];
-      var _sortedFonts;
-      var _categorizedFonts;
-      var _fontsInSubsets;
-      var _fontsInProviders;
+      var _sortedFonts = [];
+      var _searchedFonts = [];
+      var _categorizedFonts = [];
+      var _fontsInSubsets = [];
+      var _fontsInProviders = [];
       var _lastPageCount = 0;
       var _sortCache = {};
       var _scrollBuffer = 0;
+      var _forceNextFilters = false;
+  
   
       var page = $scope.page = $scope.meta.page = {
         size: PAGE_SIZE_DEFAULT,
@@ -2223,6 +2240,116 @@
       };
   
       /**
+       * Apply the current provider filter to the given font list
+       * @param {Array} fonts
+       * @return {Array}
+       */
+      function _filterProviders(fonts) {
+        var providersString = JSON.stringify($scope.current.providers);
+        if (_forceNextFilters || _sortCache.providers !== providersString) {
+          _sortCache.providers = providersString;
+          _forceNextFilters = true;
+  
+          _fontsInProviders = fonts.filter(function(font) {
+            return $scope.current.providers[font.provider];
+          });
+        }
+  
+        return _fontsInProviders;
+      }
+  
+      /**
+       * Apply current subset filters to given font list
+       * @param  {Array} fonts
+       * @return {Array}
+       */
+      function _filterSubsets(fonts) {
+        var subSetString = JSON.stringify($scope.current.subsets);
+        if (_forceNextFilters || _sortCache.subsets !== subSetString) {
+          _sortCache.subsets = subSetString;
+          _forceNextFilters = true;
+  
+          _fontsInSubsets = $filter('hasAllSubsets')(
+            fonts,
+            $scope.current.subsets
+          );
+        }
+  
+        return _fontsInSubsets;
+      }
+  
+      /**
+       * Apply current sort to given font list
+       * @param  {Array} fonts
+       * @return {Array}
+       */
+      function _filterSort(fonts) {
+        var attrDirection = $scope.current.sort.attr.dir;
+        var direction = $scope.current.sort.direction;
+  
+        if (_forceNextFilters ||
+          _sortCache.sortattr !== $scope.current.sort.attr.key ||
+          _sortCache.sortdir !== direction)
+        {
+          _sortCache.sortattr = $scope.current.sort.attr.key;
+          _sortCache.sortdir = direction;
+          _forceNextFilters = true;
+  
+          _sortedFonts = $filter('orderBy')(
+            fonts,
+            $scope.current.sort.attr.key,
+            $scope.current.sort.direction ? attrDirection : !attrDirection
+          );
+        }
+  
+        return _sortedFonts;
+      }
+  
+      /**
+       * Apply current category filters to given font list.
+       * @param  {Array} fonts
+       * @return {Array}
+       */
+      function _filterCategory(fonts) {
+        var category = $scope.current.category;
+        if (_forceNextFilters || _sortCache.category !== category) {
+          _sortCache.category = category;
+          _forceNextFilters = true;
+  
+          _categorizedFonts = $filter('filter')(fonts, {category: category}, true);
+        }
+  
+        return _categorizedFonts;
+      }
+  
+      /**
+       * Apply current search to given font list.
+       * @param  {Array} fonts
+       * @return {Array}
+       */
+      function _filterSearch(fonts) {
+        var search = $scope.current.search || '';
+        if (_forceNextFilters || _sortCache.search !== search) {
+          _sortCache.search = search;
+          _forceNextFilters = true;
+  
+          /* Unset category filter so every font is visible. */
+          $scope.current.category = undefined;
+  
+          if (search.length) {
+            _searchedFonts = _priorize(
+              $filter('fuzzySearch')(fonts, {name: search}),
+              search.toLowerCase()
+            );
+          } else {
+            _searchedFonts = fonts;
+          }
+        }
+  
+        return _searchedFonts;
+      }
+  
+      /**
        * Apply the current filters to our internal font object.
        *
        * Ensure we only apply filters when the filter parameters
@@ -2232,73 +2359,26 @@
        */
       $scope.getFilteredFonts = function() {
         if (!angular.isArray($scope.fonts)) {
-          _filteredFonts = [];
-        } else {
-          var direction = $scope.current.sort.attr.dir;
-  
-          /* Apply all filters if the source is new. */
-          if ($scope.fonts.length !== _sortCache.sourceCache) {
-            _sortCache.sourceCache = $scope.fonts.length;
-            /* ESKALATE! */
-            _sortCache.providers = null;
-          }
-  
-          if (_sortCache.providers !== JSON.stringify($scope.current.providers)) {
-            _sortCache.providers = JSON.stringify($scope.current.providers);
-            _sortCache.subsets = null;
-  
-            _fontsInProviders = $scope.fonts.filter(function(font) {
-              return $scope.current.providers[font.provider];
-            });
-          }
-  
-          if (_sortCache.subsets !== JSON.stringify($scope.current.subsets)) {
-            _sortCache.subsets = JSON.stringify($scope.current.subsets);
-            _sortCache.sortdir = null;
-  
-            _fontsInSubsets = $filter('hasAllSubsets')(
-              _fontsInProviders,
-              $scope.current.subsets
-            );
-          }
-  
-          if (_sortCache.sortattr !== $scope.current.sort.attr.key ||
-            _sortCache.sortdir !== $scope.current.sort.direction)
-          {
-            _sortCache.sortattr = $scope.current.sort.attr.key;
-            _sortCache.sortdir = $scope.current.sort.direction;
-            _sortCache.category = null;
-  
-            _sortedFonts = $filter('orderBy')(
-              _fontsInSubsets,
-              $scope.current.sort.attr.key,
-              $scope.current.sort.direction ? direction : !direction
-            );
-          }
-  
-          if (_sortCache.category !== $scope.current.category) {
-            _sortCache.category = $scope.current.category;
-            _sortCache.search = null;
-  
-            _categorizedFonts = $filter('filter')(_sortedFonts, {category: $scope.current.category}, true);
-          }
-  
-          /* check if the source is the same */
-          if (_sortCache.search !== $scope.current.search) {
-            _sortCache.search = $scope.current.search;
-            var search = $scope.current.search || '';
-  
-            if (search.length) {
-              _filteredFonts = _priorize(
-                $filter('fuzzySearch')(_categorizedFonts, {name: search}),
-                search.toLowerCase()
-              );
-            } else {
-              _filteredFonts = _categorizedFonts;
-            }
-          }
-  
+          return [];
         }
+  
+        var fonts = $scope.fonts;
+        _forceNextFilters = _sortCache.fontAmount !== fonts.length;
+        _sortCache.fontAmount = fonts.length;
+  
+        var queue = [
+          _filterProviders,
+          _filterSubsets,
+          _filterSort,
+          _filterSearch,
+          _filterCategory
+        ];
+  
+        for (var i = 0, l = queue.length; i < l; i++) {
+          fonts = queue[i](fonts);
+        }
+  
+        _filteredFonts = fonts;
   
         fontmeta.total = $scope.fonts.length;
         fontmeta.current = _filteredFonts.length;
@@ -2306,6 +2386,11 @@
         return _filteredFonts;
       };
   
+      /**
+       * Convert 'prev' and 'last' to -1 and 1
+       * @param  {Number|String} direction
+       * @return {Number}
+       */
       function _getAmountFromDirection(direction) {
         if (angular.isNumber(direction)) {
           return direction;
@@ -2313,6 +2398,12 @@
         return (direction === DIRECTION_PREVIOUS ? -1 : 1);
       }
   
+      /**
+       * Sort a list of fonts by matching them against a given search
+       * @param  {Array} fonts
+       * @param  {String} search
+       * @return {Array}
+       */
       function _priorize(fonts, search) {
         if (fonts.length > 1) {
           var rgx = new RegExp('[' + search + ']+');
