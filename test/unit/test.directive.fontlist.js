@@ -1,4 +1,5 @@
 /* global elm, $scope, LIST_CONTAINER_CLASS, PROVIDER_WEBSAFE, PROVIDER_GOOGLE */
+/* global CATEGORY_SERIF */
 describe('fontlist directive', function() {
   'use strict';
 
@@ -99,6 +100,13 @@ describe('fontlist directive', function() {
       $scope.current.search = 'a';
       $scope.$digest();
       expect($childScope.page.current).toBe(0);
+    });
+
+    it('should reset other filters when searching', function() {
+      $scope.setCategoryFilter(CATEGORY_SERIF);
+      $scope.current.search = 'a';
+      $scope.$digest();
+      expect($scope.current.category).toBeUndefined();
     });
   });
 

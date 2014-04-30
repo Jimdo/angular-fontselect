@@ -337,27 +337,29 @@ describe('fontselect directive', function() {
       filterCalled('orderBy', 1);
     });
 
-    it('should call filter filter when we change the category', function() {
+    it('should call filter filter when we search ', function() {
       filterCalled('filter', 1);
-      $listScope.current.category = 'olive';
+      $listScope.current.search = 'foob';
       $listScope.getFilteredFonts();
       filterCalled('filter', 2);
     });
 
-    it('should not call orderBy and filter filter when search', function() {
-      filterCalled('orderBy', 1);
-      filterCalled('filter', 1);
-      $listScope.current.search = 'foob';
-      $listScope.getFilteredFonts();
-      filterCalled('orderBy', 1);
-      filterCalled('filter', 1);
-    });
-
-    it('should call the fuzzySearch filter when we search', function() {
+    it('should call the fuzzySearch and filter filter when we search', function() {
       filterCalled('fuzzySearch', 1);
+      filterCalled('filter', 1);
       $listScope.current.search = 'olive';
       $listScope.getFilteredFonts();
       filterCalled('fuzzySearch', 2);
+      filterCalled('filter', 2);
+    });
+
+    it('should not call orderBy and fuzzySearch filter when change the category', function() {
+      filterCalled('orderBy', 1);
+      filterCalled('fuzzySearch', 1);
+      $listScope.current.category = 'olive';
+      $listScope.getFilteredFonts();
+      filterCalled('orderBy', 1);
+      filterCalled('fuzzySearch', 1);
     });
   });
 

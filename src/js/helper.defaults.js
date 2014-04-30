@@ -12,6 +12,21 @@ PROVIDERS[PROVIDER_WEBSAFE] = true;
 PROVIDERS[PROVIDER_GOOGLE] = true;
 
 /** @const */
+var CATEGORY_SANS_SERIF = 'sansserif';
+
+/** @const */
+var CATEGORY_SERIF = 'serif';
+
+/** @const */
+var CATEGORY_HANDWRITING = 'handwriting';
+
+/** @const */
+var CATEGORY_DISPLAY = 'display';
+
+/** @const */
+var CATEGORY_OTHER = 'other';
+
+/** @const */
 var PAGE_SIZE_DEFAULT = 10;
 
 /** @const */
@@ -28,7 +43,7 @@ var DEFAULT_WEBSAFE_FONTS = [
   {
     name: 'Arial',
     key: 'arial',
-    category: 'sansserif',
+    category: CATEGORY_SANS_SERIF,
     stack: 'Arial, "Helvetica Neue", Helvetica, sans-serif',
     popularity: 3,
     lastModified: '2014-01-28'
@@ -36,7 +51,7 @@ var DEFAULT_WEBSAFE_FONTS = [
   {
     name: 'Consolas',
     key: 'consolas',
-    category: 'sans-serif',
+    category: CATEGORY_SANS_SERIF,
     stack: 'Consolas, "Lucida Console", Monaco, monospace',
     popularity: 1,
     lastModified: '2014-02-04'
@@ -44,7 +59,7 @@ var DEFAULT_WEBSAFE_FONTS = [
   {
     name: 'Courier New',
     key: 'couriernew',
-    category: 'serif',
+    category: CATEGORY_SERIF,
     stack: '"Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace',
     popularity: 1,
     lastModified: '2014-01-28'
@@ -52,7 +67,7 @@ var DEFAULT_WEBSAFE_FONTS = [
   {
     name: 'Georgia',
     key: 'georgia',
-    category: 'serif',
+    category: CATEGORY_SERIF,
     stack: 'Georgia, Palatino, "Palatino Linotype", Times, "Times New Roman", serif',
     popularity: 2,
     lastModified: '2014-02-04'
@@ -60,7 +75,7 @@ var DEFAULT_WEBSAFE_FONTS = [
   {
     name: 'Helvetica',
     key: 'helvetica',
-    category: 'sansserif',
+    category: CATEGORY_SANS_SERIF,
     stack: 'Helvetica, "Helvetica Neue", Arial, sans-serif',
     popularity: 3,
     lastModified: '2014-02-04'
@@ -68,7 +83,7 @@ var DEFAULT_WEBSAFE_FONTS = [
   {
     name: 'Impact',
     key: 'impact',
-    category: 'display',
+    category: CATEGORY_DISPLAY,
     stack: 'Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif',
     popularity: 3,
     lastModified: '2014-02-04'
@@ -76,7 +91,7 @@ var DEFAULT_WEBSAFE_FONTS = [
   {
     name: 'Lucida Sans',
     key: 'lucidasans',
-    category: 'sansserif',
+    category: CATEGORY_SANS_SERIF,
     stack: '"Lucida Sans", "Lucida Grande", "Lucida Sans Unicode", sans-serif',
     popularity: 3,
     lastModified: '2014-02-04'
@@ -84,7 +99,7 @@ var DEFAULT_WEBSAFE_FONTS = [
   {
     name: 'Palatino',
     key: 'palatino',
-    category: 'serif',
+    category: CATEGORY_SERIF,
     stack: 'Palatino, "Palatino Linotype", Georgia, Times, "Times New Roman", serif',
     popularity: 2,
     lastModified: '2014-02-04'
@@ -92,7 +107,7 @@ var DEFAULT_WEBSAFE_FONTS = [
   {
     name: 'Tahoma',
     key: 'tahoma',
-    category: 'sansserif',
+    category: CATEGORY_SANS_SERIF,
     stack: 'Tahoma, Verdana, Geneva, sans-serif',
     popularity: 6,
     lastModified: '2014-02-04'
@@ -100,7 +115,7 @@ var DEFAULT_WEBSAFE_FONTS = [
   {
     name: 'Trebuchet',
     key: 'trebuchet',
-    category: 'sansserif',
+    category: CATEGORY_SANS_SERIF,
     stack: '"Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande", "Lucida Sans", Arial, sans-serif',
     popularity: 6,
     lastModified: '2014-02-04'
@@ -108,7 +123,7 @@ var DEFAULT_WEBSAFE_FONTS = [
   {
     name: 'Verdana',
     key: 'verdana',
-    category: 'sansserif',
+    category: CATEGORY_SANS_SERIF,
     stack: 'Verdana, Geneva, sans-serif',
     popularity: 6,
     lastModified: '2014-01-28'
@@ -116,7 +131,7 @@ var DEFAULT_WEBSAFE_FONTS = [
   {
     name: 'Times New Roman',
     key: 'timesnewroman',
-    category: 'serif',
+    category: CATEGORY_SERIF,
     stack: 'TimesNewRoman, "Times New Roman", Times, Baskerville, Georgia, serif',
     popularity: 2,
     lastModified: '2014-01-28'
@@ -124,7 +139,7 @@ var DEFAULT_WEBSAFE_FONTS = [
   {
     name: 'Brush Script',
     key: 'brushscript',
-    category: 'handwriting',
+    category: CATEGORY_HANDWRITING,
     stack: '"Brush Script MT", cursive',
     popularity: 5,
     lastModified: '2014-01-29'
@@ -134,23 +149,23 @@ var DEFAULT_WEBSAFE_FONTS = [
 /** @const */
 var DEFAULT_CATEGORIES = [
   {
-    key: 'sansserif',
+    key: CATEGORY_SANS_SERIF,
     fallback: 'sans-serif'
   },
   {
-    key: 'serif',
+    key: CATEGORY_SERIF,
     fallback: 'serif'
   },
   {
-    key: 'handwriting',
+    key: CATEGORY_HANDWRITING,
     fallback: 'cursive'
   },
   {
-    key: 'display',
+    key: CATEGORY_DISPLAY,
     fallback: 'fantasy'
   },
   {
-    key: 'other',
+    key: CATEGORY_OTHER,
     fallback: 'sans-serif'
   }
 ];

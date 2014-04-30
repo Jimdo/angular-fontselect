@@ -30,13 +30,16 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
   function($scope, $rootScope, $filter, fontsService, $element) {
   /* jshint maxparams: 3 */
     var _filteredFonts = [];
-    var _sortedFonts;
-    var _categorizedFonts;
-    var _fontsInSubsets;
-    var _fontsInProviders;
+    var _sortedFonts = [];
+    var _searchedFonts = [];
+    var _categorizedFonts = [];
+    var _fontsInSubsets = [];
+    var _fontsInProviders = [];
     var _lastPageCount = 0;
     var _sortCache = {};
     var _scrollBuffer = 0;
+    var _forceNextFilters = false;
+
 
     var page = $scope.page = $scope.meta.page = {
       size: PAGE_SIZE_DEFAULT,
@@ -227,6 +230,116 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
     };
 
     /**
+     * Apply the current provider filter to the given font list
+     * @param {Array} fonts
+     * @return {Array}
+     */
+    function _filterProviders(fonts) {
+      var providersString = JSON.stringify($scope.current.providers);
+      if (_forceNextFilters || _sortCache.providers !== providersString) {
+        _sortCache.providers = providersString;
+        _forceNextFilters = true;
+
+        _fontsInProviders = fonts.filter(function(font) {
+          return $scope.current.providers[font.provider];
+        });
+      }
+
+      return _fontsInProviders;
+    }
+
+    /**
+     * Apply current subset filters to given font list
+     * @param  {Array} fonts
+     * @return {Array}
+     */
+    function _filterSubsets(fonts) {
+      var subSetString = JSON.stringify($scope.current.subsets);
+      if (_forceNextFilters || _sortCache.subsets !== subSetString) {
+        _sortCache.subsets = subSetString;
+        _forceNextFilters = true;
+
+        _fontsInSubsets = $filter('hasAllSubsets')(
+          fonts,
+          $scope.current.subsets
+        );
+      }
+
+      return _fontsInSubsets;
+    }
+
+    /**
+     * Apply current sort to given font list
+     * @param  {Array} fonts
+     * @return {Array}
+     */
+    function _filterSort(fonts) {
+      var attrDirection = $scope.current.sort.attr.dir;
+      var direction = $scope.current.sort.direction;
+
+      if (_forceNextFilters ||
+        _sortCache.sortattr !== $scope.current.sort.attr.key ||
+        _sortCache.sortdir !== direction)
+      {
+        _sortCache.sortattr = $scope.current.sort.attr.key;
+        _sortCache.sortdir = direction;
+        _forceNextFilters = true;
+
+        _sortedFonts = $filter('orderBy')(
+          fonts,
+          $scope.current.sort.attr.key,
+          $scope.current.sort.direction ? attrDirection : !attrDirection
+        );
+      }
+
+      return _sortedFonts;
+    }
+
+    /**
+     * Apply current category filters to given font list.
+     * @param  {Array} fonts
+     * @return {Array}
+     */
+    function _filterCategory(fonts) {
+      var category = $scope.current.category;
+      if (_forceNextFilters || _sortCache.category !== category) {
+        _sortCache.category = category;
+        _forceNextFilters = true;
+
+        _categorizedFonts = $filter('filter')(fonts, {category: category}, true);
+      }
+
+      return _categorizedFonts;
+    }
+
+    /**
+     * Apply current search to given font list.
+     * @param  {Array} fonts
+     * @return {Array}
+     */
+    function _filterSearch(fonts) {
+      var search = $scope.current.search || '';
+      if (_forceNextFilters || _sortCache.search !== search) {
+        _sortCache.search = search;
+        _forceNextFilters = true;
+
+        /* Unset category filter so every font is visible. */
+        $scope.current.category = undefined;
+
+        if (search.length) {
+          _searchedFonts = _priorize(
+            $filter('fuzzySearch')(fonts, {name: search}),
+            search.toLowerCase()
+          );
+        } else {
+          _searchedFonts = fonts;
+        }
+      }
+
+      return _searchedFonts;
+    }
+
+    /**
      * Apply the current filters to our internal font object.
      *
      * Ensure we only apply filters when the filter parameters
@@ -236,73 +349,26 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
      */
     $scope.getFilteredFonts = function() {
       if (!angular.isArray($scope.fonts)) {
-        _filteredFonts = [];
-      } else {
-        var direction = $scope.current.sort.attr.dir;
-
-        /* Apply all filters if the source is new. */
-        if ($scope.fonts.length !== _sortCache.sourceCache) {
-          _sortCache.sourceCache = $scope.fonts.length;
-          /* ESKALATE! */
-          _sortCache.providers = null;
-        }
-
-        if (_sortCache.providers !== JSON.stringify($scope.current.providers)) {
-          _sortCache.providers = JSON.stringify($scope.current.providers);
-          _sortCache.subsets = null;
-
-          _fontsInProviders = $scope.fonts.filter(function(font) {
-            return $scope.current.providers[font.provider];
-          });
-        }
-
-        if (_sortCache.subsets !== JSON.stringify($scope.current.subsets)) {
-          _sortCache.subsets = JSON.stringify($scope.current.subsets);
-          _sortCache.sortdir = null;
-
-          _fontsInSubsets = $filter('hasAllSubsets')(
-            _fontsInProviders,
-            $scope.current.subsets
-          );
-        }
-
-        if (_sortCache.sortattr !== $scope.current.sort.attr.key ||
-          _sortCache.sortdir !== $scope.current.sort.direction)
-        {
-          _sortCache.sortattr = $scope.current.sort.attr.key;
-          _sortCache.sortdir = $scope.current.sort.direction;
-          _sortCache.category = null;
-
-          _sortedFonts = $filter('orderBy')(
-            _fontsInSubsets,
-            $scope.current.sort.attr.key,
-            $scope.current.sort.direction ? direction : !direction
-          );
-        }
-
-        if (_sortCache.category !== $scope.current.category) {
-          _sortCache.category = $scope.current.category;
-          _sortCache.search = null;
-
-          _categorizedFonts = $filter('filter')(_sortedFonts, {category: $scope.current.category}, true);
-        }
-
-        /* check if the source is the same */
-        if (_sortCache.search !== $scope.current.search) {
-          _sortCache.search = $scope.current.search;
-          var search = $scope.current.search || '';
-
-          if (search.length) {
-            _filteredFonts = _priorize(
-              $filter('fuzzySearch')(_categorizedFonts, {name: search}),
-              search.toLowerCase()
-            );
-          } else {
-            _filteredFonts = _categorizedFonts;
-          }
-        }
-
+        return [];
       }
+
+      var fonts = $scope.fonts;
+      _forceNextFilters = _sortCache.fontAmount !== fonts.length;
+      _sortCache.fontAmount = fonts.length;
+
+      var queue = [
+        _filterProviders,
+        _filterSubsets,
+        _filterSort,
+        _filterSearch,
+        _filterCategory
+      ];
+
+      for (var i = 0, l = queue.length; i < l; i++) {
+        fonts = queue[i](fonts);
+      }
+
+      _filteredFonts = fonts;
 
       fontmeta.total = $scope.fonts.length;
       fontmeta.current = _filteredFonts.length;
@@ -310,6 +376,11 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
       return _filteredFonts;
     };
 
+    /**
+     * Convert 'prev' and 'last' to -1 and 1
+     * @param  {Number|String} direction
+     * @return {Number}
+     */
     function _getAmountFromDirection(direction) {
       if (angular.isNumber(direction)) {
         return direction;
@@ -317,6 +388,12 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
       return (direction === DIRECTION_PREVIOUS ? -1 : 1);
     }
 
+    /**
+     * Sort a list of fonts by matching them against a given search
+     * @param  {Array} fonts
+     * @param  {String} search
+     * @return {Array}
+     */
     function _priorize(fonts, search) {
       if (fonts.length > 1) {
         var rgx = new RegExp('[' + search + ']+');

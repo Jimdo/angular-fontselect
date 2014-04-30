@@ -1,7 +1,10 @@
-/* jshint unused: false */
+/* globals CATEGORY_HANDWRITING, CATEGORY_SANS_SERIF, CATEGORY_DISPLAY, CATEGORY_SERIF */
+/* globals CATEGORY_OTHER */
+/* jshint unused: false, indent: 4 */
+
 /** @const */
-var GOOGLE_FONT_CATEGORIES = {
-  handwriting: [
+var GOOGLE_FONT_CATEGORIES = {};
+GOOGLE_FONT_CATEGORIES[CATEGORY_HANDWRITING] = [
     'Patrick Hand SC',
     'Grand Hotel',
     'Calligraffitti',
@@ -123,8 +126,8 @@ var GOOGLE_FONT_CATEGORIES = {
     'Zeyada',
     'Domine',
     'Donegal One'
-  ],
-  sansserif: [
+];
+GOOGLE_FONT_CATEGORIES[CATEGORY_SANS_SERIF] = [
     'Wendy One',
     'Tauri',
     'Sintony',
@@ -299,8 +302,8 @@ var GOOGLE_FONT_CATEGORIES = {
     'Ubuntu',
     'Ubuntu Condensed',
     'Ubuntu Mono'
-  ],
-  display: [
+];
+GOOGLE_FONT_CATEGORIES[CATEGORY_DISPLAY] = [
     'Vampiro One',
     'Snowburst One',
     'Purple Purse',
@@ -541,8 +544,8 @@ var GOOGLE_FONT_CATEGORIES = {
     'Warnes',
     'Wellfleet',
     'Yeseva One'
-  ],
-  serif: [
+];
+GOOGLE_FONT_CATEGORIES[CATEGORY_SERIF] = [
     'Roboto Slab',
     'Noto Serif',
     'Libre Baskerville',
@@ -674,8 +677,8 @@ var GOOGLE_FONT_CATEGORIES = {
     'Vidaloka',
     'Volkhov',
     'Vollkorn'
-  ],
-  other: [
+];
+GOOGLE_FONT_CATEGORIES[CATEGORY_OTHER] = [
     'Angkor',
     'Battambang',
     'Bayon',
@@ -701,5 +704,4 @@ var GOOGLE_FONT_CATEGORIES = {
     'Siemreap',
     'Suwannaphum',
     'Taprom'
-  ]
-};
+];
