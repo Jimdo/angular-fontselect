@@ -1,5 +1,5 @@
 /*!
- * angular-fontselect v0.7.12
+ * angular-fontselect v0.7.13
  * https://github.com/Jimdo/angular-fontselect
  *
  * A fontselect directive for AngularJS
@@ -160,28 +160,35 @@
     }
   ];
   
+  var CATEGORY_OBJECTS = {};
+  CATEGORY_OBJECTS[CATEGORY_SANS_SERIF] = {
+    key: CATEGORY_SANS_SERIF,
+    fallback: 'sans-serif'
+  };
+  CATEGORY_OBJECTS[CATEGORY_SERIF] = {
+    key: CATEGORY_SERIF,
+    fallback: 'serif'
+  };
+  CATEGORY_OBJECTS[CATEGORY_HANDWRITING] = {
+    key: CATEGORY_HANDWRITING,
+    fallback: 'cursive'
+  };
+  CATEGORY_OBJECTS[CATEGORY_DISPLAY] = {
+    key: CATEGORY_DISPLAY,
+    fallback: 'fantasy'
+  };
+  CATEGORY_OBJECTS[CATEGORY_OTHER] = {
+    key: CATEGORY_OTHER,
+    fallback: 'sans-serif'
+  };
+  
   /** @const */
   var DEFAULT_CATEGORIES = [
-    {
-      key: CATEGORY_SANS_SERIF,
-      fallback: 'sans-serif'
-    },
-    {
-      key: CATEGORY_SERIF,
-      fallback: 'serif'
-    },
-    {
-      key: CATEGORY_HANDWRITING,
-      fallback: 'cursive'
-    },
-    {
-      key: CATEGORY_DISPLAY,
-      fallback: 'fantasy'
-    },
-    {
-      key: CATEGORY_OTHER,
-      fallback: 'sans-serif'
-    }
+    CATEGORY_OBJECTS[CATEGORY_SANS_SERIF],
+    CATEGORY_OBJECTS[CATEGORY_SERIF],
+    CATEGORY_OBJECTS[CATEGORY_HANDWRITING],
+    CATEGORY_OBJECTS[CATEGORY_DISPLAY],
+    CATEGORY_OBJECTS[CATEGORY_OTHER]
   ];
   
   /** @const */
@@ -679,6 +686,8 @@
       'Ubuntu Mono'
   ];
   GOOGLE_FONT_CATEGORIES[CATEGORY_DISPLAY] = [
+      'Rubik One',
+      'Rubik Mono One',
       'Vampiro One',
       'Snowburst One',
       'Purple Purse',
@@ -1750,7 +1759,7 @@
       }
   
       // console.error('Category not Found:', font);
-      return categories[5];
+      return CATEGORY_OBJECTS[CATEGORY_OTHER];
     },
   
     _addDefaultFonts: function() {
