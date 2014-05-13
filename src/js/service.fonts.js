@@ -1,7 +1,7 @@
 /* global DEFAULT_WEBSAFE_FONTS, PROVIDER_WEBSAFE, PROVIDER_GOOGLE, REQUIRED_FONT_OBJECT_KEYS */
 /* global GOOGLE_FONT_CATEGORIES, NAME_FONTSSERVICE, DEFAULT_CATEGORIES, URL_GOOGLE_FONTS_CSS */
 /* global VARIANT_PRIORITY, SUBSET_PRIORITY, METHOD_GET, URL_GOOGLE_FONTS_API  */
-/* global STATE_DEFAULTS  */
+/* global STATE_DEFAULTS, CATEGORY_OTHER, CATEGORY_OBJECTS  */
 
 var _fontsServiceDeps = ['$http', '$q', 'jdFontselectConfig', '$filter'];
 
@@ -492,7 +492,7 @@ FontsService.prototype = {
     }
 
     // console.error('Category not Found:', font);
-    return categories[5];
+    return CATEGORY_OBJECTS[CATEGORY_OTHER];
   },
 
   _addDefaultFonts: function() {

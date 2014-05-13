@@ -146,28 +146,35 @@ var DEFAULT_WEBSAFE_FONTS = [
   }
 ];
 
+var CATEGORY_OBJECTS = {};
+CATEGORY_OBJECTS[CATEGORY_SANS_SERIF] = {
+  key: CATEGORY_SANS_SERIF,
+  fallback: 'sans-serif'
+};
+CATEGORY_OBJECTS[CATEGORY_SERIF] = {
+  key: CATEGORY_SERIF,
+  fallback: 'serif'
+};
+CATEGORY_OBJECTS[CATEGORY_HANDWRITING] = {
+  key: CATEGORY_HANDWRITING,
+  fallback: 'cursive'
+};
+CATEGORY_OBJECTS[CATEGORY_DISPLAY] = {
+  key: CATEGORY_DISPLAY,
+  fallback: 'fantasy'
+};
+CATEGORY_OBJECTS[CATEGORY_OTHER] = {
+  key: CATEGORY_OTHER,
+  fallback: 'sans-serif'
+};
+
 /** @const */
 var DEFAULT_CATEGORIES = [
-  {
-    key: CATEGORY_SANS_SERIF,
-    fallback: 'sans-serif'
-  },
-  {
-    key: CATEGORY_SERIF,
-    fallback: 'serif'
-  },
-  {
-    key: CATEGORY_HANDWRITING,
-    fallback: 'cursive'
-  },
-  {
-    key: CATEGORY_DISPLAY,
-    fallback: 'fantasy'
-  },
-  {
-    key: CATEGORY_OTHER,
-    fallback: 'sans-serif'
-  }
+  CATEGORY_OBJECTS[CATEGORY_SANS_SERIF],
+  CATEGORY_OBJECTS[CATEGORY_SERIF],
+  CATEGORY_OBJECTS[CATEGORY_HANDWRITING],
+  CATEGORY_OBJECTS[CATEGORY_DISPLAY],
+  CATEGORY_OBJECTS[CATEGORY_OTHER]
 ];
 
 /** @const */

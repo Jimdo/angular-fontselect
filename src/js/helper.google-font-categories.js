@@ -304,6 +304,8 @@ GOOGLE_FONT_CATEGORIES[CATEGORY_SANS_SERIF] = [
     'Ubuntu Mono'
 ];
 GOOGLE_FONT_CATEGORIES[CATEGORY_DISPLAY] = [
+    'Rubik One',
+    'Rubik Mono One',
     'Vampiro One',
     'Snowburst One',
     'Purple Purse',

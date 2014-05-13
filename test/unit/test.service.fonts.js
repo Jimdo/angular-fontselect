@@ -1,4 +1,5 @@
 /* global PROVIDER_WEBSAFE, PROVIDER_GOOGLE, $scope, $rootScope, createNewDirective, fontsService */
+/* global CATEGORY_OBJECTS, CATEGORY_OTHER, CATEGORY_HANDWRITING */
 
 describe('fontsService', function() {
   'use strict';
@@ -103,6 +104,11 @@ describe('fontsService', function() {
   describe('google fonts', function() {
     it('should not load google fonts twice, when we open two directives', function() {
       createNewDirective();
+    });
+
+    it('should gracefully fall back to the other category', function() {
+      expect(fontsService._getGoogleFontCat('New Font Foo')).toBe(CATEGORY_OBJECTS[CATEGORY_OTHER]);
+      expect(fontsService._getGoogleFontCat('Alex Brush')).toBe(CATEGORY_OBJECTS[CATEGORY_HANDWRITING]);
     });
   });
 
