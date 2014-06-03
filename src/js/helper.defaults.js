@@ -351,7 +351,8 @@ var TEXT_DEFAULTS = {
     latin: 'Latin',
     'latin-ext': 'Latin Extended',
     vietnamese: 'Vietnamese',
-    devanagari: 'Devanagari'
+    devanagari: 'Devanagari',
+    khmer: 'Khmer'
   },
   sort: {
     popularity: 'Popularity',
