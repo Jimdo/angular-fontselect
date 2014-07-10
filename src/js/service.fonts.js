@@ -377,9 +377,11 @@ FontsService.prototype = {
 
     if (googleFonts.length) {
       var googleNames = [];
+      var variant;
 
       for (var i = 0, l = googleFonts.length; i < l; i++) {
-        googleNames.push(googleFonts[i].name);
+        variant = googleFonts[i].variants ? ':' + self._getBestVariantOf(googleFonts[i].variants) : '';
+        googleNames.push(googleFonts[i].name + variant);
       }
 
       url += '?family=' + window.escape(googleNames.join('|'));

@@ -110,6 +110,12 @@ describe('fontsService', function() {
       expect(fontsService._getGoogleFontCat('New Font Foo')).toBe(CATEGORY_OBJECTS[CATEGORY_OTHER]);
       expect(fontsService._getGoogleFontCat('Alex Brush')).toBe(CATEGORY_OBJECTS[CATEGORY_HANDWRITING]);
     });
+
+    it('should have the variant appended to imports', function() {
+      $scope.current.font = fontsService.searchFont({provider: PROVIDER_GOOGLE});
+      $scope.$digest();
+      expect(fontsService.getImports().google).toMatch('%3Aregular');
+    });
   });
 
   describe('current fonts', function() {
