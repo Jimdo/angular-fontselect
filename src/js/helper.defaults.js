@@ -49,6 +49,14 @@ var DEFAULT_WEBSAFE_FONTS = [
     lastModified: '2014-01-28'
   },
   {
+    name: 'Comic Sans',
+    key: 'comicsans',
+    category: CATEGORY_SERIF,
+    stack: '"Comic Sans", "Comic Sans MS", "Chalkboard", cursive',
+    popularity: 1,
+    lastModified: '2014-07-23'
+  },
+  {
     name: 'Consolas',
     key: 'consolas',
     category: CATEGORY_SANS_SERIF,
