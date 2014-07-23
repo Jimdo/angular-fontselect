@@ -1,5 +1,5 @@
 /*!
- * angular-fontselect v0.7.15
+ * angular-fontselect v0.7.16
  * https://github.com/Jimdo/angular-fontselect
  *
  * A fontselect directive for AngularJS
@@ -1300,8 +1300,8 @@
       self._imports = {};
       self._usedProviders = {};
       self._initPromises = [];
+      self._asyncProviderQueue = [];
       self._fontInitiators = {};
-      self._asyncFontSearches = {};
   
       self.registerProvider(PROVIDER_GOOGLE, angular.bind(self, self._loadGoogleFont));
       self.registerProvider(PROVIDER_WEBSAFE, function() {});
@@ -1345,14 +1345,9 @@
         self.setSubsets(fontObj.subsets);
       }
   
-      if (angular.isObject(self._asyncFontSearches[fontObj.stack])) {
-        self._asyncFontSearches[fontObj.stack].forEach(function(callback) {
-          callback(fontObj);
-        });
-        delete self._asyncFontSearches[fontObj.stack];
-      }
-  
       self._fonts.push(fontObj);
+  
+      return fontObj;
     },
   
     searchFonts: function(object) {
@@ -1407,15 +1402,14 @@
       var self = this;
       var d = self.$q.defer();
   
-      try {
-        var font = self.getFontByStack(stack);
-        d.resolve(font);
-      } catch (e) {
-        if (!angular.isArray(self._asyncFontSearches[stack])) {
-          self._asyncFontSearches[stack] = [];
+      self.$q.all(self._asyncProviderQueue).then(function() {
+        try {
+          var font = self.getFontByStack(stack);
+          d.resolve(font);
+        } catch (e) {
+          d.reject(e);
         }
-        self._asyncFontSearches[stack].push(d.resolve);
-      }
+      }, d.reject);
   
       self._initPromises.push(d.promise);
       return d.promise;
@@ -1710,8 +1704,9 @@
   
       _googleFontsInitiated = true;
   
-      var deferred = self.$q.defer();
-      self._initPromises.push(deferred.promise);
+      var d = self.$q.defer();
+      self._initPromises.push(d.promise);
+      self._asyncProviderQueue.push(d.promise);
   
       self.$http({
         method: METHOD_GET,
@@ -1723,11 +1718,12 @@
       }).success(function(response) {
         var amount = response.items.length;
         var ready = amount - 1;
+        var fonts = [];
   
         angular.forEach(response.items, function(font, i) {
           var category = self._getGoogleFontCat(font.family);
   
-          self.add({
+          fonts.push(self.add({
             subsets: font.subsets,
             variants: font.variants,
             name: font.family,
@@ -1736,13 +1732,13 @@
             lastModified: font.lastModified,
             stack: '"' + font.family + '", ' + category.fallback,
             category: category.key
-          }, PROVIDER_GOOGLE);
+          }, PROVIDER_GOOGLE));
   
           if (ready === i) {
-            deferred.resolve();
+            d.resolve(fonts);
           }
         });
-      }).error(deferred.reject);
+      }).error(d.reject);
     },
   
     _getGoogleFontCat: function(font) {
@@ -1953,6 +1949,11 @@
         };
   
         /* INITIALIZE */
+  
+  
+        /* Initiate! */
+        fontsService._initGoogleFonts();
+  
         if (angular.isObject($scope.current)) {
           setState($scope.current);
         }
@@ -2011,13 +2012,17 @@
             return;
           }
   
-          if (newStack && newStack.length) {
-            font = fontsService.getFontByStack(newStack);
-          }
+          try {
+            if (newStack && newStack.length) {
+              font = fontsService.getFontByStack(newStack);
+            }
   
-          if (font) {
-            scope.current.font = font;
-          } else {
+            if (font) {
+              scope.current.font = font;
+            } else {
+              scope.reset();
+            }
+          } catch (e) {
             scope.reset();
           }
         });
@@ -2476,9 +2481,6 @@
   
         $scope.setCurrentPage(0);
       }
-  
-      /* Initiate! */
-      fontsService._initGoogleFonts();
     }
   ]);
 
