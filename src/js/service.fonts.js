@@ -133,6 +133,7 @@ FontsService.prototype = {
   getFontByStackAsync: function(stack) {
     var self = this;
     var d = self.$q.defer();
+    var index = null;
 
     self.$q.all(self._asyncProviderQueue).then(function() {
       try {
@@ -140,10 +141,11 @@ FontsService.prototype = {
         d.resolve(font);
       } catch (e) {
         d.reject(e);
+        delete self._initPromises[index];
       }
     }, d.reject);
 
-    self._initPromises.push(d.promise);
+    index = self._initPromises.push(d.promise) - 1;
     return d.promise;
   },
 

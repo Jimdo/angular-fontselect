@@ -299,5 +299,49 @@ describe('fontsService', function() {
         expect(error.message).toBe('Font with stack "' + voidStack + '" not found.');
       });
     });
+
+    iit('should not reject after an initial font could not be found', function() {
+      var hasBeencalled = false;
+      var invalidStack = 'Hase Igel Fuchs';
+      var expectedFont = fontsService._fonts[0];
+      var receivedFont = null;
+      var okStack = expectedFont.stack;
+      var error;
+
+      runs(function() {
+        fontsService.getFontByStackAsync(invalidStack);
+        fontsService._initGoogleFonts();
+
+        fontsService.ready().catch(function(e) {
+          hasBeencalled = true;
+          error = e;
+        });
+      });
+
+      waitsFor(function() {
+        $rootScope.$digest();
+        return hasBeencalled;
+      });
+
+      runs(function() {
+        hasBeencalled = false;
+        fontsService.getFontByStackAsync(okStack).then(function(font) {
+          receivedFont = font;
+        });
+
+        fontsService.ready().then(function() {
+          hasBeencalled = true;
+        });
+      });
+
+      waitsFor(function() {
+        $rootScope.$digest();
+        return hasBeencalled;
+      });
+
+      runs(function() {
+        expect(receivedFont).toBe(expectedFont);
+      });
+    });
   });
 });
