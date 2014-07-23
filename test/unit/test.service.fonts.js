@@ -274,5 +274,30 @@ describe('fontsService', function() {
         expect(spy).toHaveBeenCalled();
       });
     });
+
+    it('should reject when a initial font could not be found', function() {
+      var hasBeencalled = false;
+      var voidStack = 'Hase Igel Fuchs';
+      var error;
+      runs(function() {
+        fontsService.getFontByStackAsync(voidStack);
+        fontsService._initGoogleFonts();
+
+        fontsService.ready().catch(function(e) {
+          hasBeencalled = true;
+          error = e;
+        });
+      });
+
+      waitsFor(function() {
+        $rootScope.$digest();
+        return hasBeencalled;
+      });
+
+      runs(function() {
+        expect(error).toBeInstanceOf(Error);
+        expect(error.message).toBe('Font with stack "' + voidStack + '" not found.');
+      });
+    });
   });
 });

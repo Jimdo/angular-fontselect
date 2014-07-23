@@ -454,8 +454,5 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
 
       $scope.setCurrentPage(0);
     }
-
-    /* Initiate! */
-    fontsService._initGoogleFonts();
   }
 ]);

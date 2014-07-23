@@ -32,8 +32,8 @@ FontsService.prototype = {
     self._imports = {};
     self._usedProviders = {};
     self._initPromises = [];
+    self._asyncProviderQueue = [];
     self._fontInitiators = {};
-    self._asyncFontSearches = {};
 
     self.registerProvider(PROVIDER_GOOGLE, angular.bind(self, self._loadGoogleFont));
     self.registerProvider(PROVIDER_WEBSAFE, function() {});
@@ -77,14 +77,9 @@ FontsService.prototype = {
       self.setSubsets(fontObj.subsets);
     }
 
-    if (angular.isObject(self._asyncFontSearches[fontObj.stack])) {
-      self._asyncFontSearches[fontObj.stack].forEach(function(callback) {
-        callback(fontObj);
-      });
-      delete self._asyncFontSearches[fontObj.stack];
-    }
-
     self._fonts.push(fontObj);
+
+    return fontObj;
   },
 
   searchFonts: function(object) {
@@ -139,15 +134,14 @@ FontsService.prototype = {
     var self = this;
     var d = self.$q.defer();
 
-    try {
-      var font = self.getFontByStack(stack);
-      d.resolve(font);
-    } catch (e) {
-      if (!angular.isArray(self._asyncFontSearches[stack])) {
-        self._asyncFontSearches[stack] = [];
+    self.$q.all(self._asyncProviderQueue).then(function() {
+      try {
+        var font = self.getFontByStack(stack);
+        d.resolve(font);
+      } catch (e) {
+        d.reject(e);
       }
-      self._asyncFontSearches[stack].push(d.resolve);
-    }
+    }, d.reject);
 
     self._initPromises.push(d.promise);
     return d.promise;
@@ -442,8 +436,9 @@ FontsService.prototype = {
 
     _googleFontsInitiated = true;
 
-    var deferred = self.$q.defer();
-    self._initPromises.push(deferred.promise);
+    var d = self.$q.defer();
+    self._initPromises.push(d.promise);
+    self._asyncProviderQueue.push(d.promise);
 
     self.$http({
       method: METHOD_GET,
@@ -455,11 +450,12 @@ FontsService.prototype = {
     }).success(function(response) {
       var amount = response.items.length;
       var ready = amount - 1;
+      var fonts = [];
 
       angular.forEach(response.items, function(font, i) {
         var category = self._getGoogleFontCat(font.family);
 
-        self.add({
+        fonts.push(self.add({
           subsets: font.subsets,
           variants: font.variants,
           name: font.family,
@@ -468,13 +464,13 @@ FontsService.prototype = {
           lastModified: font.lastModified,
           stack: '"' + font.family + '", ' + category.fallback,
           category: category.key
-        }, PROVIDER_GOOGLE);
+        }, PROVIDER_GOOGLE));
 
         if (ready === i) {
-          deferred.resolve();
+          d.resolve(fonts);
         }
       });
-    }).error(deferred.reject);
+    }).error(d.reject);
   },
 
   _getGoogleFontCat: function(font) {

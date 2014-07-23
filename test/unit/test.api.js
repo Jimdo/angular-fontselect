@@ -212,9 +212,8 @@ describe('api', function() {
         fontsService._fonts = [];
         expect(fontsService.getUsedFonts().length).toBe(0);
 
-        setupWithState({ font: font });
         window._googleFontsInitiated = false;
-        fontsService._initGoogleFonts();
+        setupWithState({ font: font });
         $httpBackend.flush(1);
 
         expect(fontsService.getUsedFonts()[0].name).toEqual(font.name);

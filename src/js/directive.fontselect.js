@@ -157,6 +157,11 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsSer
       };
 
       /* INITIALIZE */
+
+
+      /* Initiate! */
+      fontsService._initGoogleFonts();
+
       if (angular.isObject($scope.current)) {
         setState($scope.current);
       }
@@ -215,13 +220,17 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsSer
           return;
         }
 
-        if (newStack && newStack.length) {
-          font = fontsService.getFontByStack(newStack);
-        }
+        try {
+          if (newStack && newStack.length) {
+            font = fontsService.getFontByStack(newStack);
+          }
 
-        if (font) {
-          scope.current.font = font;
-        } else {
+          if (font) {
+            scope.current.font = font;
+          } else {
+            scope.reset();
+          }
+        } catch (e) {
           scope.reset();
         }
       });
