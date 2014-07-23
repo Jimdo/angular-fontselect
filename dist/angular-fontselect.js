@@ -1,5 +1,5 @@
 /*!
- * angular-fontselect v0.7.16
+ * angular-fontselect v0.7.17
  * https://github.com/Jimdo/angular-fontselect
  *
  * A fontselect directive for AngularJS
@@ -1401,6 +1401,7 @@
     getFontByStackAsync: function(stack) {
       var self = this;
       var d = self.$q.defer();
+      var index = null;
   
       self.$q.all(self._asyncProviderQueue).then(function() {
         try {
@@ -1408,10 +1409,11 @@
           d.resolve(font);
         } catch (e) {
           d.reject(e);
+          delete self._initPromises[index];
         }
       }, d.reject);
   
-      self._initPromises.push(d.promise);
+      index = self._initPromises.push(d.promise) - 1;
       return d.promise;
     },
   
