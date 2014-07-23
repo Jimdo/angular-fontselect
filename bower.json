@@ -32,6 +32,6 @@
     "package.json"
   ],
   "dependencies": {
-    "angular": "~1.2.16"
+    "angular": "~1.2.20"
   }
 }
