@@ -1,5 +1,5 @@
 /*!
- * angular-fontselect v0.7.19
+ * angular-fontselect v0.7.20
  * https://github.com/Jimdo/angular-fontselect
  *
  * A fontselect directive for AngularJS
@@ -2040,6 +2040,7 @@
             var font = fontsService.getFontByStack($scope.stack);
             /* Since we're setting the font now before watchers are initiated, we need to update usage by ourself. */
             fontsService.updateUsage(font);
+            fontsService.load(font);
             setState({font: font});
           } catch (e) {
             fontsService.getFontByStackAsync($scope.stack).then(function(font) {
