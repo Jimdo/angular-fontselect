@@ -300,7 +300,7 @@ describe('fontsService', function() {
       });
     });
 
-    iit('should not reject after an initial font could not be found', function() {
+    it('should not reject after an initial font could not be found', function() {
       var hasBeencalled = false;
       var invalidStack = 'Hase Igel Fuchs';
       var expectedFont = fontsService._fonts[0];
