@@ -181,13 +181,15 @@ describe('api', function() {
 
       it('should replace our preselected font with the original from list', function() {
         var currentFont = angular.copy(DEFAULT_WEBSAFE_FONTS[1]);
-        setupWithState({ font: currentFont });
+        var expectedFont = angular.copy(DEFAULT_WEBSAFE_FONTS[1]);
+        expectedFont.loaded = true;
 
+        setupWithState({ font: currentFont });
         delete $rootScope.state.font.$$hashKey;
         delete $rootScope.state.font.used;
 
-        expect($rootScope.state.font).not.toBe(currentFont);
-        expect($rootScope.state.font).toEqual(currentFont);
+        expect($rootScope.state.font).not.toBe(expectedFont);
+        expect($rootScope.state.font).toEqual(expectedFont);
       });
 
       it('should leave "outdated" preselected fonts as they are.', function() {

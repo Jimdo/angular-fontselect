@@ -171,6 +171,7 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsSer
           var font = fontsService.getFontByStack($scope.stack);
           /* Since we're setting the font now before watchers are initiated, we need to update usage by ourself. */
           fontsService.updateUsage(font);
+          fontsService.load(font);
           setState({font: font});
         } catch (e) {
           fontsService.getFontByStackAsync($scope.stack).then(function(font) {
