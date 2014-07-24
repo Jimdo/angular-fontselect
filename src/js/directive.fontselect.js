@@ -200,6 +200,7 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsSer
           }
           if (angular.isObject(newFont)) {
             fontsService.updateUsage(newFont);
+            fontsService.load(newFont);
           }
 
           scope._setSelected(newFont);

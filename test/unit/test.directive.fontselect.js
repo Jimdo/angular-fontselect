@@ -1,12 +1,17 @@
 /* global DEFAULT_WEBSAFE_FONTS, $injector, $scope, elm, createNewDirective,
           NAME_JDFONTLIST_CONTROLLER, $controller, ANOTHER_FONT, AND_SOME_FONT_MORE,
-          $rootScope, fontsService, LIST_CONTAINER_CLASS */
+          $rootScope, fontsService, LIST_CONTAINER_CLASS, PROVIDER_GOOGLE */
 describe('fontselect directive', function() {
   'use strict';
 
-  var mainToggleButton, closeButton, mainSearchToggleButton, resetSearchButton;
+  var mainToggleButton, closeButton, mainSearchToggleButton, resetSearchButton,
+      $listScope, listElm;
+
 
   beforeEach(function() {
+    listElm = elm.find(LIST_CONTAINER_CLASS);
+    $listScope = listElm.isolateScope();
+
     mainToggleButton = elm.find('button.jdfs-toggle');
     mainSearchToggleButton = elm.find('button.jdfs-toggle-search');
     resetSearchButton = elm.find('button.jdfs-reset-search');
@@ -260,7 +265,7 @@ describe('fontselect directive', function() {
 
   describe('filter caching', function() {
 
-    var spies = {}, $listScope;
+    var spies = {};
 
     function expectAllSpiesCalled(times) {
       filterCalled('filter', times);
@@ -274,8 +279,6 @@ describe('fontselect directive', function() {
     }
 
     beforeEach(function() {
-      var listElm = elm.find(LIST_CONTAINER_CLASS);
-      $listScope = listElm.scope();
       $scope.current.search = 'a';
       spies.orderBy = jasmine.createSpy('orderBy');
       spies.filter = jasmine.createSpy('filter');
@@ -363,6 +366,20 @@ describe('fontselect directive', function() {
     });
   });
 
+  describe('current font name preview', function() {
+    it('should load the correct google font preview for the current font', function() {
+      var googleFont = fontsService.searchFont({provider: PROVIDER_GOOGLE});
+      expect(fontsService._fonts[0].provider).not.toBe(PROVIDER_GOOGLE);
+      spyOn(WebFont, 'load');
+      $listScope.page.size = 1;
+      $scope.current.font = googleFont;
+      $scope.$digest();
+
+      expect(WebFont.load).toHaveBeenCalled();
+      expect(WebFont.load.calls[0].args[0].google.text).toBe(googleFont.name);
+    });
+  });
+
   describe('custom text', function() {
     it('should apply text set as option to the search input', function() {
       $rootScope.text = {
@@ -411,7 +428,6 @@ describe('fontselect directive', function() {
       $scope.settingsActive = true;
       $buttons.first().click();
       expect($scope.settingsActive).toBe(false);
-
     });
   });
 
