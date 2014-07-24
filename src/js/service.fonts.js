@@ -130,7 +130,8 @@ FontsService.prototype = {
     return font;
   },
 
-  getFontByStackAsync: function(stack) {
+  getFontByStackAsync: function(stack, strict) {
+    strict = typeof strict === 'boolean' ? strict : true;
     var self = this;
     var d = self.$q.defer();
     var index = null;
@@ -140,13 +141,45 @@ FontsService.prototype = {
         var font = self.getFontByStack(stack);
         d.resolve(font);
       } catch (e) {
-        d.reject(e);
-        delete self._initPromises[index];
+        if (strict) {
+          d.reject(e);
+          delete self._initPromises[index];
+        } else {
+          d.resolve();
+        }
       }
     }, d.reject);
 
     index = self._initPromises.push(d.promise) - 1;
     return d.promise;
+  },
+
+  getFontsByStacksAsync: function(stacks, strict) {
+    strict = typeof strict === 'boolean' ? strict : true;
+    var self = this;
+    var queue = [];
+
+    angular.forEach(stacks, function(stack) {
+      queue.push(self.getFontByStackAsync(stack, strict));
+    });
+
+    var all = self.$q.all(queue);
+
+    if (strict) {
+      return all;
+    } else {
+      var d = self.$q.defer();
+      all.then(function(fonts) {
+        var result = [];
+        angular.forEach(fonts, function(font) {
+          if (angular.isObject(font)) {
+            result.push(font);
+          }
+        });
+        d.resolve(result);
+      });
+      return d.promise;
+    }
   },
 
   removeFont: function(font, provider) {
@@ -195,6 +228,30 @@ FontsService.prototype = {
 
   getImports: function() {
     return this._imports;
+  },
+
+  /**
+   * getImportsForStacks([
+   *   "'Roboto', sans-serif, 'google'",
+   *   "'Own font', serif"
+   * ]);
+   */
+  getImportsForStacks: function(fontStacks, strict) {
+    var self = this;
+    var d = self.$q.defer();
+
+    if (!angular.isArray(fontStacks)) {
+      d.reject(new Error('No stacks given'));
+    } else {
+      var fonts = [];
+      self.getFontsByStacksAsync(fontStacks, strict).then(function(fontsByStack) {
+        fonts = fontsByStack;
+      })['finally'](function() {
+        d.resolve(self.getUrlsFor(fonts));
+      });
+    }
+
+    return d.promise;
   },
 
   getSubsets: function() {
@@ -332,6 +389,19 @@ FontsService.prototype = {
     return urls;
   },
 
+  getUrlsFor: function(fonts) {
+    var self = this;
+    var googleFonts = self.$filter('filter')(fonts, {provider: PROVIDER_GOOGLE});
+    var googleUrl = self.getGoogleUrlFor(googleFonts);
+    var urls = {};
+
+    if (googleUrl) {
+      urls[PROVIDER_GOOGLE] = googleUrl;
+    }
+
+    return urls;
+  },
+
   updateUsage: function(font, wasActivated) {
     var self = this;
 
@@ -368,6 +438,11 @@ FontsService.prototype = {
   getGoogleUrl: function() {
     var self = this;
     var googleFonts = self.$filter('filter')(self.getUsedFonts(), {provider: PROVIDER_GOOGLE});
+    return self.getGoogleUrlFor(googleFonts);
+  },
+
+  getGoogleUrlFor: function(googleFonts) {
+    var self = this;
     var subsets = [];
     var url = URL_GOOGLE_FONTS_CSS;
 

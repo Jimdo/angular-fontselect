@@ -118,6 +118,71 @@ describe('fontsService', function() {
     });
   });
 
+  describe('getImports for given stacks', function() {
+    var importUrls = false;
+
+    function getImportStacks(stacks, strict) {
+      importUrls = false;
+
+      fontsService.getImportsForStacks(stacks, strict).then(function(imports) {
+        importUrls = imports;
+      });
+
+      waitsFor(function() {
+        $rootScope.$digest();
+        return importUrls;
+      });
+    }
+
+    it('should return a google url for Roboto when we pass a Roboto stack (google)', function() {
+      var robotoFont = fontsService.getFontByKey('roboto', PROVIDER_GOOGLE);
+      var oswaldFont = fontsService.getFontByKey('oswald', PROVIDER_GOOGLE);
+      getImportStacks([robotoFont.stack, oswaldFont.stack]);
+
+      runs(function() {
+        expect(importUrls.google).toMatch(/Roboto/);
+        expect(importUrls.google).toMatch(/Oswald/);
+      });
+    });
+
+    it('should return no urls when no fonts could have been found', function() {
+      getImportStacks([
+        'Arial, sans-serif',
+        '"My Own font"',
+        '"Unknown Google Font", sans-serif, "google"'
+      ], false);
+
+      runs(function() {
+        expect(importUrls).toEqual({});
+      });
+    });
+
+    it('should return the some found fonts when strict mode is off', function() {
+      getImportStacks([
+        'Arial, sans-serif',
+        '"Roboto", sans-serif, "google"',
+        '"My Own font"'
+      ], false);
+
+      runs(function() {
+        expect(importUrls.google).toMatch(/Roboto/);
+      });
+    });
+
+    it('should return no urls with invalid fonts in strict mode', function() {
+      var strict = true;
+      getImportStacks([
+        'Arial, sans-serif',
+        '"Roboto", sans-serif, "google"',
+        '"My Own font"'
+      ], strict);
+
+      runs(function() {
+        expect(importUrls).toEqual({});
+      });
+    });
+  });
+
   describe('current fonts', function() {
     it('should return an empty list when no fonts are selected', function() {
       expect(fontsService.getUsedFonts().length).toBe(0);
