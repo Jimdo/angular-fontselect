@@ -169,6 +169,12 @@ describe('api', function() {
         $rootScope.$digest();
         expect($rootScope.state.font).toBe(DEFAULT_WEBSAFE_FONTS[2]);
       });
+
+      it('should also work with stacks that match just partly', function() {
+        $rootScope.stack = '"Lucida Sans Typewriter", Baskerville, serif';
+        setupWithState();
+        expect($rootScope.name).toBe(DEFAULT_WEBSAFE_FONTS[1].name);
+      });
     });
 
     describe('state', function() {

@@ -174,8 +174,10 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsSer
           fontsService.load(font);
           setState({font: font});
         } catch (e) {
-          fontsService.getFontByStackAsync($scope.stack).then(function(font) {
-            setState({font: font});
+          fontsService.getFontByStackAsync($scope.stack, false).then(function(font) {
+            if (angular.isObject(font)) {
+              setState({font: font});
+            }
           });
         }
       }

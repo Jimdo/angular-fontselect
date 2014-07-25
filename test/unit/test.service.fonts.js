@@ -51,6 +51,20 @@ describe('fontsService', function() {
         fontsService.getFontByKey('sdfsdf', 'fireball');
       }).toThrow('Font "sdfsdf" not found in "fireball".');
     });
+
+    describe('getFontByStack', function() {
+      it('should get a font by its stack', function() {
+        var font = fontsService._fonts[0];
+        expect(fontsService.getFontByStack(font.stack)).toBe(font);
+      });
+
+      it('should get a font by a part of its stack', function() {
+        var fontStack = '"Verdana"';
+        var font = fontsService.getFontByKey('verdana', PROVIDER_WEBSAFE);
+        expect(font.name).toBe('Verdana');
+        expect(fontsService.getFontByStack(fontStack, false)).toBe(font);
+      });
+    });
   });
 
   describe('remove method', function() {
@@ -149,7 +163,7 @@ describe('fontsService', function() {
       getImportStacks([
         'Arial, sans-serif',
         '"My Own font"',
-        '"Unknown Google Font", sans-serif, "google"'
+        '"Unknown Google Font"'
       ], false);
 
       runs(function() {

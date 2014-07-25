@@ -96,7 +96,7 @@ FontsService.prototype = {
     if (fonts.length > 0) {
       fonts = fonts[0];
     } else {
-      return false;
+      return;
     }
 
     return fonts;
@@ -118,16 +118,21 @@ FontsService.prototype = {
     return font;
   },
 
-  getFontByStack: function(stack) {
-    var self = this;
+  getFontByStack: function(stack, strict) {
+    strict = typeof strict === 'boolean' ? strict : true;
+    var fonts, self = this;
 
-    var font = self.searchFont({stack: stack});
+    if (strict) {
+      fonts = self.searchFonts({stack: stack});
+    } else {
+      fonts = self.$filter('stackSearch')(self._fonts, stack);
+    }
 
-    if (!font) {
+    if (!fonts.length) {
       throw new Error ('Font with stack "' + stack + '" not found.');
     }
 
-    return font;
+    return fonts[0];
   },
 
   getFontByStackAsync: function(stack, strict) {
@@ -138,7 +143,7 @@ FontsService.prototype = {
 
     self.$q.all(self._asyncProviderQueue).then(function() {
       try {
-        var font = self.getFontByStack(stack);
+        var font = self.getFontByStack(stack, strict);
         d.resolve(font);
       } catch (e) {
         if (strict) {
