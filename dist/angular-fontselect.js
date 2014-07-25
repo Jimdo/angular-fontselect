@@ -1,5 +1,5 @@
 /*!
- * angular-fontselect v0.7.20
+ * angular-fontselect v0.8.0
  * https://github.com/Jimdo/angular-fontselect
  *
  * A fontselect directive for AngularJS
@@ -1235,6 +1235,77 @@
     };
   });
 
+  // src/js/filter.stack-search.js
+  /**
+   * Get fonts by matching stacks.
+   *
+   * @author Tim Sebastian <tim.sebastian@jimdo.com>
+   * @author Hannes Diercks <hannes.diercks@jimdo.com>
+   */
+  fontselectModule.filter('stackSearch', function() {
+    var listCache = {};
+  
+    function createInputId(input) {
+      return '' + input.length + input[0].key + input[input.length - 1].key;
+    }
+  
+    function stackSearchFilter(input, inputStack) {
+      var inputId, list, normalizedInputStack;
+      if (!angular.isArray(input) || !input.length) {
+        return input;
+      }
+  
+      inputStack = inputStack.toLowerCase();
+  
+      normalizedInputStack = stackSearchFilter.normalizeStack(inputStack);
+  
+      inputId = createInputId(input);
+      if (listCache[inputId]) {
+        list = listCache[inputId];
+      } else {
+        list = listCache[inputId] = stackSearchFilter.createWeightedFontList(input);
+      }
+  
+      for (var i = 0, l = normalizedInputStack.length; i < l; i++) {
+        if (list[normalizedInputStack[i]]) {
+          return list[normalizedInputStack[i]].fonts;
+        }
+      }
+  
+      return [];
+    }
+  
+    stackSearchFilter.normalizeStack = function(stack) {
+      var normalizedStack = [];
+      angular.forEach(stack.split(','), function(token) {
+        normalizedStack.push(token.replace(/^[ '"]*|[ '"]*$/g, ''));
+      });
+      return normalizedStack;
+    };
+  
+    stackSearchFilter.createWeightedFontList = function(input) {
+      var list = {};
+  
+      input.forEach(function(fontObj) {
+        var normalizedStack = stackSearchFilter.normalizeStack(fontObj.stack.toLowerCase());
+        normalizedStack.forEach(function(stackfont, index){
+          if (!list[stackfont] || list[stackfont].pos > index) {
+            list[stackfont] = {
+              fonts: [fontObj],
+              pos: index
+            };
+          } else if(list[stackfont].pos === index) {
+            list[stackfont].fonts.push(fontObj);
+          }
+        });
+      });
+  
+      return list;
+    };
+  
+    return stackSearchFilter;
+  });
+
   // src/js/filter.has-all-subsets.js
   fontselectModule.filter('hasAllSubsets', function() {
     return function(input, subsets) {
@@ -1364,7 +1435,7 @@
       if (fonts.length > 0) {
         fonts = fonts[0];
       } else {
-        return false;
+        return;
       }
   
       return fonts;
@@ -1386,16 +1457,21 @@
       return font;
     },
   
-    getFontByStack: function(stack) {
-      var self = this;
+    getFontByStack: function(stack, strict) {
+      strict = typeof strict === 'boolean' ? strict : true;
+      var fonts, self = this;
   
-      var font = self.searchFont({stack: stack});
+      if (strict) {
+        fonts = self.searchFonts({stack: stack});
+      } else {
+        fonts = self.$filter('stackSearch')(self._fonts, stack);
+      }
   
-      if (!font) {
+      if (!fonts.length) {
         throw new Error ('Font with stack "' + stack + '" not found.');
       }
   
-      return font;
+      return fonts[0];
     },
   
     getFontByStackAsync: function(stack, strict) {
@@ -1406,7 +1482,7 @@
   
       self.$q.all(self._asyncProviderQueue).then(function() {
         try {
-          var font = self.getFontByStack(stack);
+          var font = self.getFontByStack(stack, strict);
           d.resolve(font);
         } catch (e) {
           if (strict) {
@@ -2043,8 +2119,10 @@
             fontsService.load(font);
             setState({font: font});
           } catch (e) {
-            fontsService.getFontByStackAsync($scope.stack).then(function(font) {
-              setState({font: font});
+            fontsService.getFontByStackAsync($scope.stack, false).then(function(font) {
+              if (angular.isObject(font)) {
+                setState({font: font});
+              }
             });
           }
         }
