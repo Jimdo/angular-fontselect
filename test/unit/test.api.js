@@ -146,6 +146,8 @@ describe('api', function() {
     });
 
     describe('stack', function() {
+      var partlyMatchingStack = '"Lucida Sans Typewriter", Baskerville, serif';
+
       it('should find the font for our init stack and initiate with it.', function() {
         expect($rootScope.name).not.toBeDefined();
         $rootScope.stack = DEFAULT_WEBSAFE_FONTS[1].stack;
@@ -171,9 +173,16 @@ describe('api', function() {
       });
 
       it('should also work with stacks that match just partly', function() {
-        $rootScope.stack = '"Lucida Sans Typewriter", Baskerville, serif';
+        $rootScope.stack = partlyMatchingStack;
         setupWithState();
         expect($rootScope.name).toBe(DEFAULT_WEBSAFE_FONTS[1].name);
+      });
+
+      it('should also work with partly matching stack changes', function() {
+        setupWithState();
+        $rootScope.stack = partlyMatchingStack;
+        $rootScope.$digest();
+        expect($rootScope.state.font).toBe(DEFAULT_WEBSAFE_FONTS[1]);
       });
     });
 

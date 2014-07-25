@@ -226,7 +226,7 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsSer
 
         try {
           if (newStack && newStack.length) {
-            font = fontsService.getFontByStack(newStack);
+            font = fontsService.getFontByStack(newStack, false);
           }
 
           if (font) {
