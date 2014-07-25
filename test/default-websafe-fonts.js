@@ -23,7 +23,7 @@ DEFAULT_WEBSAFE_FONTS = [
     name: 'Verdana',
     key: 'verdana',
     category: 'sansserif',
-    stack: 'Verdana, Geneva, sans-serif',
+    stack: 'Verdana, Helvetica, Geneva, sans-serif',
     popularity: 7,
     lastModified: '2014-01-28',
     subsets: [SUBSET_LATIN, SUBSET_GREEK]
