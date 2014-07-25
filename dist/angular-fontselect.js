@@ -1,5 +1,5 @@
 /*!
- * angular-fontselect v0.8.0
+ * angular-fontselect v0.8.1
  * https://github.com/Jimdo/angular-fontselect
  *
  * A fontselect directive for AngularJS
@@ -2171,7 +2171,7 @@
   
           try {
             if (newStack && newStack.length) {
-              font = fontsService.getFontByStack(newStack);
+              font = fontsService.getFontByStack(newStack, false);
             }
   
             if (font) {
