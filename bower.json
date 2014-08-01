@@ -14,11 +14,12 @@
   ],
   "license": "MIT",
   "devDependencies": {
-    "angular-mocks": "~1.2.20",
+    "jasmine-moar-matchers": "https://gist.github.com/8549144a6969317efa11.git",
+    "angular-mocks": "~1.2.21",
     "webfontloader": "~1.5.5",
-    "lesshat": "2.0.15",
-    "jquery": "~2.0.3",
-    "less": "~1.6.1"
+    "lesshat": "~3.0.2",
+    "jquery": "~2.1.1",
+    "less": "~1.7.4"
   },
   "ignore": [
     "**/.*",
@@ -32,6 +33,6 @@
     "package.json"
   ],
   "dependencies": {
-    "angular": "~1.2.20"
+    "angular": "~1.2.21"
   }
 }

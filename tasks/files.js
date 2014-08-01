@@ -41,7 +41,7 @@ var files = {
   e2eTests: ['test/e2e/SpecHelper.js', 'test/e2e/test.*.js'],
   apiKeys: 'tmp.apikeys.js',
   testEnvKarma: [
-    'bower_components/jquery/jquery.js',
+    'bower_components/jquery/dist/jquery.js',
     'bower_components/angular/angular.js',
     libsDistDir + 'webfontloader.js',
     'bower_components/angular-mocks/angular-mocks.js'
@@ -57,12 +57,13 @@ files.testEnvKarma = files.testEnvKarma.concat(files.source);
 files.testEnvKarma.splice(apiKeysPos, 0, 'tmp.apikeys.js');
 
 files.testEnv = JSON.parse(JSON.stringify(files.testEnvKarma));
-files.testEnv.splice(0, 0, 'bower_components/less/dist/less-1.6.1.js');
+files.testEnv.unshift('bower_components/less/dist/less-1.7.4.js');
 files.demoEnv = JSON.parse(JSON.stringify(files.testEnv));
 
 files.testEnv.push('test/default-websafe-fonts.js');
 files.testEnvKarma.push(files.allPartialsCombined);
 files.testEnvKarma.push('test/default-websafe-fonts.js');
+files.testEnvKarma.unshift('bower_components/jasmine-moar-matchers/*.js');
 
 if (typeof module === 'object') {
   module.exports = files;

@@ -28,6 +28,7 @@ module.exports = {
   watch: {
     options: {
       browsers: ['Chrome'],
+      autoWatch: false,
       background: true
     }
   }

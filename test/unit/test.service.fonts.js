@@ -133,66 +133,68 @@ describe('fontsService', function() {
   });
 
   describe('getImports for given stacks', function() {
-    var importUrls = false;
+    function getImportStacks(stacks, strict, callback) {
+      var importUrls = false;
 
-    function getImportStacks(stacks, strict) {
-      importUrls = false;
+      if (angular.isFunction(strict)) {
+        callback = strict;
+        strict = undefined;
+      }
 
       fontsService.getImportsForStacks(stacks, strict).then(function(imports) {
         importUrls = imports;
       });
 
-      waitsFor(function() {
+      var ivl = window.setInterval(function() {
         $rootScope.$digest();
-        return importUrls;
-      });
+        if (importUrls) {
+          window.clearInterval(ivl);
+          callback(importUrls);
+        }
+      }, 5);
     }
 
-    it('should return a google url for Roboto when we pass a Roboto stack (google)', function() {
+    it('should return a google url for Roboto when we pass a Roboto stack (google)', function(done) {
       var robotoFont = fontsService.getFontByKey('roboto', PROVIDER_GOOGLE);
       var oswaldFont = fontsService.getFontByKey('oswald', PROVIDER_GOOGLE);
-      getImportStacks([robotoFont.stack, oswaldFont.stack]);
-
-      runs(function() {
+      getImportStacks([robotoFont.stack, oswaldFont.stack], function(importUrls) {
         expect(importUrls.google).toMatch(/Roboto/);
         expect(importUrls.google).toMatch(/Oswald/);
+        done();
       });
     });
 
-    it('should return no urls when no fonts could have been found', function() {
+    it('should return no urls when no fonts could have been found', function(done) {
       getImportStacks([
         'Arial, sans-serif',
         '"My Own font"',
         '"Unknown Google Font"'
-      ], false);
-
-      runs(function() {
+      ], false, function(importUrls) {
         expect(importUrls).toEqual({});
+        done();
       });
     });
 
-    it('should return the some found fonts when strict mode is off', function() {
+    it('should return the some found fonts when strict mode is off', function(done) {
       getImportStacks([
         'Arial, sans-serif',
         '"Roboto", sans-serif, "google"',
         '"My Own font"'
-      ], false);
-
-      runs(function() {
+      ], false, function(importUrls) {
         expect(importUrls.google).toMatch(/Roboto/);
+        done();
       });
     });
 
-    it('should return no urls with invalid fonts in strict mode', function() {
+    it('should return no urls with invalid fonts in strict mode', function(done) {
       var strict = true;
       getImportStacks([
         'Arial, sans-serif',
         '"Roboto", sans-serif, "google"',
         '"My Own font"'
-      ], strict);
-
-      runs(function() {
+      ], strict, function(importUrls) {
         expect(importUrls).toEqual({});
+        done();
       });
     });
   });
@@ -354,73 +356,43 @@ describe('fontsService', function() {
       });
     });
 
-    it('should reject when a initial font could not be found', function() {
-      var hasBeencalled = false;
+    it('should reject when a initial font could not be found', function(done) {
       var voidStack = 'Hase Igel Fuchs';
       var error;
-      runs(function() {
-        fontsService.getFontByStackAsync(voidStack);
-        fontsService._initGoogleFonts();
 
-        fontsService.ready().catch(function(e) {
-          hasBeencalled = true;
-          error = e;
-        });
+      fontsService.getFontByStackAsync(voidStack);
+      fontsService._initGoogleFonts();
+
+      fontsService.ready().catch(function(e) {
+        error = e;
       });
 
-      waitsFor(function() {
+      window.setTimeout(function() {
         $rootScope.$digest();
-        return hasBeencalled;
-      });
-
-      runs(function() {
         expect(error).toBeInstanceOf(Error);
         expect(error.message).toBe('Font with stack "' + voidStack + '" not found.');
-      });
+        done();
+      }, 10);
     });
 
-    it('should not reject after an initial font could not be found', function() {
-      var hasBeencalled = false;
+    it('should not reject after an initial font could not be found', function(done) {
       var invalidStack = 'Hase Igel Fuchs';
       var expectedFont = fontsService._fonts[0];
-      var receivedFont = null;
       var okStack = expectedFont.stack;
       var error;
 
-      runs(function() {
-        fontsService.getFontByStackAsync(invalidStack);
-        fontsService._initGoogleFonts();
+      fontsService.getFontByStackAsync(invalidStack);
+      fontsService._initGoogleFonts();
 
-        fontsService.ready().catch(function(e) {
-          hasBeencalled = true;
-          error = e;
-        });
-      });
-
-      waitsFor(function() {
-        $rootScope.$digest();
-        return hasBeencalled;
-      });
-
-      runs(function() {
-        hasBeencalled = false;
+      fontsService.ready().catch(function(e) {
+        error = e;
         fontsService.getFontByStackAsync(okStack).then(function(font) {
-          receivedFont = font;
-        });
-
-        fontsService.ready().then(function() {
-          hasBeencalled = true;
+          expect(font).toBe(expectedFont);
+          window.setTimeout(done, 0);
         });
       });
 
-      waitsFor(function() {
-        $rootScope.$digest();
-        return hasBeencalled;
-      });
-
-      runs(function() {
-        expect(receivedFont).toBe(expectedFont);
-      });
+      $rootScope.$apply();
     });
   });
 });

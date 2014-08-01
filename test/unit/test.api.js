@@ -118,7 +118,7 @@ describe('api', function() {
       });
 
       it('should call the reset method when the state gets invalid', function() {
-        spyOn($scope, 'reset').andCallThrough();
+        spyOn($scope, 'reset').and.callThrough();
         $scope.current = false;
         $scope.$digest();
         expect($scope.reset).toHaveBeenCalled();
@@ -159,7 +159,7 @@ describe('api', function() {
       it('should also trigger reset method when stack gets false', function() {
         $rootScope.stack = DEFAULT_WEBSAFE_FONTS[1].stack;
         setupWithState();
-        spyOn($scope, 'reset').andCallThrough();
+        spyOn($scope, 'reset').and.callThrough();
         $rootScope.stack = false;
         $scope.$digest();
         expect($scope.reset).toHaveBeenCalled();
@@ -238,7 +238,7 @@ describe('api', function() {
     });
 
     describe('set globals on fontsService', function() {
-      beforeEach(setupWithState);
+      beforeEach(function() { setupWithState(); });
 
       it('should have a getSubsets method', function() {
         expect(fontsService.getSubsets).toBeInstanceOf(Function);

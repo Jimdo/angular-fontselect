@@ -275,7 +275,7 @@ describe('fontselect directive', function() {
     }
 
     function filterCalled(name, times) {
-      expect(spies[name].calls.length).toBe(times);
+      expect(spies[name].calls.count()).toBe(times);
     }
 
     beforeEach(function() {
@@ -291,7 +291,7 @@ describe('fontselect directive', function() {
         $element: listElm,
         $scope: $listScope,
         $filter: function(name) {
-          return spies[name].andCallFake($filter(name));
+          return spies[name].and.callFake($filter(name));
         },
         fontsService: fontsService
       });
@@ -376,7 +376,7 @@ describe('fontselect directive', function() {
       $scope.$digest();
 
       expect(WebFont.load).toHaveBeenCalled();
-      expect(WebFont.load.calls[0].args[0].google.text).toBe(googleFont.name);
+      expect(WebFont.load.calls.argsFor(0)[0].google.text).toBe(googleFont.name);
     });
   });
 

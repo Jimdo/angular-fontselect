@@ -32,10 +32,10 @@ describe('stackSearch filter', function() {
 
   describe('caching', function() {
     it('should not create a weighted font List for the same input twice', function() {
-      spyOn(filter, 'createWeightedFontList').andCallThrough();
+      spyOn(filter, 'createWeightedFontList').and.callThrough();
       filter(DEFAULT_WEBSAFE_FONTS, 'Helvetica');
       filter(DEFAULT_WEBSAFE_FONTS, 'Arial');
-      expect(filter.createWeightedFontList.calls.length).toBe(1);
+      expect(filter.createWeightedFontList.calls.count()).toBe(1);
     });
   });
 
