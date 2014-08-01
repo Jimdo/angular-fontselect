@@ -15,7 +15,7 @@
     /* jshint indent: false */
     /* global files, $ */
     $.get('/tasks/files.js', function() {
-      files.testEnv.push('test/e2e/app.js');
+      files.testEnv.push('test/e2e/env/app.js');
       $.each(files.testEnv, function(i, url) {
         $('body').append($('<script>').attr('src', '/' + url));
       });

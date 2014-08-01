@@ -20,49 +20,61 @@ module.exports = function(grunt) {
   require('load-grunt-tasks')(grunt);
   grunt.loadTasks('tasks');
 
-  /* "Helper" Tasks */
+  grunt.registerTask('_buildapikeys', function() {
+    Helpers.setUpApiKeyFile();
+    Helpers.ensureApiKeyFileExists();
+  });
 
-  grunt.registerTask('_test:beforeEach', ['ngtemplates', '_build:apikeys']);
-  grunt.registerTask('_test:beforeEachWithHint', ['jshint', '_test:beforeEach']);
-  grunt.registerTask('_build:less', [
+  grunt.registerTask(
+    'tdd',
+    'Watch source and test files and execute tests on change',
+    function(suite) {
+      var tasks = ['_buildapikeys'];
+      var watcher = '';
+      if (!suite || suite === 'unit') {
+        tasks.push('karma:watch:start');
+        watcher = 'watch:andtestunit';
+      }
+      if (!suite || suite === 'e2e') {
+        tasks.push('http-server:test', 'shell:startsilenium');
+        watcher = 'watch:andteste2e';
+      }
+      if (!suite) {
+        watcher = 'watch:andtestboth';
+      }
+      tasks.push(watcher);
+      grunt.task.run(tasks);
+    }
+  );
+
+  grunt.registerTask('demo', 'Start the demo app', ['shell:opendemo', 'http-server:demo']);
+
+  grunt.registerTask(
+    'test',
+    'Execute all the tests',
+    function(suite) {
+      var tasks = ['_buildapikeys', 'jshint', 'ngtemplates'];
+      if (!suite || suite === 'unit') {
+        process.env.defaultBrowsers = 'Firefox,Chrome';
+        tasks.push('karma:all');
+      }
+      if (!suite || suite === 'e2e') {
+        tasks.push('http-server:test', 'protractor:single');
+      }
+      grunt.task.run(tasks);
+    }
+  );
+
+
+  /* Build dist files. */
+  grunt.registerTask('build', 'Build dist files', [
+    'ngtemplates',
+    '_buildapikeys',
+    'shell:buildWFL',
     'less:dist',
     'less:distmin',
     'concat:bannerToDistStyle',
-    'concat:bannerToDistStyleMin'
-  ]);
-  grunt.registerTask('_protractor:start', ['http-server:test', 'protractor']);
-  grunt.registerTask('_build:apikeys', function() { Helpers.setUpApiKeyFile(); });
-  grunt.registerTask('_build:ensureApiKeyFileExists', function() { Helpers.ensureApiKeyFileExists(); });
-
-  /* "Public" Tasks */
-
-  /* Watch source and test files and execute karma unit tests on change. */
-  grunt.registerTask('watch:start', ['karma:watch:start', 'watch:andtest']);
-
-  /* Alias for starting the demo server */
-  grunt.registerTask('demo', ['http-server:demo']);
-
-  /* Execute all tests. */
-  grunt.registerTask('test', [
-    '_build:apikeys',
-    '_build:ensureApiKeyFileExists',
-    '_test:beforeEachWithHint',
-    'karma:all',
-    '_protractor:start'
-  ]);
-  /* Execute e2e tests. */
-  grunt.registerTask('test:e2e', ['_test:beforeEachWithHint', '_protractor:start']);
-  /* Execute unit tests. */
-  grunt.registerTask('test:unit', ['_test:beforeEachWithHint', 'karma:all']);
-  /* Execute karma tests with Firefox and PhantomJS. */
-  grunt.registerTask('test:travis', ['_test:beforeEachWithHint', 'karma:travis']);
-
-  /* Build dist files. */
-  grunt.registerTask('build', [
-    'ngtemplates',
-    '_build:apikeys',
-    'shell:buildWFL',
-    '_build:less',
+    'concat:bannerToDistStyleMin',
     'concat:dist',
     'uglify'
   ]);
@@ -78,7 +90,7 @@ module.exports = function(grunt) {
     ]);
   });
 
-  grunt.registerTask('default', ['test', 'build']);
+  grunt.registerTask('default', ['test']);
 
   grunt.initConfig(config);
 };

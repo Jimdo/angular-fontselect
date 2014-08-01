@@ -82,6 +82,7 @@
         "waitsFor",
         "inject",
         "module",
+        "process",
         "require",
         "fontselectModule",
         "_bind",

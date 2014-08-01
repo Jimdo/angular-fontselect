@@ -1,35 +1,28 @@
 var files = require('../files');
+var browsers = process.env.KARMA_BROWSERS;
 
 module.exports = {
   options: {
+    browsers: (browsers || 'Chrome').split(','),
+    preprocessors: {
+      '**/*.coffee': ['coffee']
+    },
     frameworks: [
       'jasmine'
     ],
+    singleRun: true,
     files: files.testEnvKarma.concat([files.unitTests])
   },
   all: {
     options: {
-      browsers: ['PhantomJS', 'Chrome', 'Firefox'],
-      singleRun: true
-    }
-  },
-  headless: {
-    options: {
-      browsers: ['PhantomJS'],
-      singleRun: true
-    }
-  },
-  travis: {
-    options: {
-      browsers: ['PhantomJS', 'Firefox'],
-      singleRun: true
+      browsers: (browsers || 'Chrome,Firefox,PhantomJS').split(',')
     }
   },
   watch: {
     options: {
-      browsers: ['Chrome'],
-      autoWatch: false,
-      background: true
+      background: true,
+      singleRun: false,
+      autoWatch: false
     }
   }
 };

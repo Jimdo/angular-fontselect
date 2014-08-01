@@ -1,5 +1,5 @@
 /* global browser, element, by, protractor */
-var sandboxUrl = 'http://localhost:8765/test/e2e/';
+var sandboxUrl = 'http://localhost:8765/test/e2e/env';
 var active, prot, searching;
 
 beforeEach(function() {

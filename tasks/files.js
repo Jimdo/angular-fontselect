@@ -32,7 +32,7 @@ var files = {
   partialsDir: 'src/partials',
   allHTML: '*.html',
   allPartials: 'src/partials/*.html',
-  allPartialsCombined: 'src/partials/all.js',
+  allPartialsCombined: 'test/e2e/env/all-partials.js',
 
   wflDir: 'bower_components/webfontloader/',
   libsDir: libsDistDir,

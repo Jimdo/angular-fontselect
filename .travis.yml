@@ -1,14 +1,15 @@
 language: node_js
 node_js:
-- '0.10'
 - '0.11'
 env:
   global:
-  - JD_FONTSELECT_GOOGLE_FONTS_API_KEY="FooBar"
+  - PROTRACTOR_BROWSERS=firefox
+  - KARMA_BROWSERS=Firefox,PhantomJS
+  - JD_FONTSELECT_GOOGLE_FONTS_API_KEY="AIzaSyDj4SNEhYFlyj3574soB5IR1GkA9SzteLg"
 install:
 - npm install
 before_script:
 - export DISPLAY=:99.0
 - sh -e /etc/init.d/xvfb start
 script:
-- grunt test:travis
+- grunt test
