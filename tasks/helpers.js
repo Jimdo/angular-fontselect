@@ -11,6 +11,11 @@ if (browsers) {
   process.env.PROTRACTOR_BROWSERS = browsers;
 }
 
+var reporters = grunt.option('reporter') || grunt.option('reporters');
+if (reporters) {
+  process.env.KARMA_REPORTERS = reporters;
+}
+
 Helpers.config = {
   pkg: grunt.file.readJSON('./package.json'),
   env: process.env

@@ -1,9 +1,11 @@
 var files = require('../files');
 var browsers = process.env.KARMA_BROWSERS;
+var reporters = process.env.KARMA_REPORTERS;
 
 module.exports = {
   options: {
     browsers: (browsers || 'Chrome').split(','),
+    reporters: (reporters || 'progress').split(','),
     preprocessors: {
       '**/*.coffee': ['coffee']
     },
