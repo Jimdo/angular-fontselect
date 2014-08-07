@@ -3,7 +3,7 @@ Angular Font-Selector
 
 [![Build Status](https://travis-ci.org/Jimdo/angular-fontselect.png?branch=master)](https://travis-ci.org/Jimdo/angular-fontselect)
 
-A fontselect directive for AngularJS
+A font selection directive for AngularJS - [Try it, it's beautiful](http://jimdo.github.io/angular-fontselect/).
 
 #### Directive:
 
@@ -15,98 +15,153 @@ A fontselect directive for AngularJS
 	jdFontselect
 
 
-BUILD
------
-
-We assume you have [node.js](http://nodejs.org/) installed.  
-For building, [ruby](https://www.ruby-lang.org/) and [bundler](http://bundler.io/) are required
-since the typekit webfontloader needs to be compiled before we can ship it. 
-
-Once this dependencies are met, you can simply run:
-
-```sh
-npm install
-```
-
-
-If you want to rebuild the dist-files to add your changes, run:
-
-```sh
-grunt       #with tests
-grunt build #without tests
-```
-
-
-DEMO
-----
-
-There is a Sandbox for building castles playing around.  
-
-You need to [build this project successfully](#build) once.
-If you want to see google fonts in the demo, you need to setup an 
-[Google API KEY](#api-keys)
-
-Then you can execute `grunt demo` and go to 
-[http://localhost:8000/demo](http://localhost:8000/demo).
-
-
-TEST
-----
-
-We use [Karma](http://karma-runner.github.io/) and
-[Protractor](https://github.com/angular/protractor) for testing.  
-
-Before the tests, you need to [build this project successfully](#build) once.
-
-Note that the End to End tests require an [Google API KEY](#api-keys)
-
-#### Unit Tests 
-```sh
-grunt test:unit
-```
-
-#### End to End Tests 
-```sh
-grunt test:e2e
-```
-
-#### Why not both ?
-```sh
-grunt test
-```
-
-#### Execute karma on every file change.
-```sh
-grunt watch:start
-```
-
-
-API KEYS
+Api Keys
 --------
 
-#### For Development / Testing
-
-The tests expect a valid API Key for Google Web fonts.
-
-How to get one:
-* Go to the [Google Developers Console](https://developers.google.com/fonts/docs/developer_api#Auth) and create a new project (or use an existing one if the font selection is part of it)
-* Enable `APIs & auth` / `APIs` / `Web Fonts Developer API`
-* Go to `APIs & auth` / `Credentials` and click on `CREATE NEW KEY` in the `Public API access` section.
-* Copy your API key to the clipboard
-* Set your key into the environment Variable
-`export JD_FONTSELECT_GOOGLE_FONTS_API_KEY="__yourKeyHere__"`
-The build and test tasks will then create a file named `tmp.apikeys.js` in the
-project root and include it in the demos and tests.
-
-#### In Production
-
 You can provide your production API Keys by setting them as a constant in your application.
+Get one from the [Google Developers Console](https://developers.google.com/fonts/docs/developer_api#Auth).
 
 ```js
 angular.module('myApp', ['jdFontselect']).constant('jdFontselectConfig', {
-	googleApiKey: '__yourKeyHere__'
+  googleApiKey: '__yourKeyHere__'
 });
 ```
+
+
+Directive Attributes
+--------------------
+
+#### Current State
+
+	<jd-fontselect current="myStateObject" />
+
+The State object is meant to be read only and can be used for initiation with a
+certain state.
+
+```js
+// $scope.myStateObject
+{
+  sort: {               // Sort the list by a given font attribute
+    attr: 'name',       // Can be: 'name', 'popularity', 'lastModified'
+    direction: true
+  },
+  providers: {          // Filter the list by Font provider
+    google: true,
+    websafe: true
+  },
+  category: undefined,  // Filter. Can be: undefined (all), 'sansserif',
+                        //   'serif', 'handwriting', 'display', 'other'
+  font: {               // The current font object
+    subsets: [ ... ],   // List of supported subsets
+    variants: [ ... ],  // List of available Variants
+    name: '',           // Name of the font (As displayed in the list)
+    popularity: 0,      // Popularity of the font
+    key: '',            // Lower-cased alpha only version of the name
+    lastModified: 0,    // Timestamp
+    stack: '',			// For example '"Open Sans", sans-serif'
+    category: ''        // 'sansserif', 'serif', 'handwriting', 'display', 'other'
+  },
+  search: '',            // Current search string
+  subsets: {            // Filter: Object of subsets supported by google
+    latin: true
+    // [ ... ]
+  }
+}
+
+```
+
+#### Current Stack
+
+	<jd-fontselect stack="myFontStack" />
+
+The Font stack can be used in CSS like this
+
+	<h1 style="font-family: {{myFontStack}};">Look at this font</h1>
+
+You can change the current font in the selection by giving
+`$scope.myFontStack` a value (for example `Helvetica, Verdana, sans-serif`)
+
+#### Current Font Name
+
+	<jd-fontselect name="myFontName" />
+
+Read-Only. `$scope.myFontName` now contains the current font name
+
+#### Translate
+
+	<jd-fontselect text="myTranslationObject" />
+	<jd-fontselect rawText="{ toggleOpenLabel: 'Mach uff!', ... }" />
+
+The `text` attribute contains a translation object, the `rawtext` object contains a
+string, evaluating into a translation object.
+
+```js
+// $scope.myTranslationObject
+{
+  toggleOpenLabel: 'open',
+  toggleCloseLabel: 'close',
+  searchToggleLabel: 'Search',
+  search: 'Search by Fontname',
+  toggleSearchLabel: 'Choose Font',
+  providerLabel: 'Providers',
+  subsetLabel: 'Subsets',
+  styleLabel: 'Categories',
+  settingsLabel: 'Settings',
+  noResultsLabel: 'No Fonts found.',
+  pageLabel: 'Page: ',
+  fontFabel: 'Fonts: ',
+  closeButton: 'Close',
+  page: {
+    prev: '▲',
+    next: '▼'
+  },
+  provider: {
+    websafe: 'Websafe Fonts',
+    google: 'Google Fonts'
+  },
+  category: {
+    serif: 'Serif',
+    sansserif: 'Sans Serif',
+    display: 'Display',
+    handwriting: 'Handwriting',
+    other: 'Other'
+  },
+  subset: {
+    cyrillic: 'Cyrillic',
+    'cyrillic-ext': 'Cyrillic Extended',
+    greek: 'Greek',
+    'greek-ext': 'Greek Extended',
+    latin: 'Latin',
+    'latin-ext': 'Latin Extended',
+    vietnamese: 'Vietnamese',
+    devanagari: 'Devanagari',
+    khmer: 'Khmer'
+  },
+  sort: {
+    popularity: 'Popularity',
+    name: 'Alphabet',
+    lastModified: 'Latest'
+  },
+  sortdir: {
+    desc: '▼',
+    asc: '▲'
+  }
+}
+```
+
+#### On Initiation
+
+	<jd-fontselect on-init="myInitiation($scope, $element)" />
+
+This calls `$scope.myInitiation` with the font selection scope and element
+once the selection is initiated.
+
+
+Contributing
+------------
+
+The [CONTRIBUTE.md](https://github.com/Jimdo/angular-fontselect/blob/master/CONTRIBUTE.md)
+contains a lot of notes and tips to kickstart your development environment.
 
 
 LICENSE
