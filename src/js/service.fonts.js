@@ -509,12 +509,14 @@ FontsService.prototype = {
     return this._getBestOf(subsets, SUBSET_PRIORITY);
   },
 
-  _initGoogleFonts: function() {
+  _initGoogleFonts: function(force) {
     var self = this;
 
-    if (!self.jdFontselectConfig.googleApiKey || _googleFontsInitiated) {
+    if (!self.jdFontselectConfig.googleApiKey || (!force && _googleFontsInitiated)) {
       return;
     }
+
+    var googleFontsUrl = self.jdFontselectConfig.googleApiUrl || URL_GOOGLE_FONTS_API;
 
     _googleFontsInitiated = true;
 
@@ -524,7 +526,7 @@ FontsService.prototype = {
 
     self.$http({
       method: METHOD_GET,
-      url: URL_GOOGLE_FONTS_API,
+      url: googleFontsUrl,
       params: {
         sort: 'popularity',
         key: self.jdFontselectConfig.googleApiKey
