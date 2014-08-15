@@ -1,5 +1,5 @@
 /* global PROVIDER_WEBSAFE, PROVIDER_GOOGLE, $scope, $rootScope, createNewDirective, fontsService */
-/* global CATEGORY_OBJECTS, CATEGORY_OTHER, CATEGORY_HANDWRITING */
+/* global CATEGORY_OBJECTS, CATEGORY_OTHER, CATEGORY_HANDWRITING, $httpBackend, GOOGLE_FONTS_RESPONSE */
 
 describe('fontsService', function() {
   'use strict';
@@ -129,6 +129,20 @@ describe('fontsService', function() {
       $scope.current.font = fontsService.searchFont({provider: PROVIDER_GOOGLE});
       $scope.$digest();
       expect(fontsService.getImports().google).toMatch('%3Aregular');
+    });
+
+    it('should accept a custom googleApi url', function() {
+      var jdFontselectConfig;
+      inject(['jdFontselectConfig', function(jdfsc) {
+        jdFontselectConfig = jdfsc;
+        jdFontselectConfig.googleApiUrl = 'http://example.org/';
+      }]);
+
+      $httpBackend.expectGET(/http(s)?:\/\/example\.org\/.*/).respond(GOOGLE_FONTS_RESPONSE);
+      fontsService._initGoogleFonts(true);
+
+      $httpBackend.flush(1);
+      delete jdFontselectConfig.googleApiUrl;
     });
   });
 
