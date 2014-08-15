@@ -1,5 +1,5 @@
 /*!
- * angular-fontselect v0.8.1
+ * angular-fontselect v0.8.2
  * https://github.com/Jimdo/angular-fontselect
  *
  * A fontselect directive for AngularJS
@@ -1848,12 +1848,14 @@
       return this._getBestOf(subsets, SUBSET_PRIORITY);
     },
   
-    _initGoogleFonts: function() {
+    _initGoogleFonts: function(force) {
       var self = this;
   
-      if (!self.jdFontselectConfig.googleApiKey || _googleFontsInitiated) {
+      if (!self.jdFontselectConfig.googleApiKey || (!force && _googleFontsInitiated)) {
         return;
       }
+  
+      var googleFontsUrl = self.jdFontselectConfig.googleApiUrl || URL_GOOGLE_FONTS_API;
   
       _googleFontsInitiated = true;
   
@@ -1863,7 +1865,7 @@
   
       self.$http({
         method: METHOD_GET,
-        url: URL_GOOGLE_FONTS_API,
+        url: googleFontsUrl,
         params: {
           sort: 'popularity',
           key: self.jdFontselectConfig.googleApiKey
@@ -2685,7 +2687,7 @@
     };
   });
 
-  // src/partials/all.js
+  // test/e2e/env/all-partials.js
   angular.module('jdFontselect').run(['$templateCache', function($templateCache) {
     'use strict';
   
