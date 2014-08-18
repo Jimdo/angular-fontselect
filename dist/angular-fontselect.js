@@ -1,5 +1,5 @@
 /*!
- * angular-fontselect v0.8.4
+ * angular-fontselect v0.8.5
  * https://github.com/Jimdo/angular-fontselect
  *
  * A fontselect directive for AngularJS
@@ -1624,11 +1624,8 @@
     getUsageForStacks: function(fontStacks) {
       var self = this;
       var normalize = self.$filter('stackSearch').normalizeStack;
+      var existingProviders = self.getProviders();
       var usage = {};
-  
-      angular.forEach(self.getProviders(), function(active, provider) {
-        usage[provider] = 0;
-      });
   
       if (!angular.isArray(fontStacks)) {
         return usage;
@@ -1639,8 +1636,8 @@
   
         var normalizedStack = normalize(stack);
         var provider = normalizedStack[normalizedStack.length - 1];
-        if (!angular.isUndefined(usage[provider])) {
-          usage[provider] += 1;
+        if (!usage[provider] && !angular.isUndefined(existingProviders[provider])) {
+          usage[provider] = true;
         }
       });
   
