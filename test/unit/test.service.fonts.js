@@ -231,16 +231,21 @@ describe('fontsService', function() {
       expect(getUsageByStack(stacks)).toBeTypeOf('object');
     });
 
-    it('should know which providers are unused', function() {
-      expect(getUsageByStack()[PROVIDER_WEBSAFE]).toBe(0);
-    });
-
     it('should know when we use a google font', function() {
       var stacks = [
         googleFont('Foo')
       ];
 
-      expect(getUsageByStack(stacks)[PROVIDER_GOOGLE]).toBe(1);
+      expect(getUsageByStack(stacks)[PROVIDER_GOOGLE]).toBe(true);
+    });
+
+    it('should return a sparse object', function() {
+      var stacks = [
+        googleFont('Foo')
+      ];
+
+      expect(getUsageByStack(stacks)[PROVIDER_GOOGLE]).toBe(true);
+      expect(getUsageByStack(stacks)[PROVIDER_WEBSAFE]).toBeUndefined();
     });
 
     it('should know when we use multiple google fonts', function() {
@@ -249,7 +254,8 @@ describe('fontsService', function() {
         googleFont('Bar')
       ];
 
-      expect(getUsageByStack(stacks)[PROVIDER_GOOGLE]).toBe(2);
+      expect(getUsageByStack(stacks)[PROVIDER_GOOGLE]).toBe(true);
+      expect(getUsageByStack(stacks)[PROVIDER_WEBSAFE]).toBeUndefined();
     });
 
     it('should know when i use a websafe font', function() {
@@ -258,8 +264,8 @@ describe('fontsService', function() {
         googleFont('Foo')
       ];
 
-      expect(getUsageByStack(stacks)[PROVIDER_GOOGLE]).toBe(1);
-      expect(getUsageByStack(stacks)[PROVIDER_WEBSAFE]).toBe(1);
+      expect(getUsageByStack(stacks)[PROVIDER_GOOGLE]).toBe(true);
+      expect(getUsageByStack(stacks)[PROVIDER_WEBSAFE]).toBe(true);
     });
 
     it('should work with custom providers', function() {
@@ -270,11 +276,20 @@ describe('fontsService', function() {
         'Foo, Bar, "' + providerName + '"'
       ];
 
-      expect(getUsageByStack(stacks)[providerName]).toBe(1);
+      expect(getUsageByStack(stacks)[providerName]).toBe(true);
+    });
+
+    it('should not return usage of unknown providers', function() {
+      var providerName = 'My custom Provider';
+      var stacks = [
+        'Foo, Bar, "' + providerName + '"'
+      ];
+
+      expect(getUsageByStack(stacks)[providerName]).toBeUndefined();
     });
 
     it('should ignore falsely stacks', function() {
-      expect(getUsageByStack([false])[PROVIDER_WEBSAFE]).toBe(0);
+      expect(getUsageByStack([false])[PROVIDER_WEBSAFE]).toBeUndefined();
     });
   });
 

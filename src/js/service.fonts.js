@@ -285,11 +285,8 @@ FontsService.prototype = {
   getUsageForStacks: function(fontStacks) {
     var self = this;
     var normalize = self.$filter('stackSearch').normalizeStack;
+    var existingProviders = self.getProviders();
     var usage = {};
-
-    angular.forEach(self.getProviders(), function(active, provider) {
-      usage[provider] = 0;
-    });
 
     if (!angular.isArray(fontStacks)) {
       return usage;
@@ -300,8 +297,8 @@ FontsService.prototype = {
 
       var normalizedStack = normalize(stack);
       var provider = normalizedStack[normalizedStack.length - 1];
-      if (!angular.isUndefined(usage[provider])) {
-        usage[provider] += 1;
+      if (!usage[provider] && !angular.isUndefined(existingProviders[provider])) {
+        usage[provider] = true;
       }
     });
 
