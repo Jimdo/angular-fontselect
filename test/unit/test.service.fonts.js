@@ -213,6 +213,63 @@ describe('fontsService', function() {
     });
   });
 
+  describe('getUsageForStacks', function() {
+    function getUsageByStack(stacks) {
+      return fontsService.getUsageForStacks(stacks);
+    }
+
+    function googleFont(font) {
+      return font + ', "' + PROVIDER_GOOGLE + '"';
+    }
+
+    function websafeFont(font) {
+      return font + ', "' + PROVIDER_WEBSAFE + '"';
+    }
+
+    it('should return an object', function() {
+      var stacks = [];
+      expect(getUsageByStack(stacks)).toBeTypeOf('object');
+    });
+
+    it('should know when we use a google font', function() {
+      var stacks = [
+        googleFont('Foo')
+      ];
+
+      expect(getUsageByStack(stacks)[PROVIDER_GOOGLE]).toBe(1);
+    });
+
+    it('should know when we use multiple google fonts', function() {
+      var stacks = [
+        googleFont('Foo'),
+        googleFont('Bar')
+      ];
+
+      expect(getUsageByStack(stacks)[PROVIDER_GOOGLE]).toBe(2);
+    });
+
+    it('should know when i use a websafe font', function() {
+      var stacks = [
+        websafeFont('Bar'),
+        googleFont('Foo')
+      ];
+
+      expect(getUsageByStack(stacks)[PROVIDER_GOOGLE]).toBe(1);
+      expect(getUsageByStack(stacks)[PROVIDER_WEBSAFE]).toBe(1);
+    });
+
+    it('should work with custom providers', function() {
+      var providerName = 'My custom Provider';
+      fontsService.registerProvider(providerName, function() {});
+
+      var stacks = [
+        'Foo, Bar, "' + providerName + '"'
+      ];
+
+      expect(getUsageByStack(stacks)[providerName]).toBe(1);
+    });
+  });
+
   describe('current fonts', function() {
     it('should return an empty list when no fonts are selected', function() {
       expect(fontsService.getUsedFonts().length).toBe(0);
