@@ -1,5 +1,5 @@
 /*!
- * angular-fontselect v0.8.3
+ * angular-fontselect v0.8.4
  * https://github.com/Jimdo/angular-fontselect
  *
  * A fontselect directive for AngularJS
@@ -1630,7 +1630,13 @@
         usage[provider] = 0;
       });
   
+      if (!angular.isArray(fontStacks)) {
+        return usage;
+      }
+  
       angular.forEach(fontStacks, function(stack) {
+        if (!stack) { return; }
+  
         var normalizedStack = normalize(stack);
         var provider = normalizedStack[normalizedStack.length - 1];
         if (!angular.isUndefined(usage[provider])) {
