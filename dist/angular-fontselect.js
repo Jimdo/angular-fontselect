@@ -1,5 +1,5 @@
 /*!
- * angular-fontselect v0.8.2
+ * angular-fontselect v0.8.3
  * https://github.com/Jimdo/angular-fontselect
  *
  * A fontselect directive for AngularJS
@@ -1608,6 +1608,37 @@
   
     getUsage: function() {
       return this._usedProviders;
+    },
+  
+    /**
+     * Get a usage object from a list of font stacks
+     *
+     * getUsageForStacks([
+     *   "'Roboto', sans-serif, 'google'",
+     *   "'Own font', serif, 'custom'"
+     * ]);
+     *
+     * @param {Array} fontStacks
+     * @return {Object}
+     */
+    getUsageForStacks: function(fontStacks) {
+      var self = this;
+      var normalize = self.$filter('stackSearch').normalizeStack;
+      var usage = {};
+  
+      angular.forEach(self.getProviders(), function(active, provider) {
+        usage[provider] = 0;
+      });
+  
+      angular.forEach(fontStacks, function(stack) {
+        var normalizedStack = normalize(stack);
+        var provider = normalizedStack[normalizedStack.length - 1];
+        if (!angular.isUndefined(usage[provider])) {
+          usage[provider] += 1;
+        }
+      });
+  
+      return usage;
     },
   
     setSubsets: function(subsets, options) {
