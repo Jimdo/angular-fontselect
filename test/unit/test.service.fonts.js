@@ -231,6 +231,10 @@ describe('fontsService', function() {
       expect(getUsageByStack(stacks)).toBeTypeOf('object');
     });
 
+    it('should know which providers are unused', function() {
+      expect(getUsageByStack()[PROVIDER_WEBSAFE]).toBe(0);
+    });
+
     it('should know when we use a google font', function() {
       var stacks = [
         googleFont('Foo')
@@ -267,6 +271,10 @@ describe('fontsService', function() {
       ];
 
       expect(getUsageByStack(stacks)[providerName]).toBe(1);
+    });
+
+    it('should ignore falsely stacks', function() {
+      expect(getUsageByStack([false])[PROVIDER_WEBSAFE]).toBe(0);
     });
   });
 

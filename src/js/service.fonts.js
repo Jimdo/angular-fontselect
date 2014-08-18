@@ -291,7 +291,13 @@ FontsService.prototype = {
       usage[provider] = 0;
     });
 
+    if (!angular.isArray(fontStacks)) {
+      return usage;
+    }
+
     angular.forEach(fontStacks, function(stack) {
+      if (!stack) { return; }
+
       var normalizedStack = normalize(stack);
       var provider = normalizedStack[normalizedStack.length - 1];
       if (!angular.isUndefined(usage[provider])) {
