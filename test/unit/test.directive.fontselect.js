@@ -117,7 +117,7 @@ describe('fontselect directive', function() {
   });
 
   it('should provide a list with some fonts', function() {
-    expect(elm.find('li').length).toBe(9);
+    expect(elm.find('li').length).toBe(10);
   });
 
   it('should not show the font-select window when inactive', function() {
@@ -133,6 +133,9 @@ describe('fontselect directive', function() {
     var length = elm.find('li').length;
 
     fontsService.add(ANOTHER_FONT);
+
+    $listScope.page.size = 200;
+    $listScope.$digest();
 
     $scope.$digest();
     expect(elm.find('li').length).toBe(length + 1);
@@ -188,11 +191,11 @@ describe('fontselect directive', function() {
     }
 
     it('should have radio buttons inside the list items', function() {
-      expect(elm.find('li input[type="radio"]').length).toBe(9);
+      expect(elm.find('li input[type="radio"]').length).toBe(10);
     });
 
     it('should have labels for the radio buttons', function() {
-      expect(elm.find('li label').length).toBe(9);
+      expect(elm.find('li label').length).toBe(10);
     });
 
     it('should link the labels to the radio buttons', function() {

@@ -10,7 +10,7 @@ describe('stackSearch filter', function() {
   });
 
   it('should have a consistent set of fixture fonts', function() {
-    expect(DEFAULT_WEBSAFE_FONTS.length).toBe(5);
+    expect(DEFAULT_WEBSAFE_FONTS.length).toBe(6);
     expect(DEFAULT_WEBSAFE_FONTS[0].name).toBe('Arial');
   });
 
@@ -23,11 +23,11 @@ describe('stackSearch filter', function() {
   });
 
   it('should find the best fallback font if multiple stacks are matching', function() {
-    expect(filter(DEFAULT_WEBSAFE_FONTS, 'Helvetica')).toEqual([DEFAULT_WEBSAFE_FONTS[2]]);
+    expect(filter(DEFAULT_WEBSAFE_FONTS, 'Helvetica')).toEqual([DEFAULT_WEBSAFE_FONTS[3]]);
   });
 
   it('should return multiple fonts when we cant not figure out the best one', function() {
-    expect(filter(DEFAULT_WEBSAFE_FONTS, 'sans-serif')).toEqual([DEFAULT_WEBSAFE_FONTS[0], DEFAULT_WEBSAFE_FONTS[2]]);
+    expect(filter(DEFAULT_WEBSAFE_FONTS, 'sans-serif')).toEqual([DEFAULT_WEBSAFE_FONTS[0], DEFAULT_WEBSAFE_FONTS[3]]);
   });
 
   describe('caching', function() {

@@ -20,6 +20,15 @@ DEFAULT_WEBSAFE_FONTS = [
     subsets: [SUBSET_LATIN, SUBSET_LATIN_EXT]
   },
   {
+    name: 'Tahoma',
+    key: 'tahoma',
+    category: 'sansserif',
+    stack: 'Tahoma, Verdana, Helvetica, Geneva, sans-serif',
+    popularity: 6,
+    lastModified: '2014-02-04',
+    subsets: [SUBSET_LATIN, SUBSET_GREEK]
+  },
+  {
     name: 'Verdana',
     key: 'verdana',
     category: 'sansserif',

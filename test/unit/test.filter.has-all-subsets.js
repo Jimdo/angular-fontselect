@@ -3,7 +3,7 @@ describe('hasAllSubsets filter', function() {
   var filter;
   beforeEach(inject(function($filter) {
     filter = $filter('hasAllSubsets');
-    expect(DEFAULT_WEBSAFE_FONTS.length).toBe(5);
+    expect(DEFAULT_WEBSAFE_FONTS.length).toBe(6);
   }));
 
   it('should exist', function() {
@@ -16,7 +16,7 @@ describe('hasAllSubsets filter', function() {
   });
 
   it('should find all fonts with greek script', function() {
-    expect(filter(DEFAULT_WEBSAFE_FONTS, {greek: true}).length).toBe(2);
+    expect(filter(DEFAULT_WEBSAFE_FONTS, {greek: true}).length).toBe(3);
   });
 
   it('should find all latin extended fonts', function() {
@@ -24,11 +24,11 @@ describe('hasAllSubsets filter', function() {
   });
 
   it('should ignore falsy filter entries', function() {
-    expect(filter(DEFAULT_WEBSAFE_FONTS, {greek: false}).length).toBe(5);
+    expect(filter(DEFAULT_WEBSAFE_FONTS, {greek: false}).length).toBe(6);
   });
 
   it('should only return items that contain all required subsets', function() {
-    expect(filter(DEFAULT_WEBSAFE_FONTS, {greek: true, latin: true}).length).toBe(2);
+    expect(filter(DEFAULT_WEBSAFE_FONTS, {greek: true, latin: true}).length).toBe(3);
   });
 
   it('should remove all entries when no subsets are found', function() {
