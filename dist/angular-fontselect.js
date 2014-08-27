@@ -1,5 +1,5 @@
 /*!
- * angular-fontselect v0.8.5
+ * angular-fontselect v0.8.6
  * https://github.com/Jimdo/angular-fontselect
  *
  * A fontselect directive for AngularJS
@@ -1432,13 +1432,13 @@
   
       var fonts = self.searchFonts(object);
   
-      if (fonts.length > 0) {
-        fonts = fonts[0];
+      if (fonts.length === 1) {
+        return fonts[0];
+      } else if (fonts.length > 0) {
+        return self._getBestFontForSearch(fonts, object);
       } else {
         return;
       }
-  
-      return fonts;
     },
   
     getFontByKey: function(key, provider) {
@@ -1462,7 +1462,8 @@
       var fonts, self = this;
   
       if (strict) {
-        fonts = self.searchFonts({stack: stack});
+        var font = self.searchFont({stack: stack});
+        fonts = font ? [font] : [];
       } else {
         fonts = self.$filter('stackSearch')(self._fonts, stack);
       }
@@ -1688,6 +1689,54 @@
       self.setProviders(provider);
       self._usedProviders[name] = false;
       self._fontInitiators[name] = fontInitiator;
+    },
+  
+    /* http://stackoverflow.com/questions/3446170/escape-string-for-use-in-javascript-regex */
+    _escapeRegExp: function(str) {
+      return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&');
+    },
+  
+    _getBestFontForSearch: function(fonts, search) {
+      var self = this;
+  
+      fonts.sort(function(a, b) {
+        var rankA = 0;
+        var rankB = 0;
+        angular.forEach(search, function(value, key) {
+          if (angular.isString(value)) {
+            var rgx = new RegExp(self._escapeRegExp(value));
+  
+            if (rgx.test(a[key]) && rgx.test(b[key])) {
+              var restA = a[key].replace(value, '').length;
+              var restB = b[key].replace(value, '').length;
+  
+              if (restA < restB) {
+                rankA++;
+              } else if (restB < restA) {
+                rankB++;
+              }
+              return;
+            }
+          }
+  
+          if (a[key] === value) {
+            rankA++;
+          }
+          if (b[key] === value) {
+            rankB++;
+          }
+        });
+  
+        if (rankA > rankB) {
+          return -1;
+        } else if(rankB > rankA) {
+          return 1;
+        } else {
+          return 0;
+        }
+      });
+  
+      return fonts[0];
     },
   
     _setSelectOptions: function(options, additional) {
