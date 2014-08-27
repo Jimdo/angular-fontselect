@@ -99,6 +99,20 @@ describe('fontsService', function() {
     });
   });
 
+  describe('searchFont', function() {
+    it('should decide which is the best match, when multiple are found', function() {
+      var myStack = 'Verdana, Helvetica, Geneva, sans-serif';
+      var myExpectedStack = myStack + ', "websafe"';
+      var fontsForMyStack = fontsService.searchFonts({stack: myStack});
+
+      // this test requires two results, from which the first one is the false match
+      expect(fontsForMyStack.length).toBe(2);
+      expect(fontsForMyStack[0].stack).not.toBe(myExpectedStack);
+
+      expect(fontsService.searchFont({stack: myStack}).stack).toBe(myExpectedStack);
+    });
+  });
+
   describe('getBestOf', function() {
     var testPrios = ['foo', 'bar', 'baz'];
     var testPrios2 = ['a', 'b', 'c'];
