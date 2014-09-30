@@ -43,13 +43,12 @@ describe('api', function() {
     expect($rootScope.initFS).toHaveBeenCalled();
   });
 
-  it('should pass the element and scope into external init callback', function() {
-    $rootScope.initFS = function($element, $scope) {
-      expect($element.length).toBe(1);
+  it('should pass the scope into external init callback', function() {
+    $rootScope.initFS = function($scope) {
       expect($scope.id).toBe(2);
     };
 
-    createNewDirective('on-init="initFS($element, $scope)"');
+    createNewDirective('on-init="initFS($scope)"');
   });
 
   describe('basic out', function() {

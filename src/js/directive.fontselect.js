@@ -182,7 +182,7 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsSer
         }
       }
 
-      $scope.onInit({$scope: $scope, $element: $element});
+      $scope.onInit({$scope: $scope});
     }],
 
     link: function(scope) {
