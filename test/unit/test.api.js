@@ -52,6 +52,28 @@ describe('api', function() {
     createNewDirective('on-init="initFS($scope)"');
   });
 
+  it('should call optional onOpen callback', function() {
+    $rootScope.openFs = jasmine.createSpy('openFs');
+
+    var $toggle = createNewDirective('on-open="openFs()"').elm.find('button.jdfs-toggle');
+
+    expect($rootScope.openFs).not.toHaveBeenCalled();
+    $toggle.click();
+    expect($rootScope.openFs).toHaveBeenCalled();
+  });
+
+  it('should call optional onClose callback', function() {
+    $rootScope.closeFs = jasmine.createSpy('closeFs');
+
+    var $toggle = createNewDirective('on-close="closeFs()"').elm.find('button.jdfs-toggle');
+
+    expect($rootScope.closeFs).not.toHaveBeenCalled();
+    $toggle.click();
+    expect($rootScope.closeFs).not.toHaveBeenCalled();
+    $toggle.click();
+    expect($rootScope.closeFs).toHaveBeenCalled();
+  });
+
   describe('basic out', function() {
     beforeEach(function() {
       setupWithState();

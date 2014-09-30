@@ -10,7 +10,9 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsSer
       name: '=?',
       rawText: '@?text',
       text: '=?textObj',
-      onInit: '&?'
+      onInit: '&?',
+      onOpen: '&?',
+      onClose: '&?'
     },
     restrict: 'E',
     templateUrl: DIR_PARTIALS + 'fontselect.html',
@@ -65,6 +67,14 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsSer
         $scope.$digest();
       }
 
+      function callOnOpen() {
+        $scope.onOpen();
+      }
+
+      function callOnClose() {
+        $scope.onClose();
+      }
+
       $scope.reverseSort = function() {
         var sort = $scope.current.sort;
 
@@ -76,6 +86,9 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsSer
 
         if (!$scope.active) {
           $scope.searching = false;
+          callOnClose();
+        } else {
+          callOnOpen();
         }
       };
 
