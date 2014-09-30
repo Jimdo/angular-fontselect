@@ -1,5 +1,5 @@
 /*!
- * angular-fontselect v0.8.6
+ * angular-fontselect v0.8.7
  * https://github.com/Jimdo/angular-fontselect
  *
  * A fontselect directive for AngularJS
@@ -2212,7 +2212,7 @@
           }
         }
   
-        $scope.onInit({$scope: $scope, $element: $element});
+        $scope.onInit({$scope: $scope});
       }],
   
       link: function(scope) {
