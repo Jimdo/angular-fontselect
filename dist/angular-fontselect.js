@@ -1,5 +1,5 @@
 /*!
- * angular-fontselect v0.8.9
+ * angular-fontselect v0.8.10
  * https://github.com/Jimdo/angular-fontselect
  *
  * A fontselect directive for AngularJS
@@ -2198,6 +2198,8 @@
           $scope.stylesActive = true;
           $scope.settingsActive = false;
         };
+  
+        $scope.$on('$destroy', callOnClose);
   
         /* INITIALIZE */
   
