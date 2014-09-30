@@ -43,9 +43,10 @@ describe('api', function() {
     expect($rootScope.initFS).toHaveBeenCalled();
   });
 
-  it('should pass the scope into external init callback', function() {
+  it('should pass the scope into external init callback', function(done) {
     $rootScope.initFS = function($scope) {
       expect($scope.id).toBe(2);
+      done();
     };
 
     createNewDirective('on-init="initFS($scope)"');

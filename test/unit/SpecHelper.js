@@ -93,13 +93,19 @@ beforeEach(function() {
   $httpBackend.flush(1);
 });
 
-afterEach(function() {
+afterEach(function(done) {
   /* Each directive gets it's own id, we want to test only on id 1 */
   id = 1;
   directiveID = 1;
   _googleFontsInitiated = false;
   DEFAULT_WEBSAFE_FONTS = DEFAULT_WEBSAFE_FONTS_BACKUP;
-  /* Make sure, there are no unexpected request */
-  $httpBackend.verifyNoOutstandingExpectation();
-  $httpBackend.verifyNoOutstandingRequest();
+
+  /* Since verifyNoOutstandingExpectation will do a digest we do not want
+     that to collide with any digests we're doing in tests. -> timeout. */
+  setTimeout(function() {
+    /* Make sure, there are no unexpected request */
+    $httpBackend.verifyNoOutstandingExpectation();
+    $httpBackend.verifyNoOutstandingRequest();
+    done();
+  }, 0);
 });
