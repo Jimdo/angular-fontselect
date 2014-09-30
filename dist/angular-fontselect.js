@@ -1,5 +1,5 @@
 /*!
- * angular-fontselect v0.8.8
+ * angular-fontselect v0.8.9
  * https://github.com/Jimdo/angular-fontselect
  *
  * A fontselect directive for AngularJS
@@ -2040,7 +2040,9 @@
         name: '=?',
         rawText: '@?text',
         text: '=?textObj',
-        onInit: '&?'
+        onInit: '&?',
+        onOpen: '&?',
+        onClose: '&?'
       },
       restrict: 'E',
       templateUrl: DIR_PARTIALS + 'fontselect.html',
@@ -2095,6 +2097,14 @@
           $scope.$digest();
         }
   
+        function callOnOpen() {
+          $scope.onOpen();
+        }
+  
+        function callOnClose() {
+          $scope.onClose();
+        }
+  
         $scope.reverseSort = function() {
           var sort = $scope.current.sort;
   
@@ -2106,6 +2116,9 @@
   
           if (!$scope.active) {
             $scope.searching = false;
+            callOnClose();
+          } else {
+            callOnOpen();
           }
         };
   
