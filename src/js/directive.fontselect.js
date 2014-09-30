@@ -169,6 +169,8 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsSer
         $scope.settingsActive = false;
       };
 
+      $scope.$on('$destroy', callOnClose);
+
       /* INITIALIZE */
 
 

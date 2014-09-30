@@ -72,6 +72,21 @@ describe('api', function() {
     expect($rootScope.closeFs).not.toHaveBeenCalled();
     $toggle.click();
     expect($rootScope.closeFs).toHaveBeenCalled();
+
+  });
+
+  it('should call optional onClose when scope is destroyed', function() {
+    $rootScope.closeFs = jasmine.createSpy('closeFs');
+    $rootScope.toggle = {
+      isOn: true
+    };
+
+   createNewDirective('on-close="closeFs()" ng-if="toggle.isOn"');
+
+   expect($rootScope.closeFs).not.toHaveBeenCalled();
+   $rootScope.toggle.isOn = false;
+   $rootScope.$digest();
+   expect($rootScope.closeFs).toHaveBeenCalled();
   });
 
   describe('basic out', function() {
