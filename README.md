@@ -5,6 +5,10 @@ Angular Font-Selector
 
 A font selection directive for AngularJS - [Try it, it's beautiful](http://jimdo.github.io/angular-fontselect/).
 
+#### Bower:
+
+	bower install jd-fontselect
+
 #### Directive:
 
 	<jd-fontselect />
