@@ -1,4 +1,4 @@
-/* global DEFAULT_WEBSAFE_FONTS, PROVIDER_WEBSAFE, PROVIDER_GOOGLE, REQUIRED_FONT_OBJECT_KEYS */
+/* global PROVIDER_GOOGLE, REQUIRED_FONT_OBJECT_KEYS */
 /* global GOOGLE_FONT_CATEGORIES, NAME_FONTSSERVICE, DEFAULT_CATEGORIES, URL_GOOGLE_FONTS_CSS */
 /* global VARIANT_PRIORITY, SUBSET_PRIORITY, METHOD_GET, URL_GOOGLE_FONTS_API  */
 /* global STATE_DEFAULTS, CATEGORY_OTHER, CATEGORY_OBJECTS  */
@@ -36,9 +36,6 @@ FontsService.prototype = {
     self._fontInitiators = {};
 
     self.registerProvider(PROVIDER_GOOGLE, angular.bind(self, self._loadGoogleFont));
-    self.registerProvider(PROVIDER_WEBSAFE, function() {});
-
-    self._addDefaultFonts();
   },
 
   getAllFonts: function() {
@@ -57,7 +54,7 @@ FontsService.prototype = {
     var self = this;
 
     if (!angular.isString(provider)) {
-      provider = angular.isString(fontObj.provider) ? fontObj.provider : PROVIDER_WEBSAFE;
+      throw new Error('Font without provider');
     }
 
     fontObj.provider = provider;
@@ -456,15 +453,6 @@ FontsService.prototype = {
     this.setImports(this.getUrls());
   },
 
-  load: function(font) {
-    if (font.loaded) {
-      return;
-    }
-
-    font.loaded = true;
-    this._fontInitiators[font.provider](font);
-  },
-
   getUrls: function() {
     var self = this;
     var googleUrl = self.getGoogleUrl();
@@ -658,14 +646,6 @@ FontsService.prototype = {
 
     // console.error('Category not Found:', font);
     return CATEGORY_OBJECTS[CATEGORY_OTHER];
-  },
-
-  _addDefaultFonts: function() {
-    var self = this;
-
-    angular.forEach(DEFAULT_WEBSAFE_FONTS, function(font) {
-      self.add(font);
-    });
   },
 
   _loadGoogleFont: function(font) {
