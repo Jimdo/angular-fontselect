@@ -171,9 +171,6 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsSer
 
       $scope.$on('$destroy', callOnClose);
 
-      /* INITIALIZE */
-
-
       /* Initiate! */
       fontsService._initGoogleFonts();
 
@@ -198,19 +195,17 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsSer
       }
 
       $scope.onInit({$scope: $scope});
-    }],
 
-    link: function(scope) {
-      scope.$watch('current.font', function(newFont, oldFont) {
-        if (!angular.isObject(scope.current)) {
-          scope.reset();
+      $scope.$watch('current.font', function(newFont, oldFont) {
+        if (!angular.isObject($scope.current)) {
+          $scope.reset();
         }
 
         if (oldFont !== newFont) {
-          scope.tryUnfocusSearch();
+          $scope.tryUnfocusSearch();
 
-          if (angular.isObject(scope.current.font)) {
-            newFont = scope.current.font;
+          if (angular.isObject($scope.current.font)) {
+            newFont = $scope.current.font;
           }
 
           if (angular.isObject(oldFont) && oldFont.used) {
@@ -221,21 +216,21 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsSer
             fontsService.load(newFont);
           }
 
-          scope._setSelected(newFont);
+          $scope._setSelected(newFont);
           fontsService.updateImports();
         }
       });
 
-      scope.$watch('current.subsets', function(newSubsets, oldSubsets) {
+      $scope.$watch('current.subsets', function(newSubsets, oldSubsets) {
         if (newSubsets !== oldSubsets) {
           fontsService.updateImports();
         }
       }, true);
 
-      scope.$watch('stack', function(newStack, oldStack) {
+      $scope.$watch('stack', function(newStack, oldStack) {
         var font;
 
-        if (newStack === oldStack || (scope.current.font && newStack === scope.current.font.stack)) {
+        if (newStack === oldStack || ($scope.current.font && newStack === $scope.current.font.stack)) {
           return;
         }
 
@@ -245,14 +240,14 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsSer
           }
 
           if (font) {
-            scope.current.font = font;
+            $scope.current.font = font;
           } else {
-            scope.reset();
+            $scope.reset();
           }
         } catch (e) {
-          scope.reset();
+          $scope.reset();
         }
       });
-    }
+    }]
   };
 }]);
