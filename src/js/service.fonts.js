@@ -183,7 +183,7 @@ FontsService.prototype = {
           }
         });
         d.resolve(result);
-      });
+      }, d.reject);
       return d.promise;
     }
   },
