@@ -1,5 +1,5 @@
 /*!
- * angular-fontselect v0.8.10
+ * angular-fontselect v0.8.11
  * https://github.com/Jimdo/angular-fontselect
  *
  * A fontselect directive for AngularJS
@@ -1522,7 +1522,7 @@
             }
           });
           d.resolve(result);
-        });
+        }, d.reject);
         return d.promise;
       }
     },
@@ -2042,7 +2042,8 @@
         text: '=?textObj',
         onInit: '&?',
         onOpen: '&?',
-        onClose: '&?'
+        onClose: '&?',
+        onChange: '&?'
       },
       restrict: 'E',
       templateUrl: DIR_PARTIALS + 'fontselect.html',
@@ -2201,9 +2202,6 @@
   
         $scope.$on('$destroy', callOnClose);
   
-        /* INITIALIZE */
-  
-  
         /* Initiate! */
         fontsService._initGoogleFonts();
   
@@ -2228,19 +2226,17 @@
         }
   
         $scope.onInit({$scope: $scope});
-      }],
   
-      link: function(scope) {
-        scope.$watch('current.font', function(newFont, oldFont) {
-          if (!angular.isObject(scope.current)) {
-            scope.reset();
+        $scope.$watch('current.font', function(newFont, oldFont) {
+          if (!angular.isObject($scope.current)) {
+            $scope.reset();
           }
   
           if (oldFont !== newFont) {
-            scope.tryUnfocusSearch();
+            $scope.tryUnfocusSearch();
   
-            if (angular.isObject(scope.current.font)) {
-              newFont = scope.current.font;
+            if (angular.isObject($scope.current.font)) {
+              newFont = $scope.current.font;
             }
   
             if (angular.isObject(oldFont) && oldFont.used) {
@@ -2251,21 +2247,22 @@
               fontsService.load(newFont);
             }
   
-            scope._setSelected(newFont);
+            $scope._setSelected(newFont);
             fontsService.updateImports();
+            $scope.onChange({font: newFont});
           }
         });
   
-        scope.$watch('current.subsets', function(newSubsets, oldSubsets) {
+        $scope.$watch('current.subsets', function(newSubsets, oldSubsets) {
           if (newSubsets !== oldSubsets) {
             fontsService.updateImports();
           }
         }, true);
   
-        scope.$watch('stack', function(newStack, oldStack) {
+        $scope.$watch('stack', function(newStack, oldStack) {
           var font;
   
-          if (newStack === oldStack || (scope.current.font && newStack === scope.current.font.stack)) {
+          if (newStack === oldStack || ($scope.current.font && newStack === $scope.current.font.stack)) {
             return;
           }
   
@@ -2275,15 +2272,15 @@
             }
   
             if (font) {
-              scope.current.font = font;
+              $scope.current.font = font;
             } else {
-              scope.reset();
+              $scope.reset();
             }
           } catch (e) {
-            scope.reset();
+            $scope.reset();
           }
         });
-      }
+      }]
     };
   }]);
 
