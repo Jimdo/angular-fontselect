@@ -1,5 +1,5 @@
 /*!
- * angular-fontselect v0.8.11
+ * angular-fontselect v0.8.12
  * https://github.com/Jimdo/angular-fontselect
  *
  * A fontselect directive for AngularJS
@@ -51,6 +51,12 @@
   
   /** @const */
   var NAME_FONTSSERVICE = 'jdFontselect.fonts';
+  
+  /** @const */
+  var CLOSE_EVENT = 'jdFontselectEventClose';
+  
+  /** @const */
+  var OPEN_EVENT = 'jdFontselectEventOpen';
   
   /** @const */
   var DEFAULT_WEBSAFE_FONTS = [
@@ -2048,7 +2054,18 @@
       restrict: 'E',
       templateUrl: DIR_PARTIALS + 'fontselect.html',
       replace: true,
-      controller: ['$scope', '$element', '$timeout', function($scope, $element, $timeout) {
+  
+      controller: [
+        '$scope',
+        '$element',
+        '$timeout',
+        '$document',
+        function(
+          $scope,
+          $element,
+          $timeout,
+          $document
+      ) {
         $scope.fonts = fontsService.getAllFonts();
         $scope.id = id++;
         $scope.stylesActive = true;
@@ -2093,16 +2110,33 @@
             globalProviders : fontsService.setProviders($scope.current.providers);
         }
   
-        function close() {
-          $scope.toggle();
-          $scope.$digest();
+        function outsideClickHandler(event) {
+          if ($scope.active && !_isDescendant($element[0], event.target)) {
+            $scope.toggle();
+            $scope.$digest();
+          }
         }
   
-        function callOnOpen() {
+        function escapeKeyHandler(event) {
+          if ($scope.active && event.keyCode === KEY_ESCAPE) {
+            $scope.toggle();
+            $scope.$digest();
+          }
+        }
+  
+        function open() {
+          $document.on('click', outsideClickHandler);
+          $document.on('keyup', escapeKeyHandler);
+  
+          $scope.$broadcast(OPEN_EVENT);
           $scope.onOpen();
         }
   
-        function callOnClose() {
+        function close() {
+          $document.off('keyup', escapeKeyHandler);
+          $document.off('click', outsideClickHandler);
+  
+          $scope.$broadcast(CLOSE_EVENT);
           $scope.onClose();
         }
   
@@ -2117,14 +2151,16 @@
   
           if (!$scope.active) {
             $scope.searching = false;
-            callOnClose();
+            close();
           } else {
-            callOnOpen();
+            open();
           }
         };
   
         $scope.toggleSearch = function() {
-          $scope.active = true;
+          if (!$scope.active) {
+            $scope.toggle();
+          }
   
           $scope.searching = !$scope.searching;
   
@@ -2153,18 +2189,6 @@
             $element[0].querySelector('.jdfs-search').focus();
           });
         };
-  
-        document.addEventListener('click', function(event) {
-          if ($scope.active && !_isDescendant($element[0], event.target)) {
-            close();
-          }
-        });
-  
-        document.addEventListener('keyup', function(event) {
-          if ($scope.active && event.keyCode === KEY_ESCAPE) {
-            close();
-          }
-        });
   
         $scope.setCategoryFilter = function(category) {
           var current = $scope.current;
@@ -2200,7 +2224,7 @@
           $scope.settingsActive = false;
         };
   
-        $scope.$on('$destroy', callOnClose);
+        $scope.$on('$destroy', close);
   
         /* Initiate! */
         fontsService._initGoogleFonts();
@@ -2310,7 +2334,8 @@
     '$rootScope',
     '$filter',
     'jdFontselect.fonts',
-    '$element',  function($scope, $rootScope, $filter, fontsService, $element) {    var _filteredFonts = [];
+    '$element',
+    '$document',  function($scope, $rootScope, $filter, fontsService, $element, $document) {    var _filteredFonts = [];
       var _sortedFonts = [];
       var _searchedFonts = [];
       var _categorizedFonts = [];
@@ -2363,7 +2388,7 @@
         }
       };
   
-      document.addEventListener('keydown', function(event) {
+      function keyDownHandler(event) {
         if (!$scope.active) {
           return;
         }
@@ -2398,9 +2423,9 @@
           $scope.keyfocus(DIRECTION_PREVIOUS, page.size);
           return prevent();
         }
-      });
+      }
   
-      var _wheel = function(event) {
+      var wheelHandler = function(event) {
         if (!event.target) {
           return;
         }
@@ -2409,8 +2434,10 @@
           event.preventDefault();
           event.stopPropagation();
   
+          var originalEvent = event.originalEvent;
           var subpage = 1 / page.size;
-          var delta = event.wheelDeltaY || event.wheelDelta || event.deltaY * -1 || event.detail * -1;
+          var delta = originalEvent.wheelDeltaY || originalEvent.wheelDelta ||
+            originalEvent.deltaY * -1 || originalEvent.detail * -1;
           var absDelta = Math.abs(delta);
   
           /* For touch-pads etc., we buffer small movements */
@@ -2428,9 +2455,19 @@
         }
       };
   
-      document.addEventListener('wheel', _wheel);
-      document.addEventListener('mousewheel', _wheel);
-      document.addEventListener('DOMMouseScroll', _wheel);
+      $scope.$on(OPEN_EVENT, function() {
+        $document.on('keydown', keyDownHandler);
+        $document.on('wheel', wheelHandler);
+        $document.on('mousewheel', wheelHandler);
+        $document.on('DOMMouseScroll', wheelHandler);
+      });
+  
+      $scope.$on(CLOSE_EVENT, function() {
+        $document.off('keydown', keyDownHandler);
+        $document.off('wheel', wheelHandler);
+        $document.off('mousewheel', wheelHandler);
+        $document.off('DOMMouseScroll', wheelHandler);
+      });
   
       /**
        * Set the current page
