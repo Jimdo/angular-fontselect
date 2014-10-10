@@ -1,5 +1,6 @@
 /* global STATE_DEFAULTS, NAME_FONTSSERVICE, DIR_PARTIALS, SORT_ATTRIBUTES, TEXT_DEFAULTS */
-/* global KEY_ESCAPE, VALUE_NO_FONT_STACK */
+/* global KEY_ESCAPE, VALUE_NO_FONT_STACK, CLOSE_EVENT, OPEN_EVENT */
+/* jshint maxparams: 4 */
 var id = 1;
 
 fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsService) {
@@ -18,7 +19,18 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsSer
     restrict: 'E',
     templateUrl: DIR_PARTIALS + 'fontselect.html',
     replace: true,
-    controller: ['$scope', '$element', '$timeout', function($scope, $element, $timeout) {
+
+    controller: [
+      '$scope',
+      '$element',
+      '$timeout',
+      '$document',
+      function(
+        $scope,
+        $element,
+        $timeout,
+        $document
+    ) {
       $scope.fonts = fontsService.getAllFonts();
       $scope.id = id++;
       $scope.stylesActive = true;
@@ -63,16 +75,33 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsSer
           globalProviders : fontsService.setProviders($scope.current.providers);
       }
 
-      function close() {
-        $scope.toggle();
-        $scope.$digest();
+      function outsideClickHandler(event) {
+        if ($scope.active && !_isDescendant($element[0], event.target)) {
+          $scope.toggle();
+          $scope.$digest();
+        }
       }
 
-      function callOnOpen() {
+      function escapeKeyHandler(event) {
+        if ($scope.active && event.keyCode === KEY_ESCAPE) {
+          $scope.toggle();
+          $scope.$digest();
+        }
+      }
+
+      function open() {
+        $document.on('click', outsideClickHandler);
+        $document.on('keyup', escapeKeyHandler);
+
+        $scope.$broadcast(OPEN_EVENT);
         $scope.onOpen();
       }
 
-      function callOnClose() {
+      function close() {
+        $document.off('keyup', escapeKeyHandler);
+        $document.off('click', outsideClickHandler);
+
+        $scope.$broadcast(CLOSE_EVENT);
         $scope.onClose();
       }
 
@@ -87,14 +116,16 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsSer
 
         if (!$scope.active) {
           $scope.searching = false;
-          callOnClose();
+          close();
         } else {
-          callOnOpen();
+          open();
         }
       };
 
       $scope.toggleSearch = function() {
-        $scope.active = true;
+        if (!$scope.active) {
+          $scope.toggle();
+        }
 
         $scope.searching = !$scope.searching;
 
@@ -123,18 +154,6 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsSer
           $element[0].querySelector('.jdfs-search').focus();
         });
       };
-
-      document.addEventListener('click', function(event) {
-        if ($scope.active && !_isDescendant($element[0], event.target)) {
-          close();
-        }
-      });
-
-      document.addEventListener('keyup', function(event) {
-        if ($scope.active && event.keyCode === KEY_ESCAPE) {
-          close();
-        }
-      });
 
       $scope.setCategoryFilter = function(category) {
         var current = $scope.current;
@@ -170,7 +189,7 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsSer
         $scope.settingsActive = false;
       };
 
-      $scope.$on('$destroy', callOnClose);
+      $scope.$on('$destroy', close);
 
       /* Initiate! */
       fontsService._initGoogleFonts();

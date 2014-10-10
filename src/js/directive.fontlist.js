@@ -1,5 +1,6 @@
 /* global NAME_CONTROLLER, DIR_PARTIALS, DIRECTION_NEXT, DIRECTION_PREVIOUS, KEY_DOWN */
-/* global KEY_UP, KEY_RIGHT, KEY_LEFT, PAGE_SIZE_DEFAULT, SCROLL_BUFFER */
+/* global KEY_UP, KEY_RIGHT, KEY_LEFT, PAGE_SIZE_DEFAULT, SCROLL_BUFFER, CLOSE_EVENT */
+/* global OPEN_EVENT */
 var NAME_JDFONTLIST = 'jdFontlist';
 var NAME_JDFONTLIST_CONTROLLER = NAME_JDFONTLIST + NAME_CONTROLLER;
 
@@ -26,8 +27,9 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
   '$filter',
   'jdFontselect.fonts',
   '$element',
-  /* jshint maxparams: 5 */
-  function($scope, $rootScope, $filter, fontsService, $element) {
+  '$document',
+  /* jshint maxparams: 6 */
+  function($scope, $rootScope, $filter, fontsService, $element, $document) {
   /* jshint maxparams: 3 */
     var _filteredFonts = [];
     var _sortedFonts = [];
@@ -82,7 +84,7 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
       }
     };
 
-    document.addEventListener('keydown', function(event) {
+    function keyDownHandler(event) {
       if (!$scope.active) {
         return;
       }
@@ -117,9 +119,9 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
         $scope.keyfocus(DIRECTION_PREVIOUS, page.size);
         return prevent();
       }
-    });
+    }
 
-    var _wheel = function(event) {
+    var wheelHandler = function(event) {
       if (!event.target) {
         return;
       }
@@ -128,8 +130,10 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
         event.preventDefault();
         event.stopPropagation();
 
+        var originalEvent = event.originalEvent;
         var subpage = 1 / page.size;
-        var delta = event.wheelDeltaY || event.wheelDelta || event.deltaY * -1 || event.detail * -1;
+        var delta = originalEvent.wheelDeltaY || originalEvent.wheelDelta ||
+          originalEvent.deltaY * -1 || originalEvent.detail * -1;
         var absDelta = Math.abs(delta);
 
         /* For touch-pads etc., we buffer small movements */
@@ -147,9 +151,19 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
       }
     };
 
-    document.addEventListener('wheel', _wheel);
-    document.addEventListener('mousewheel', _wheel);
-    document.addEventListener('DOMMouseScroll', _wheel);
+    $scope.$on(OPEN_EVENT, function() {
+      $document.on('keydown', keyDownHandler);
+      $document.on('wheel', wheelHandler);
+      $document.on('mousewheel', wheelHandler);
+      $document.on('DOMMouseScroll', wheelHandler);
+    });
+
+    $scope.$on(CLOSE_EVENT, function() {
+      $document.off('keydown', keyDownHandler);
+      $document.off('wheel', wheelHandler);
+      $document.off('mousewheel', wheelHandler);
+      $document.off('DOMMouseScroll', wheelHandler);
+    });
 
     /**
      * Set the current page

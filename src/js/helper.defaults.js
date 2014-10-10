@@ -39,6 +39,12 @@ var NAME_CONTROLLER = '.controller';
 var NAME_FONTSSERVICE = 'jdFontselect.fonts';
 
 /** @const */
+var CLOSE_EVENT = 'jdFontselectEventClose';
+
+/** @const */
+var OPEN_EVENT = 'jdFontselectEventOpen';
+
+/** @const */
 var DEFAULT_WEBSAFE_FONTS = [
   {
     name: 'Arial',
