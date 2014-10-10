@@ -12,7 +12,8 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsSer
       text: '=?textObj',
       onInit: '&?',
       onOpen: '&?',
-      onClose: '&?'
+      onClose: '&?',
+      onChange: '&?'
     },
     restrict: 'E',
     templateUrl: DIR_PARTIALS + 'fontselect.html',
@@ -218,6 +219,7 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsSer
 
           $scope._setSelected(newFont);
           fontsService.updateImports();
+          $scope.onChange({font: newFont});
         }
       });
 

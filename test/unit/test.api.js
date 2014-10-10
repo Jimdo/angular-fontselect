@@ -89,6 +89,16 @@ describe('api', function() {
    expect($rootScope.closeFs).toHaveBeenCalled();
   });
 
+  it('should call onChange when font changes', function() {
+    $rootScope.onChangeCb = jasmine.createSpy('onChange');
+    var d = createNewDirective('on-change="onChangeCb(font)"');
+
+    d.scope.current.font = DEFAULT_WEBSAFE_FONTS[3];
+    d.scope.$digest();
+
+    expect($rootScope.onChangeCb).toHaveBeenCalledWith(DEFAULT_WEBSAFE_FONTS[3]);
+  });
+
   describe('basic out', function() {
     beforeEach(function() {
       setupWithState();
