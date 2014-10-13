@@ -39,7 +39,10 @@ var NAME_CONTROLLER = '.controller';
 var NAME_FONTSSERVICE = 'jdFontselect.fonts';
 
 /* @const */
-var NAME_PROVIDER_MANAGER = 'jdFontselectProviderManager';
+var NAME_FONTS = 'jdFontselectFonts';
+
+/* @const */
+var NAME_FONTS_PROVIDER = NAME_FONTS + 'Provider';
 
 /* @const */
 var NAME_PREVIEW = 'jdFontselectPreview';

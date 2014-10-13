@@ -37,6 +37,7 @@ var AND_SOME_FONT_MORE = {
 
 var DEFAULT_WEBSAFE_FONTS_BACKUP;
 var directiveID = 1;
+var moduleCreated = false;
 
 function createNewDirective(attributeStr) {
   var e, scope;
@@ -62,8 +63,8 @@ function createNewDirective(attributeStr) {
   };
 }
 
-beforeEach(function() {
-
+function createModule() {
+  moduleCreated = true;
   DEFAULT_WEBSAFE_FONTS_BACKUP = angular.copy(DEFAULT_WEBSAFE_FONTS);
 
   /* Initiate the main module */
@@ -91,9 +92,13 @@ beforeEach(function() {
   $scope = d.scope;
 
   $httpBackend.flush(1);
-});
+}
 
 afterEach(function(done) {
+  if (!moduleCreated) {
+    return done();
+  }
+
   /* Each directive gets it's own id, we want to test only on id 1 */
   id = 1;
   directiveID = 1;
@@ -105,7 +110,8 @@ afterEach(function(done) {
   setTimeout(function() {
     /* Make sure, there are no unexpected request */
     $httpBackend.verifyNoOutstandingExpectation();
-    // $httpBackend.verifyNoOutstandingRequest();
+    $httpBackend.verifyNoOutstandingRequest();
+    moduleCreated = false;
     done();
   }, 0);
 });
