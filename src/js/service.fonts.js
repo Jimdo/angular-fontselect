@@ -686,6 +686,4 @@ FontsService.prototype = {
   }
 };
 
-fontselectModule.factory(NAME_FONTSSERVICE, ['$injector', function($injector) {
-  return $injector.instantiate(FontsService);
-}]);
+fontselectModule.service(NAME_FONTSSERVICE, FontsService);
