@@ -2,6 +2,7 @@ Angular Font-Selector
 =====================
 
 [![Build Status](https://travis-ci.org/Jimdo/angular-fontselect.png?branch=master)](https://travis-ci.org/Jimdo/angular-fontselect)
+[![Coverage Status](https://img.shields.io/coveralls/Jimdo/angular-fontselect.svg)](https://coveralls.io/r/Jimdo/angular-fontselect?branch=master)
 
 A font selection directive for AngularJS - [Try it, it's beautiful](http://jimdo.github.io/angular-fontselect/).
 
