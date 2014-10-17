@@ -109,6 +109,19 @@ __Reporters__
 The Karma reporter can be customized using `--reporters`
 
 
+Coverage
+--------
+
+Start a server to serve the coverage reports.
+
+```sh
+grunt coverage
+```
+
+The `--port` is changeable, defaults to 8000
+
+
+
 Api Keys
 --------
 

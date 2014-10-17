@@ -5,15 +5,25 @@ var reporters = process.env.KARMA_REPORTERS;
 module.exports = {
   options: {
     browsers: (browsers || 'Chrome').split(','),
-    reporters: (reporters || 'progress').split(','),
+    reporters: (reporters || 'progress').split(',').concat('coverage'),
     preprocessors: {
+      'src/**/*.+(js|coffee)': ['coverage'],
       '**/*.coffee': ['coffee']
     },
     frameworks: [
       'jasmine'
     ],
+    coverageReporter: {
+      reporters: [{
+        type: 'lcov',
+        dir: 'coverage',
+        subdir: '.'
+      }, {
+        type: 'text-summary'
+      }]
+    },
     singleRun: true,
-    files: files.testEnvKarma.concat([files.unitTests])
+    files: files.environments.karma.concat([files.unitTests])
   },
   all: {
     options: {

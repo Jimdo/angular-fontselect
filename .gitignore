@@ -1,7 +1,9 @@
 bower_components/
+coverage/
 node_modules/
 npm-debug.log
 test/e2e/env/all-partials.js
 tmp.apikeys.js
 .DS_Store
+.tmp
 grunt

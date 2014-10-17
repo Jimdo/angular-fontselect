@@ -1,16 +1,17 @@
 var _ = require('grunt').util._;
 var files = require('../files');
 var glob = require('glob');
-
+var grunt = require('grunt');
+var isDebug = !!grunt.option('debug');
 
 var jar = glob.sync('node_modules/protractor/selenium/selenium-server-standalone-2.*.jar')[0];
 var chromeDriver = process.cwd() + '/node_modules/protractor/selenium/chromedriver';
 
 var options = {
+  debug: isDebug,
   configFile: 'test/e2e/env/config.js',
   args: {}
 };
-
 
 var args = {
   specs: [files.e2eTests],

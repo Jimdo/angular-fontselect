@@ -10,49 +10,35 @@
   </style>
   <base href="/" />
   <link rel="stylesheet" type="text/css" jd-fontselect-current-href />
-  <link rel="stylesheet/less" type="text/css" href="demo/styles.less" />
-  <link rel="stylesheet/less" type="text/css" href="src/less/fontselect.less" />
+  <link rel="stylesheet" type="text/css" href="demo/style.css" />
+  <!-- [[src/less]] -->
 </head>
 <body ng-cloak>
-    <div class="wrap">
-        <div class="topbar">
-            <jd-fontselect stack="font"></jd-fontselect>
-        </div>
+  <div class="wrap">
+    <div class="topbar">
+      <jd-fontselect stack="font"></jd-fontselect>
+    </div>
 
-        <header >
-          <h1>Angular Fontselection</h1>
-          <h2>a Directive written to bring a new experience to font family choosing
-          <h3>(in developement)</h3>
-          </h2>
-        </header>
+    <header >
+      <h1>Angular Fontselection</h1>
+      <h2>a Directive written to bring a new experience to font family choosing
+      <h3>(in developement)</h3>
+      </h2>
+    </header>
 
-        <div class="selection-example">
-          <div class="fontselect">
-          </div>
-          <span style="font-family: {{font}};">Change the Font family of this text with our awesome Fontselection</span>
-        </div>
+    <div class="selection-example">
+      <div class="fontselect">
+      </div>
+      <span style="font-family: {{font}};">Change the Font family of this text with our awesome Fontselection</span>
+    </div>
 
-
-        <div class="links">
-          <a href="https://github.com/Jimdo/angular-fontselect">github</a>
-          <a href="http://jimdo.com">Jimdo</a>
-        </div>
-
-
+    <div class="links">
+      <a href="https://github.com/Jimdo/angular-fontselect">github</a>
+      <a href="http://jimdo.com">Jimdo</a>
+    </div>
   </div>
 
-    <script src="/bower_components/jquery/dist/jquery.js"></script>
-    <script>
-      /* jshint indent: false */
-      /* global files, $ */
-      $.get('/tasks/files.js', function() {
-        files.demoEnv.push('demo/app.js');
-        $.each(files.demoEnv, function(i, url) {
-          $('body').append($('<script>').attr('src', '/' + url));
-        });
-      });
-    </script>
-
-  </div>
+  <!-- [[src/js]] -->
+  <script type="text/javascript" src="demo/app.js"></script>
 </body>
 </html>

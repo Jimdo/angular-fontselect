@@ -1,4 +1,4 @@
-/* global STATE_DEFAULTS, NAME_FONTSSERVICE, DIR_PARTIALS, SORT_ATTRIBUTES, TEXT_DEFAULTS */
+/* global STATE_DEFAULTS, NAME_FONTSSERVICE, SORT_ATTRIBUTES, TEXT_DEFAULTS */
 /* global KEY_ESCAPE, VALUE_NO_FONT_STACK, CLOSE_EVENT, OPEN_EVENT */
 /* jshint maxparams: 4 */
 var id = 1;
@@ -17,7 +17,7 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsSer
       onChange: '&?'
     },
     restrict: 'E',
-    templateUrl: DIR_PARTIALS + 'fontselect.html',
+    templateUrl: 'fontselect.html',
     replace: true,
 
     controller: [

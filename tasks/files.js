@@ -1,3 +1,4 @@
+var _ = require('grunt').util._;
 var libsDistDir = 'dist/libs/';
 
 var files = {
@@ -40,30 +41,35 @@ var files = {
   unitTests: 'test/unit/**/*.js',
   e2eTests: ['test/e2e/SpecHelper.js', 'test/e2e/test.*.js'],
   apiKeys: 'tmp.apikeys.js',
-  testEnvKarma: [
-    'bower_components/jquery/dist/jquery.js',
-    'bower_components/angular/angular.js',
-    libsDistDir + 'webfontloader.js',
-    'bower_components/angular-mocks/angular-mocks.js'
-  ],
+
+  environments: {},
+
+  demo: 'demo/*',
 
   package: ['package.json', 'bower.json']
 };
 
-var apiKeysPos = files.testEnvKarma.length + 1;
-
 /* Prepare environments */
-files.testEnvKarma = files.testEnvKarma.concat(files.source);
-files.testEnvKarma.splice(apiKeysPos, 0, 'tmp.apikeys.js');
+var sourceWithApiKeys = _.clone(files.source);
+sourceWithApiKeys.splice(1, 0, 'tmp.apikeys.js');
 
-files.testEnv = JSON.parse(JSON.stringify(files.testEnvKarma));
-files.testEnv.unshift('bower_components/less/dist/less-1.7.4.js');
-files.demoEnv = JSON.parse(JSON.stringify(files.testEnv));
+var baseEnvironment = [].concat(
+  'bower_components/jquery/dist/jquery.js',
+  'bower_components/angular/angular.js',
+  libsDistDir + 'webfontloader.js',
+  sourceWithApiKeys,
+  files.allPartialsCombined
+);
 
-files.testEnv.push('test/default-websafe-fonts.js');
-files.testEnvKarma.push(files.allPartialsCombined);
-files.testEnvKarma.push('test/default-websafe-fonts.js');
-files.testEnvKarma.unshift('bower_components/jasmine-moar-matchers/*.js');
+var demoEnvironment = _.clone(baseEnvironment);
+var karmaEnvironment = _.clone(baseEnvironment);
+
+karmaEnvironment.unshift('bower_components/jasmine-moar-matchers/*.js');
+karmaEnvironment.push('test/default-websafe-fonts.js');
+karmaEnvironment.push('bower_components/angular-mocks/angular-mocks.js');
+
+files.environments.demo = demoEnvironment;
+files.environments.karma = karmaEnvironment;
 
 if (typeof module === 'object') {
   module.exports = files;

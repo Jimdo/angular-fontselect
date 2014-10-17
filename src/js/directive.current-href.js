@@ -1,7 +1,7 @@
-/* global NAME_FONTSSERVICE, DIR_PARTIALS */
+/* global NAME_FONTSSERVICE */
 fontselectModule.directive('jdFontselectCurrentHref', [NAME_FONTSSERVICE, function(fontsService) {
   return {
-    templateUrl: DIR_PARTIALS + 'current-href.html',
+    templateUrl: 'current-href.html',
     restrict: 'A',
     replace: true,
     controller: ['$scope', function($scope) {

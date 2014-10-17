@@ -1,4 +1,4 @@
-/* global NAME_CONTROLLER, DIR_PARTIALS, DIRECTION_NEXT, DIRECTION_PREVIOUS, KEY_DOWN */
+/* global NAME_CONTROLLER, DIRECTION_NEXT, DIRECTION_PREVIOUS, KEY_DOWN */
 /* global KEY_UP, KEY_RIGHT, KEY_LEFT, PAGE_SIZE_DEFAULT, SCROLL_BUFFER, CLOSE_EVENT */
 /* global OPEN_EVENT */
 var NAME_JDFONTLIST = 'jdFontlist';
@@ -15,7 +15,7 @@ fontselectModule.directive(NAME_JDFONTLIST, function() {
       active: '='
     },
     restrict: 'E',
-    templateUrl: DIR_PARTIALS + 'fontlist.html',
+    templateUrl: 'fontlist.html',
     replace: true,
     controller: NAME_JDFONTLIST_CONTROLLER
   };

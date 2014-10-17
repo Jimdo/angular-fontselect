@@ -1,9 +1,6 @@
 /**
  * Build instructions for grunt.
  *
- * Structure seen in [rprtr](https://github.com/mrmrs/rprtr)
- * by [aputinski](https://github.com/aputinski)
- *
  * @param  {Object} grunt
  * @return {void}
  */
@@ -14,6 +11,8 @@ module.exports = function(grunt) {
   var config  = Helpers.config;
   var _       = grunt.util._;
 
+
+  /* Task configuration is in ./tasks/options - load here */
   config = _.extend(config, Helpers.loadConfig('./tasks/options/'));
 
   /* Load grunt tasks from NPM packages */
@@ -24,6 +23,7 @@ module.exports = function(grunt) {
     Helpers.setUpApiKeyFile();
     Helpers.ensureApiKeyFileExists();
   });
+
 
   grunt.registerTask(
     'tdd',
@@ -36,7 +36,7 @@ module.exports = function(grunt) {
         watcher = 'watch:andtestunit';
       }
       if (!suite || suite === 'e2e') {
-        tasks.push('http-server:test', 'shell:startsilenium');
+        tasks.push('connect:test', 'shell:startsilenium');
         watcher = 'watch:andteste2e';
       }
       if (!suite) {
@@ -47,7 +47,14 @@ module.exports = function(grunt) {
     }
   );
 
-  grunt.registerTask('demo', 'Start the demo app', ['shell:opendemo', 'http-server:demo']);
+  grunt.registerTask('demo', 'Start the demo app', [
+    'connect:demo',
+    'shell:opendemo',
+    'parallel:watchdemo'
+  ]);
+
+  grunt.registerTask('coverage', 'Serve coverage report', ['connect:coverage']);
+
 
   grunt.registerTask(
     'test',
@@ -56,15 +63,14 @@ module.exports = function(grunt) {
       var tasks = ['_buildapikeys', 'jshint', 'ngtemplates'];
       if (!suite || suite === 'unit') {
         process.env.defaultBrowsers = 'Firefox,Chrome';
-        tasks.push('karma:all');
+        tasks.push('shell:deleteCoverages', 'karma:all');
       }
       if (!suite || suite === 'e2e') {
-        tasks.push('http-server:test', 'protractor:single');
+        tasks.push('connect:test', 'protractor:single');
       }
       grunt.task.run(tasks);
     }
   );
-
 
   /* Build dist files. */
   grunt.registerTask('build', 'Build dist files', [
@@ -79,8 +85,7 @@ module.exports = function(grunt) {
     'uglify'
   ]);
 
-  /* Distribute a new patch version. */
-
+  /* Distribute a new version. */
   grunt.registerTask('release', 'Test, bump, build and release.', function(type) {
     grunt.task.run([
       'test',
@@ -90,7 +95,7 @@ module.exports = function(grunt) {
     ]);
   });
 
-  grunt.registerTask('default', ['test']);
+  grunt.registerTask('default', 'Test', ['test']);
 
   grunt.initConfig(config);
 };

@@ -67,7 +67,6 @@
         "angular",
         "jasmine",
         "jQuery",
-        "yepnope",
         "WebFont",
         "describe",
         "xdescribe",
@@ -79,7 +78,6 @@
         "spyOn",
         "runs",
         "waits",
-        "waitsFor",
         "inject",
         "module",
         "process",
@@ -89,6 +87,7 @@
         "_createKey",
         "_objLength",
         "_createName",
-        "_isDescendant"
+        "_isDescendant",
+        "exports"
     ]
 }
