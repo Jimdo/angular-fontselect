@@ -17,6 +17,10 @@ fontselectModule.filter('stackSearch', function() {
       return input;
     }
 
+    if (!angular.isString(inputStack)) {
+      return [];
+    }
+
     inputStack = inputStack.toLowerCase();
 
     normalizedInputStack = stackSearchFilter.normalizeStack(inputStack);
