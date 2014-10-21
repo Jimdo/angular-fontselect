@@ -9,6 +9,10 @@ describe('stackSearch filter', function() {
     expect(filter).toBeInstanceOf(Function);
   });
 
+  it('should return empty result if given wrong stack', function() {
+    expect(filter(DEFAULT_WEBSAFE_FONTS, false)).toEqual([]);
+  });
+
   it('should have a consistent set of fixture fonts', function() {
     expect(DEFAULT_WEBSAFE_FONTS.length).toBe(6);
     expect(DEFAULT_WEBSAFE_FONTS[0].name).toBe('Arial');
