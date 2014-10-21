@@ -1,5 +1,5 @@
 /*!
- * angular-fontselect v0.8.13
+ * angular-fontselect v0.8.14
  * https://github.com/Jimdo/angular-fontselect
  *
  * A fontselect directive for AngularJS
@@ -1259,6 +1259,10 @@
       var inputId, list, normalizedInputStack;
       if (!angular.isArray(input) || !input.length) {
         return input;
+      }
+  
+      if (!angular.isString(inputStack)) {
+        return [];
       }
   
       inputStack = inputStack.toLowerCase();
