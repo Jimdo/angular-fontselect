@@ -38,6 +38,15 @@ var NAME_CONTROLLER = '.controller';
 /** @const */
 var NAME_FONTSSERVICE = 'jdFontselect.fonts';
 
+/* @const */
+var NAME_FONTS = 'jdFontselectFonts';
+
+/* @const */
+var NAME_FONTS_PROVIDER = NAME_FONTS + 'Provider';
+
+/* @const */
+var NAME_PREVIEW = 'jdFontselectPreview';
+
 /** @const */
 var CLOSE_EVENT = 'jdFontselectEventClose';
 

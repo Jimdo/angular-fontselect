@@ -1,9 +1,12 @@
 /* global STATE_DEFAULTS, NAME_FONTSSERVICE, SORT_ATTRIBUTES, TEXT_DEFAULTS */
-/* global KEY_ESCAPE, VALUE_NO_FONT_STACK, CLOSE_EVENT, OPEN_EVENT */
+/* global KEY_ESCAPE, VALUE_NO_FONT_STACK, CLOSE_EVENT, OPEN_EVENT, NAME_PREVIEW */
 /* jshint maxparams: 4 */
 var id = 1;
 
-fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsService) {
+fontselectModule.directive('jdFontselect', [
+  NAME_FONTSSERVICE,
+  NAME_PREVIEW,
+  function(fontsService, preview) {
   return {
     scope: {
       current: '=?state',
@@ -19,7 +22,6 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsSer
     restrict: 'E',
     templateUrl: 'fontselect.html',
     replace: true,
-
     controller: [
       '$scope',
       '$element',
@@ -47,7 +49,7 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsSer
 
       $scope.text = angular.extend(angular.copy(TEXT_DEFAULTS), $scope.text || {});
       if ($scope.rawText) {
-        $scope.text = angular.extend($scope.text , $scope.$eval($scope.rawText) || {});
+        $scope.text = angular.extend($scope.text, $scope.$eval($scope.rawText) || {});
       }
 
       function setState(extend) {
@@ -233,7 +235,7 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsSer
           }
           if (angular.isObject(newFont)) {
             fontsService.updateUsage(newFont);
-            fontsService.load(newFont);
+            preview.load(newFont);
           }
 
           $scope._setSelected(newFont);
