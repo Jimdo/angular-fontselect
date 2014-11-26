@@ -1,5 +1,5 @@
 /*!
- * angular-fontselect v0.8.14
+ * angular-fontselect v0.8.15
  * https://github.com/Jimdo/angular-fontselect
  *
  * A fontselect directive for AngularJS
@@ -2062,11 +2062,13 @@
         '$element',
         '$timeout',
         '$document',
+        '$rootScope',
         function(
           $scope,
           $element,
           $timeout,
-          $document
+          $document,
+          $rootScope
       ) {
         $scope.fonts = fontsService.getAllFonts();
         $scope.id = id++;
@@ -2115,14 +2117,14 @@
         function outsideClickHandler(event) {
           if ($scope.active && !_isDescendant($element[0], event.target)) {
             $scope.toggle();
-            $scope.$digest();
+            $rootScope.$digest();
           }
         }
   
         function escapeKeyHandler(event) {
           if ($scope.active && event.keyCode === KEY_ESCAPE) {
             $scope.toggle();
-            $scope.$digest();
+            $rootScope.$digest();
           }
         }
   
@@ -2155,7 +2157,7 @@
             $scope.searching = false;
             close();
           } else {
-            open();
+            $timeout(open);
           }
         };
   
