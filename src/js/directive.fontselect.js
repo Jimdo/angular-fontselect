@@ -1,6 +1,6 @@
 /* global STATE_DEFAULTS, NAME_FONTSSERVICE, SORT_ATTRIBUTES, TEXT_DEFAULTS */
 /* global KEY_ESCAPE, VALUE_NO_FONT_STACK, CLOSE_EVENT, OPEN_EVENT */
-/* jshint maxparams: 4 */
+/* jshint maxparams: 5 */
 var id = 1;
 
 fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsService) {
@@ -25,11 +25,13 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsSer
       '$element',
       '$timeout',
       '$document',
+      '$rootScope',
       function(
         $scope,
         $element,
         $timeout,
-        $document
+        $document,
+        $rootScope
     ) {
       $scope.fonts = fontsService.getAllFonts();
       $scope.id = id++;
@@ -78,14 +80,14 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsSer
       function outsideClickHandler(event) {
         if ($scope.active && !_isDescendant($element[0], event.target)) {
           $scope.toggle();
-          $scope.$digest();
+          $rootScope.$digest();
         }
       }
 
       function escapeKeyHandler(event) {
         if ($scope.active && event.keyCode === KEY_ESCAPE) {
           $scope.toggle();
-          $scope.$digest();
+          $rootScope.$digest();
         }
       }
 
@@ -118,7 +120,7 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsSer
           $scope.searching = false;
           close();
         } else {
-          open();
+          $timeout(open);
         }
       };
 

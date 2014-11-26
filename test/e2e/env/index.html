@@ -4,12 +4,23 @@
   <meta charset="utf-8">
   <title>Angular Fontselect Sandbox</title>
   <base href="/">
+  <style>
+   .ng-cloak { display: none; }
+  </style>
   <!-- [[src/less]] -->
 </head>
-<body>
+<body ng-controller="e2ehelper">
   <!--       THIS IS NOT A SANDBOX, IT'S FOR E2E TESTING!      -->
   <!-- PLEASE USE demo/index.html IF YOU'D LIKE TO PLAY AROUND -->
-  <jd-fontselect></jd-fontselect>
+  <jd-fontselect class='fs-1' on-open="onOpenA()" on-close="onCloseA()"></jd-fontselect>
+
+  <span ng-if="second">
+    <jd-fontselect class='fs-2' on-open="onOpenB()" on-close="onCloseB()"></jd-fontselect>
+  </span>
+
+  <input type="checkbox" ng-model="second" id="activate-second">
+  <label for="activate-second">Activate second</label>
+  <span id="events" class="ng-cloak">{{events()}}</span>
   <!-- [[src/js]] -->
   <script type="text/javascript" src="app.js"></script>
 </body>

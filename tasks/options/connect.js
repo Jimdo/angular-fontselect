@@ -43,6 +43,14 @@ module.exports = {
       base: baseDirs.concat('test/e2e/env')
     }
   },
+  testDemo: {
+    options: {
+      port: optPort || 8500,
+      middleware: middleware('test/e2e/env', 'demo'),
+      base: baseDirs.concat('test/e2e/env'),
+      keepalive: true
+    }
+  },
   demo: {
     options: {
       port: optPort || process.env.DEMO_PORT || 8000,

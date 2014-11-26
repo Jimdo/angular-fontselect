@@ -4,7 +4,7 @@
 /* jshint undef: false, unused: false  */
 
 /* some globals we might need later on, set in beforeEach */
-var $rootScope, $compile, $injector, $httpBackend, $scope, $q, $controller, $googleScope, elm, fontsService;
+var $rootScope, $compile, $injector, $httpBackend, $scope, $q, $controller, $googleScope, elm, fontsService, $timeout;
 
 /* Request Regex for catching Google Font API calls. */
 /** @const */
@@ -70,7 +70,7 @@ beforeEach(function() {
   module('jdFontselect');
 
   /* jshint maxparams: 10 */
-  inject(function(_$rootScope_, _$compile_, _$injector_, _$httpBackend_, _$q_, _$controller_) {
+  inject(function(_$rootScope_, _$compile_, _$injector_, _$httpBackend_, _$q_, _$controller_, _$timeout_) {
   /* jshint maxparams: 3 */
     $rootScope   = _$rootScope_;
     $compile     = _$compile_;
@@ -78,6 +78,7 @@ beforeEach(function() {
     $httpBackend = _$httpBackend_;
     $q           = _$q_;
     $controller  = _$controller_;
+    $timeout     = _$timeout_;
   });
 
   fontsService = $injector.get(NAME_FONTSSERVICE);

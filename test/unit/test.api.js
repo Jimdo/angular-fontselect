@@ -1,6 +1,6 @@
 /* global $rootScope, DEFAULT_WEBSAFE_FONTS, PROVIDER_GOOGLE, STATE_DEFAULTS,
           createNewDirective, fontsService, PROVIDERS,
-          VALUE_NO_FONT_STACK, $httpBackend */
+          VALUE_NO_FONT_STACK, $httpBackend, $timeout */
 describe('api', function() {
   var elm, $scope;
 
@@ -52,51 +52,56 @@ describe('api', function() {
     createNewDirective('on-init="initFS($scope)"');
   });
 
-  it('should call optional onOpen callback', function() {
-    $rootScope.openFs = jasmine.createSpy('openFs');
+  describe('events', function() {
 
-    var $toggle = createNewDirective('on-open="openFs()"').elm.find('button.jdfs-toggle');
+    it('should call optional onOpen callback', function() {
+      $rootScope.openFs = jasmine.createSpy('openFs');
 
-    expect($rootScope.openFs).not.toHaveBeenCalled();
-    $toggle.click();
-    expect($rootScope.openFs).toHaveBeenCalled();
-  });
+      var $toggle = createNewDirective('on-open="openFs()"').elm.find('button.jdfs-toggle');
 
-  it('should call optional onClose callback', function() {
-    $rootScope.closeFs = jasmine.createSpy('closeFs');
+      expect($rootScope.openFs).not.toHaveBeenCalled();
+      $toggle.click();
+      $timeout.flush();
+      expect($rootScope.openFs).toHaveBeenCalled();
+    });
 
-    var $toggle = createNewDirective('on-close="closeFs()"').elm.find('button.jdfs-toggle');
+    it('should call optional onClose callback', function() {
+      $rootScope.closeFs = jasmine.createSpy('closeFs');
 
-    expect($rootScope.closeFs).not.toHaveBeenCalled();
-    $toggle.click();
-    expect($rootScope.closeFs).not.toHaveBeenCalled();
-    $toggle.click();
-    expect($rootScope.closeFs).toHaveBeenCalled();
+      var $toggle = createNewDirective('on-close="closeFs()"').elm.find('button.jdfs-toggle');
 
-  });
+      expect($rootScope.closeFs).not.toHaveBeenCalled();
+      $toggle.click();
+      expect($rootScope.closeFs).not.toHaveBeenCalled();
+      $toggle.click();
+      expect($rootScope.closeFs).toHaveBeenCalled();
 
-  it('should call optional onClose when scope is destroyed', function() {
-    $rootScope.closeFs = jasmine.createSpy('closeFs');
-    $rootScope.toggle = {
-      isOn: true
-    };
+    });
 
-   createNewDirective('on-close="closeFs()" ng-if="toggle.isOn"');
+    it('should call optional onClose when scope is destroyed', function() {
+      $rootScope.closeFs = jasmine.createSpy('closeFs');
+      $rootScope.toggle = {
+        isOn: true
+      };
 
-   expect($rootScope.closeFs).not.toHaveBeenCalled();
-   $rootScope.toggle.isOn = false;
-   $rootScope.$digest();
-   expect($rootScope.closeFs).toHaveBeenCalled();
-  });
+     createNewDirective('on-close="closeFs()" ng-if="toggle.isOn"');
 
-  it('should call onChange when font changes', function() {
-    $rootScope.onChangeCb = jasmine.createSpy('onChange');
-    var d = createNewDirective('on-change="onChangeCb(font)"');
+     expect($rootScope.closeFs).not.toHaveBeenCalled();
+     $rootScope.toggle.isOn = false;
+     $rootScope.$digest();
+     expect($rootScope.closeFs).toHaveBeenCalled();
+    });
 
-    d.scope.current.font = DEFAULT_WEBSAFE_FONTS[3];
-    d.scope.$digest();
+    it('should call onChange when font changes', function() {
+      $rootScope.onChangeCb = jasmine.createSpy('onChange');
+      var d = createNewDirective('on-change="onChangeCb(font)"');
 
-    expect($rootScope.onChangeCb).toHaveBeenCalledWith(DEFAULT_WEBSAFE_FONTS[3]);
+      d.scope.current.font = DEFAULT_WEBSAFE_FONTS[3];
+      d.scope.$digest();
+
+      expect($rootScope.onChangeCb).toHaveBeenCalledWith(DEFAULT_WEBSAFE_FONTS[3]);
+    });
+
   });
 
   describe('basic out', function() {

@@ -24,6 +24,10 @@ var SpecHelper = {
   /** @const */
   FONTCOUNT_CONTAINER_CLASS: '.jdfs-fontcount',
 
+  toggleSpecific: function(n) {
+    element(by.css('.fs-' + n + ' .jdfs-toggle')).click();
+  },
+
   toggle: function() {
     if (!active) {
       element(by.css('.jdfs-toggle')).click();
@@ -33,6 +37,10 @@ var SpecHelper = {
     }
 
     active = !active;
+  },
+
+  toggleSecondFontSelection: function() {
+    element(by.model('second')).click();
   },
 
   toggleBySearch: function() {
@@ -152,6 +160,10 @@ var SpecHelper = {
 
   openSettings: function() {
     element(by.css('.jdfs-settings-label')).click();
+  },
+
+  getEvents: function() {
+    return element(by.css('#events')).getText();
   }
 };
 

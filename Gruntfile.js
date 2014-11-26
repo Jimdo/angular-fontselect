@@ -55,6 +55,7 @@ module.exports = function(grunt) {
 
   grunt.registerTask('coverage', 'Serve coverage report', ['connect:coverage']);
 
+  grunt.registerTask('lookAtE2ePage', 'connect:testDemo');
 
   grunt.registerTask(
     'test',
