@@ -1,4 +1,4 @@
-<div class="jdfs-main" id="jd-fontselect-{{id}}">
+<div class="jdfs-main" id="jd-fontselect-{{suffixedId}}">
 
 		<button
 			ng-click="toggleSearch()"
@@ -11,6 +11,7 @@
 		<button
 			ng-click="toggleSearch()"
 			class="jdfs-toggle-search"
+			id="jd-fontselect-{{suffixedId}}-toggle-search"
 			ng-show="!searching"
 			>
 
@@ -39,6 +40,7 @@
 	<button
 		class="jdfs-toggle"
 		ng-click="toggle()"
+		id="jd-fontselect-{{suffixedId}}-toggle"
 		ng-class="{'jdfs-highlight': active}"
 	>
 	{{active ? text.toggleCloseLabel : text.toggleOpenLabel}}
