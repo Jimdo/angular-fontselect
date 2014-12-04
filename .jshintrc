@@ -68,6 +68,8 @@
         "jasmine",
         "jQuery",
         "WebFont",
+        "beforeEach",
+        "afterEach",
         "describe",
         "xdescribe",
         "beforeEach",
@@ -76,8 +78,6 @@
         "xit",
         "expect",
         "spyOn",
-        "runs",
-        "waits",
         "inject",
         "module",
         "process",
@@ -88,6 +88,9 @@
         "_objLength",
         "_createName",
         "_isDescendant",
-        "exports"
+        "exports",
+        "process",
+        "element",
+        "by"
     ]
 }

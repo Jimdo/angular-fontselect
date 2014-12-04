@@ -73,23 +73,28 @@ module.exports = function(grunt) {
     }
   );
 
-  /* Build dist files. */
-  grunt.registerTask('build', 'Build dist files', [
-    'ngtemplates',
-    '_buildapikeys',
-    'shell:buildWFL',
-    'less:dist',
-    'less:distmin',
-    'concat:bannerToDistStyle',
-    'concat:bannerToDistStyleMin',
-    'concat:dist',
-    'uglify'
-  ]);
+  grunt.registerTask(
+    'build',
+    'Build dist files',
+    [
+      'ngtemplates',
+      '_buildapikeys',
+      'shell:buildWFL',
+      'less:dist',
+      'less:distmin',
+      'concat:bannerToDistStyle',
+      'concat:bannerToDistStyleMin',
+      'concat:dist',
+      'ngAnnotate:dist',
+      'uglify'
+    ]
+  );
 
   /* Distribute a new version. */
   grunt.registerTask('release', 'Test, bump, build and release.', function(type) {
     grunt.task.run([
       'test',
+      'npm-contributors',
       'bump-only:' + (type || 'patch'),
       'build',
       'bump-commit'

@@ -63,7 +63,6 @@ function createNewDirective(attributeStr) {
 }
 
 beforeEach(function() {
-
   DEFAULT_WEBSAFE_FONTS_BACKUP = angular.copy(DEFAULT_WEBSAFE_FONTS);
 
   /* Initiate the main module */

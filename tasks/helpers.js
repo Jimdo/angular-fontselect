@@ -5,6 +5,7 @@ var fs = require('fs');
 var path = require('path');
 var Helpers = {};
 var base = process.cwd();
+var glob = require('glob');
 
 /* Overwrite browser env variables if grunt options are set */
 var browsers = grunt.option('browser') || grunt.option('browsers');
@@ -88,8 +89,10 @@ Helpers.ensureApiKeyFileExists = function() {
 function getScripts(env) {
   var scripts = '';
   var tag = '<script type="text/javascript" src=":src"></script>\n';
-  require('./files').environments[env].forEach(function(file) {
-    scripts += tag.replace(':src', '/' + file);
+  require('./files').environments[env].forEach(function(fileGlobs) {
+    glob.sync(fileGlobs).forEach(function(file) {
+      scripts += tag.replace(':src', '/' + file);
+    });
   });
 
   return scripts;

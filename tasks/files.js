@@ -9,16 +9,7 @@ var files = {
     'src/js/helper.defaults.js',
     'src/js/helper.google-font-categories.js',
     'src/js/helper.functions.js',
-    'src/js/filter.start-from.js',
-    'src/js/filter.fuzzy-search.js',
-    'src/js/filter.stack-search.js',
-    'src/js/filter.has-all-subsets.js',
-    'src/js/service.fonts.js',
-    'src/js/directive.fontselect.js',
-    'src/js/directive.fontlist.js',
-    'src/js/directive.font.js',
-    'src/js/directive.current-href.js',
-    'src/js/directive.meta.js'
+    'src/js/!(helper)*.js'
   ],
   sourceStyle: [
     'src/less/fontselect.less'
@@ -33,7 +24,7 @@ var files = {
   partialsDir: 'src/partials',
   allHTML: '*.html',
   allPartials: 'src/partials/*.html',
-  allPartialsCombined: 'test/e2e/env/all-partials.js',
+  allPartialsCombined: '.tmp/all-partials.js',
 
   wflDir: 'bower_components/webfontloader/',
   libsDir: libsDistDir,
@@ -46,7 +37,7 @@ var files = {
 
   demo: 'demo/*',
 
-  package: ['package.json', 'bower.json']
+  'package': ['package.json', 'bower.json']
 };
 
 /* Prepare environments */
@@ -64,7 +55,7 @@ var baseEnvironment = [].concat(
 var demoEnvironment = _.clone(baseEnvironment);
 var karmaEnvironment = _.clone(baseEnvironment);
 
-karmaEnvironment.unshift('bower_components/jasmine-moar-matchers/*.js');
+karmaEnvironment.unshift('bower_components/jasmine-moar-matchers/lib/*.js');
 karmaEnvironment.push('test/default-websafe-fonts.js');
 karmaEnvironment.push('bower_components/angular-mocks/angular-mocks.js');
 

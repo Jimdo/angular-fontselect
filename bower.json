@@ -2,7 +2,9 @@
   "name": "angular-fontselect",
   "version": "0.8.15",
   "authors": [
-    "Hannes Diercks <hannes.diercks@jimdo.com>"
+    "Hannes Diercks <hannes.diercks@jimdo.com>",
+    "Joscha Feth <joscha@feth.com>",
+    "Hauke Stange <hauke@jimdo.com>"
   ],
   "description": "A fontselect directive for AngularJS",
   "main": "dist/angular-fontselect.js",
@@ -14,12 +16,11 @@
   ],
   "license": "MIT",
   "devDependencies": {
-    "jasmine-moar-matchers": "https://gist.github.com/8549144a6969317efa11.git",
+    "jasmine-moar-matchers": "~0.0.2",
     "angular-mocks": "~1.2.25",
     "webfontloader": "1.5.6",
     "lesshat": "3.0.2",
-    "jquery": "2.1.1",
-    "less": "1.7.5"
+    "jquery": "2.1.1"
   },
   "ignore": [
     "**/.*",
