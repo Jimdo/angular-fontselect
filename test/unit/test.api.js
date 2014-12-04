@@ -19,7 +19,7 @@ describe('api', function() {
 
   function useGoogleFont() {
     $scope.current.font = fontsService.searchFont({provider: PROVIDER_GOOGLE});
-    $scope.$digest();
+    $scope.$apply();
   }
 
   it('should expand api data into current', function() {
@@ -108,7 +108,7 @@ describe('api', function() {
     beforeEach(function() {
       setupWithState();
       $scope.current.font = DEFAULT_WEBSAFE_FONTS[0];
-      $scope.$digest();
+      $scope.$apply();
     });
 
     it('should provide the font stack of our currently selected font', function() {
@@ -157,7 +157,7 @@ describe('api', function() {
         expect($scope.name).toBe('');
         expect($scope.stack).toBe(VALUE_NO_FONT_STACK);
         $scope.current.font = DEFAULT_WEBSAFE_FONTS[0];
-        $scope.$digest();
+        $scope.$apply();
       });
 
       it('should set name and stack when we init with state', function() {
@@ -185,14 +185,14 @@ describe('api', function() {
       it('should unset the currently selected font name on reset', function() {
         expect($rootScope.name).not.toBe('');
         $scope.reset();
-        $scope.$digest();
+        $scope.$apply();
         expect($rootScope.name).toBe('');
       });
 
       it('should unset the currently selected font stack on reset', function() {
         expect($rootScope.stack).not.toBe(VALUE_NO_FONT_STACK);
         $scope.reset();
-        $scope.$digest();
+        $scope.$apply();
         expect($rootScope.stack).toBe(VALUE_NO_FONT_STACK);
       });
     });
@@ -213,7 +213,7 @@ describe('api', function() {
         setupWithState();
         spyOn($scope, 'reset').and.callThrough();
         $rootScope.stack = false;
-        $scope.$digest();
+        $scope.$apply();
         expect($scope.reset).toHaveBeenCalled();
       });
 
