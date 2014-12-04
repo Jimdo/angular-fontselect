@@ -1,10 +1,10 @@
 /*!
- * angular-fontselect v0.8.15
+ * angular-fontselect v0.9.0
  * https://github.com/Jimdo/angular-fontselect
  *
  * A fontselect directive for AngularJS
  *
- * Copyright 2014, Jimdo, Hannes Diercks <hannes.diercks@jimdo.com>
+ * Copyright 2014, Jimdo GmbH
  * Released under the MIT license
  */
 (function(angular, undefined) {
@@ -1134,15 +1134,789 @@
     return false;
   }
 
-  // src/js/filter.start-from.js
-  /* From: http://tech.small-improvements.com/2013/09/10/angularjs-performance-with-large-lists/ */
-  fontselectModule.filter('startFrom', function() {
-    return function(input, start) {
-      if (!angular.isArray(input)) {
-        return input;
+  // src/js/directive.current-href.js
+  fontselectModule.directive('jdFontselectCurrentHref', [NAME_FONTSSERVICE, function(fontsService) {
+    return {
+      templateUrl: 'current-href.html',
+      restrict: 'A',
+      replace: true,
+      controller: ['$scope', function($scope) {
+        $scope.urls = fontsService.getImports();
+      }]
+    };
+  }]);
+
+  // src/js/directive.font.js
+  fontselectModule.directive('jdFont', ['jdFontselect.fonts', function(fontsService) {
+    return {
+      templateUrl: 'font.html',
+      restrict: 'E',
+      replace: true,
+      controller: ['$scope', function($scope) {
+        if ($scope.active) {
+          fontsService.load($scope.font);
+        } else {
+          var destroy = $scope.$watch('active', function(newActive) {
+            if (newActive) {
+              fontsService.load($scope.font);
+              destroy();
+            }
+          });
+        }
+      }]
+    };
+  }]);
+
+  // src/js/directive.fontlist.js
+  var NAME_JDFONTLIST = 'jdFontlist';
+  var NAME_JDFONTLIST_CONTROLLER = NAME_JDFONTLIST + NAME_CONTROLLER;
+  
+  fontselectModule.directive(NAME_JDFONTLIST, function() {
+    return {
+      scope: {
+        id: '=fsid',
+        fonts: '=',
+        meta: '=',
+        current: '=',
+        text: '=',
+        active: '='
+      },
+      restrict: 'E',
+      templateUrl: 'fontlist.html',
+      replace: true,
+      controller: NAME_JDFONTLIST_CONTROLLER
+    };
+  });
+  
+  fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
+    '$scope',
+    '$rootScope',
+    '$filter',
+    'jdFontselect.fonts',
+    '$element',
+    '$document',  function($scope, $rootScope, $filter, fontsService, $element, $document) {    var _filteredFonts = [];
+      var _sortedFonts = [];
+      var _searchedFonts = [];
+      var _categorizedFonts = [];
+      var _fontsInSubsets = [];
+      var _fontsInProviders = [];
+      var _lastPageCount = 0;
+      var _sortCache = {};
+      var _scrollBuffer = 0;
+      var _forceNextFilters = false;
+  
+  
+      var page = $scope.page = $scope.meta.page = {
+        size: PAGE_SIZE_DEFAULT,
+        count: 0,
+        current: 0,
+        currentAbs: 0
+      };
+      var fontmeta = $scope.meta.fonts = {
+        total: 0,
+        current: 0
+      };
+  
+      function isOnCurrentPage(index) {
+        var currentMinIndex = page.current * page.size;
+  
+        return index >= currentMinIndex && index < currentMinIndex + page.size;
       }
   
-      return input.slice(start);
+      $scope.keyfocus = function(direction, amount) {
+        var index = _filteredFonts.indexOf($scope.current.font);
+        var pageoffset = page.size * page.current;
+        var onPage = isOnCurrentPage(index);
+  
+        if (angular.isUndefined(amount)) {
+          amount = 1;
+        }
+  
+        index += (direction === DIRECTION_PREVIOUS ? -amount : amount);
+  
+        if (!onPage && _filteredFonts[index + pageoffset]) {
+          index += pageoffset;
+        }
+  
+        if (_filteredFonts[index]) {
+          $scope.current.font = _filteredFonts[index];
+  
+          page.currentAbs = page.current = Math.floor(index / page.size);
+  
+          $rootScope.$digest();
+        }
+      };
+  
+      function keyDownHandler(event) {
+        if (!$scope.active) {
+          return;
+        }
+  
+        function prevent() {
+          event.preventDefault();
+          return false;
+        }
+  
+        var key = event.keyCode;
+  
+        if (key === KEY_DOWN) {
+          $scope.keyfocus(DIRECTION_NEXT);
+          return prevent();
+        } else if (key === KEY_UP) {
+          $scope.keyfocus(DIRECTION_PREVIOUS);
+          return prevent();
+        }
+  
+        if (document.activeElement.tagName === 'INPUT' && document.activeElement.value) {
+          return;
+        }
+  
+        var amount = page.size;
+        if (key === KEY_RIGHT) {
+          if (!$scope.current.font) {
+            amount++;
+          }
+          $scope.keyfocus(DIRECTION_NEXT, amount);
+          return prevent();
+        } else if (key === KEY_LEFT) {
+          $scope.keyfocus(DIRECTION_PREVIOUS, page.size);
+          return prevent();
+        }
+      }
+  
+      var wheelHandler = function(event) {
+        if (!event.target) {
+          return;
+        }
+  
+        if (_isDescendant($element[0], event.target)) {
+          event.preventDefault();
+          event.stopPropagation();
+  
+          var originalEvent = event.originalEvent;
+          var subpage = 1 / page.size;
+          var delta = originalEvent.wheelDeltaY || originalEvent.wheelDelta ||
+            originalEvent.deltaY * -1 || originalEvent.detail * -1;
+          var absDelta = Math.abs(delta);
+  
+          /* For touch-pads etc., we buffer small movements */
+          if (absDelta > 1 && absDelta < SCROLL_BUFFER) {
+            _scrollBuffer += delta;
+            if (Math.abs(_scrollBuffer) < SCROLL_BUFFER) {
+              return;
+            }
+            _scrollBuffer = 0;
+          }
+  
+          if ($scope.paginate(delta > 0 ? -subpage : subpage) !== false) {
+            $scope.$digest();
+          }
+        }
+      };
+  
+      $scope.$on(OPEN_EVENT, function() {
+        $document.on('keydown', keyDownHandler);
+        $document.on('wheel', wheelHandler);
+        $document.on('mousewheel', wheelHandler);
+        $document.on('DOMMouseScroll', wheelHandler);
+      });
+  
+      $scope.$on(CLOSE_EVENT, function() {
+        $document.off('keydown', keyDownHandler);
+        $document.off('wheel', wheelHandler);
+        $document.off('mousewheel', wheelHandler);
+        $document.off('DOMMouseScroll', wheelHandler);
+      });
+  
+      /**
+       * Set the current page
+       *
+       * @param {Number} currentPage
+       * @return {void}
+       */
+      $scope.setCurrentPage = function(currentPage) {
+        page.currentAbs = page.current = currentPage;
+      };
+  
+      /**
+       * Go to the next or previous page.
+       *
+       * @param  {String} direction 'next' or 'prev'
+       * @return {void}
+       */
+      $scope.paginate = function(amount) {
+        var direction = amount;
+        if (angular.isNumber(amount)) {
+          if (amount === 0) {
+            return false;
+          }
+          direction = amount < 0 ? DIRECTION_PREVIOUS : DIRECTION_NEXT;
+        } else {
+          amount = _getAmountFromDirection(direction);
+        }
+  
+        if (!$scope.paginationButtonActive(direction)) {
+          return false;
+        }
+  
+        if (page.current + amount < 0) {
+          page.currentAbs = page.current = 0;
+        } else {
+          page.current += amount;
+          page.currentAbs = Math.floor(page.current);
+        }
+  
+        return page.current;
+      };
+  
+      /**
+       * Check if the pagination button is active
+       *
+       * @param  {String} direction 'next' or 'prev'
+       * @return {Boolean}
+       */
+      $scope.paginationButtonActive = function(direction) {
+        _updatePageCount();
+        _updateCurrentPage();
+  
+        return (
+          (direction === DIRECTION_NEXT && (page.current + 1) * page.size < _filteredFonts.length) ||
+          (direction === DIRECTION_PREVIOUS && page.current > 0)
+        );
+      };
+  
+      /**
+       * Get an array with the length similar to the
+       * amount of pages we have. (So we can use it in a repeater)
+       *
+       * Also update the current page and the current amount of pages.
+       *
+       * @return {Array}
+       */
+      $scope.getPages = function() {
+        _updatePageCount();
+        var pages = new Array(page.count);
+  
+        _updateCurrentPage();
+  
+        /* Display the page buttons only if we have at least two pages. */
+        if (pages.length <= 1) {
+          return [];
+        }
+        return pages;
+      };
+  
+      /**
+       * Apply the current provider filter to the given font list
+       * @param {Array} fonts
+       * @return {Array}
+       */
+      function _filterProviders(fonts) {
+        var providersString = JSON.stringify($scope.current.providers);
+        if (_forceNextFilters || _sortCache.providers !== providersString) {
+          _sortCache.providers = providersString;
+          _forceNextFilters = true;
+  
+          _fontsInProviders = fonts.filter(function(font) {
+            return $scope.current.providers[font.provider];
+          });
+        }
+  
+        return _fontsInProviders;
+      }
+  
+      /**
+       * Apply current subset filters to given font list
+       * @param  {Array} fonts
+       * @return {Array}
+       */
+      function _filterSubsets(fonts) {
+        var subSetString = JSON.stringify($scope.current.subsets);
+        if (_forceNextFilters || _sortCache.subsets !== subSetString) {
+          _sortCache.subsets = subSetString;
+          _forceNextFilters = true;
+  
+          _fontsInSubsets = $filter('hasAllSubsets')(
+            fonts,
+            $scope.current.subsets
+          );
+        }
+  
+        return _fontsInSubsets;
+      }
+  
+      /**
+       * Apply current sort to given font list
+       * @param  {Array} fonts
+       * @return {Array}
+       */
+      function _filterSort(fonts) {
+        var attrDirection = $scope.current.sort.attr.dir;
+        var direction = $scope.current.sort.direction;
+  
+        if (_forceNextFilters ||
+          _sortCache.sortattr !== $scope.current.sort.attr.key ||
+          _sortCache.sortdir !== direction)
+        {
+          _sortCache.sortattr = $scope.current.sort.attr.key;
+          _sortCache.sortdir = direction;
+          _forceNextFilters = true;
+  
+          _sortedFonts = $filter('orderBy')(
+            fonts,
+            $scope.current.sort.attr.key,
+            $scope.current.sort.direction ? attrDirection : !attrDirection
+          );
+        }
+  
+        return _sortedFonts;
+      }
+  
+      /**
+       * Apply current category filters to given font list.
+       * @param  {Array} fonts
+       * @return {Array}
+       */
+      function _filterCategory(fonts) {
+        var category = $scope.current.category;
+        if (_forceNextFilters || _sortCache.category !== category) {
+          _sortCache.category = category;
+          _forceNextFilters = true;
+  
+          _categorizedFonts = $filter('filter')(fonts, {category: category}, true);
+        }
+  
+        return _categorizedFonts;
+      }
+  
+      /**
+       * Apply current search to given font list.
+       * @param  {Array} fonts
+       * @return {Array}
+       */
+      function _filterSearch(fonts) {
+        var search = $scope.current.search || '';
+        if (_forceNextFilters || _sortCache.search !== search) {
+          _sortCache.search = search;
+          _forceNextFilters = true;
+  
+          /* Unset category filter so every font is visible. */
+          $scope.current.category = undefined;
+  
+          if (search.length) {
+            _searchedFonts = _priorize(
+              $filter('fuzzySearch')(fonts, {name: search}),
+              search.toLowerCase()
+            );
+          } else {
+            _searchedFonts = fonts;
+          }
+        }
+  
+        return _searchedFonts;
+      }
+  
+      /**
+       * Apply the current filters to our internal font object.
+       *
+       * Ensure we only apply filters when the filter parameters
+       * or the source have changed.
+       *
+       * @return {Array}
+       */
+      $scope.getFilteredFonts = function() {
+        if (!angular.isArray($scope.fonts)) {
+          return [];
+        }
+  
+        var fonts = $scope.fonts;
+        _forceNextFilters = _sortCache.fontAmount !== fonts.length;
+        _sortCache.fontAmount = fonts.length;
+  
+        var queue = [
+          _filterProviders,
+          _filterSubsets,
+          _filterSort,
+          _filterSearch,
+          _filterCategory
+        ];
+  
+        for (var i = 0, l = queue.length; i < l; i++) {
+          fonts = queue[i](fonts);
+        }
+  
+        _filteredFonts = fonts;
+  
+        fontmeta.total = $scope.fonts.length;
+        fontmeta.current = _filteredFonts.length;
+  
+        return _filteredFonts;
+      };
+  
+      /**
+       * Convert 'prev' and 'last' to -1 and 1
+       * @param  {Number|String} direction
+       * @return {Number}
+       */
+      function _getAmountFromDirection(direction) {
+        if (angular.isNumber(direction)) {
+          return direction;
+        }
+        return (direction === DIRECTION_PREVIOUS ? -1 : 1);
+      }
+  
+      /**
+       * Sort a list of fonts by matching them against a given search
+       * @param  {Array} fonts
+       * @param  {String} search
+       * @return {Array}
+       */
+      function _priorize(fonts, search) {
+        if (fonts.length > 1) {
+          var rgx = new RegExp('[' + search + ']+');
+  
+          fonts.sort(function(a, b) {
+            var nameA = a.name.toLowerCase();
+            var nameB = b.name.toLowerCase();
+            var firstCharA = nameA[0];
+            var firstCharB = nameB[0];
+  
+            /* Prioritize by first character... */
+            if (firstCharA !== firstCharB) {
+              if (firstCharA === search[0]) {
+                return -1;
+              } else if (firstCharB === search[0]) {
+                return 1;
+              }
+            }
+  
+            /* Prioritize by amount of matches. */
+            return (nameA.replace(rgx, '').length < nameB.replace(rgx, '').length) ? -1 : 1;
+          });
+        }
+  
+        return fonts;
+      }
+  
+      /**
+       * Calculate the amount of pages we have.
+       *
+       * @return {void}
+       */
+      function _updatePageCount() {
+        _lastPageCount = page.count;
+  
+        if (!angular.isArray($scope.fonts)) {
+          return 0;
+        }
+  
+        if (_filteredFonts.length) {
+          page.count = Math.ceil(_filteredFonts.length / page.size);
+        }
+      }
+  
+      /**
+       * Whenever the amount of pages is changing:
+       * Make sure we're not staying on a page that does not exist.
+       * And if we have a font selected, try to stay on the page of
+       * that font.
+       *
+       * @return {void}
+       */
+      function _updateCurrentPage() {
+        /* do nothing if the amount of pages hasn't change */
+        if (_lastPageCount === page.count) {
+          return;
+        }
+  
+        $scope.setCurrentPage(0);
+      }
+    }
+  ]);
+
+  // src/js/directive.fontselect.js
+  var id = 1;
+  
+  fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsService) {
+    return {
+      scope: {
+        current: '=?state',
+        stack: '=?',
+        name: '=?',
+        rawText: '@?text',
+        text: '=?textObj',
+        onInit: '&?',
+        onOpen: '&?',
+        onClose: '&?',
+        onChange: '&?'
+      },
+      restrict: 'E',
+      templateUrl: 'fontselect.html',
+      replace: true,
+  
+      controller: [
+        '$scope',
+        '$element',
+        '$timeout',
+        '$document',
+        '$rootScope',
+        function(
+          $scope,
+          $element,
+          $timeout,
+          $document,
+          $rootScope
+      ) {
+        $scope.fonts = fontsService.getAllFonts();
+        $scope.id = id++;
+        $scope.stylesActive = true;
+        $scope.settingsActive = false;
+        $scope.active = false;
+        $scope.searching = false;
+        $scope.categories = fontsService.getCategories();
+        $scope.sortAttrs = SORT_ATTRIBUTES;
+        $scope.name = '';
+        $scope.meta = {};
+        if (angular.isUndefined($scope.stack)) {
+          $scope.stack = VALUE_NO_FONT_STACK;
+        }
+  
+        $scope.text = angular.extend(angular.copy(TEXT_DEFAULTS), $scope.text || {});
+        if ($scope.rawText) {
+          $scope.text = angular.extend($scope.text , $scope.$eval($scope.rawText) || {});
+        }
+  
+        function setState(extend) {
+          var globalSubsets, globalProviders;
+          $scope.current = angular.extend(
+            angular.copy(STATE_DEFAULTS),
+            extend || {}
+          );
+  
+          if (!$scope.current.sort.attr) {
+            $scope.current.sort.attr = SORT_ATTRIBUTES[0];
+          }
+  
+          if (angular.isObject($scope.current.font)) {
+            $scope.stack = $scope.current.font.stack;
+            $scope.name = $scope.current.font.name;
+          }
+  
+          globalSubsets = fontsService.getSubsets();
+          $scope.current.subsets = _objLength(globalSubsets) ?
+            globalSubsets : fontsService.setSubsets($scope.current.subsets);
+  
+          globalProviders = fontsService.getProviders();
+          $scope.current.providers = _objLength(globalProviders) ?
+            globalProviders : fontsService.setProviders($scope.current.providers);
+        }
+  
+        function outsideClickHandler(event) {
+          if ($scope.active && !_isDescendant($element[0], event.target)) {
+            $scope.toggle();
+            $rootScope.$digest();
+          }
+        }
+  
+        function escapeKeyHandler(event) {
+          if ($scope.active && event.keyCode === KEY_ESCAPE) {
+            $scope.toggle();
+            $rootScope.$digest();
+          }
+        }
+  
+        function open() {
+          $document.on('click', outsideClickHandler);
+          $document.on('keyup', escapeKeyHandler);
+  
+          $scope.$broadcast(OPEN_EVENT);
+          $scope.onOpen();
+        }
+  
+        function close() {
+          $document.off('keyup', escapeKeyHandler);
+          $document.off('click', outsideClickHandler);
+  
+          $scope.$broadcast(CLOSE_EVENT);
+          $scope.onClose();
+        }
+  
+        $scope.reverseSort = function() {
+          var sort = $scope.current.sort;
+  
+          sort.direction = !sort.direction;
+        };
+  
+        $scope.toggle = function() {
+          $scope.active = !$scope.active;
+  
+          if (!$scope.active) {
+            $scope.searching = false;
+            close();
+          } else {
+            $timeout(open);
+          }
+        };
+  
+        $scope.toggleSearch = function() {
+          if (!$scope.active) {
+            $scope.toggle();
+          }
+  
+          $scope.searching = !$scope.searching;
+  
+          if ($scope.searching) {
+            $scope.setFocus();
+          }
+        };
+  
+        $scope.tryUnfocusSearch = function() {
+          if ($scope.searching && $scope.current.search.length === 0) {
+            $scope.searching = false;
+          }
+        };
+  
+        $scope.resetSearch = function() {
+          $scope.current.search = '';
+          if ($scope.searching) {
+            $scope.setFocus();
+          }
+        };
+  
+        $scope.toName = _createName;
+  
+        $scope.setFocus = function() {
+          $timeout(function() {
+            $element[0].querySelector('.jdfs-search').focus();
+          });
+        };
+  
+        $scope.setCategoryFilter = function(category) {
+          var current = $scope.current;
+  
+          if (current.category === category) {
+            current.category = undefined;
+          } else {
+            current.category = category;
+          }
+        };
+  
+        $scope.reset = function() {
+          setState();
+        };
+  
+        $scope._setSelected = function(font) {
+          if (angular.isObject(font)) {
+            $scope.name = font.name;
+            $scope.stack = font.stack;
+          } else {
+            $scope.name = '';
+            $scope.stack = VALUE_NO_FONT_STACK;
+          }
+        };
+  
+        $scope.toggleSettings = function() {
+          $scope.settingsActive = true;
+          $scope.stylesActive = false;
+        };
+  
+        $scope.toggleStyles = function() {
+          $scope.stylesActive = true;
+          $scope.settingsActive = false;
+        };
+  
+        $scope.$on('$destroy', close);
+  
+        /* Initiate! */
+        fontsService._initGoogleFonts();
+  
+        if (angular.isObject($scope.current)) {
+          setState($scope.current);
+        }
+  
+        if ($scope.stack.length) {
+          try {
+            var font = fontsService.getFontByStack($scope.stack);
+            /* Since we're setting the font now before watchers are initiated, we need to update usage by ourself. */
+            fontsService.updateUsage(font);
+            fontsService.load(font);
+            setState({font: font});
+          } catch (e) {
+            fontsService.getFontByStackAsync($scope.stack, false).then(function(font) {
+              if (angular.isObject(font)) {
+                setState({font: font});
+              }
+            });
+          }
+        }
+  
+        $scope.onInit({$scope: $scope});
+  
+        $scope.$watch('current.font', function(newFont, oldFont) {
+          if (!angular.isObject($scope.current)) {
+            $scope.reset();
+          }
+  
+          if (oldFont !== newFont) {
+            $scope.tryUnfocusSearch();
+  
+            if (angular.isObject($scope.current.font)) {
+              newFont = $scope.current.font;
+            }
+  
+            if (angular.isObject(oldFont) && oldFont.used) {
+              fontsService.updateUsage(oldFont, false);
+            }
+            if (angular.isObject(newFont)) {
+              fontsService.updateUsage(newFont);
+              fontsService.load(newFont);
+            }
+  
+            $scope._setSelected(newFont);
+            fontsService.updateImports();
+            $scope.onChange({font: newFont});
+          }
+        });
+  
+        $scope.$watch('current.subsets', function(newSubsets, oldSubsets) {
+          if (newSubsets !== oldSubsets) {
+            fontsService.updateImports();
+          }
+        }, true);
+  
+        $scope.$watch('stack', function(newStack, oldStack) {
+          var font;
+  
+          if (newStack === oldStack || ($scope.current.font && newStack === $scope.current.font.stack)) {
+            return;
+          }
+  
+          try {
+            if (newStack && newStack.length) {
+              font = fontsService.getFontByStack(newStack, false);
+            }
+  
+            if (font) {
+              $scope.current.font = font;
+            } else {
+              $scope.reset();
+            }
+          } catch (e) {
+            $scope.reset();
+          }
+        });
+      }]
+    };
+  }]);
+
+  // src/js/directive.meta.js
+  var NAME_JDMETA = 'jdMeta';
+  
+  fontselectModule.directive(NAME_JDMETA, function() {
+    return {
+      restrict: 'E',
+      templateUrl: 'meta.html',
+      replace: true
     };
   });
 
@@ -1241,6 +2015,41 @@
     };
   });
 
+  // src/js/filter.has-all-subsets.js
+  fontselectModule.filter('hasAllSubsets', function() {
+    return function(input, subsets) {
+      if (!angular.isArray(input)) {
+        return input;
+      }
+  
+      function hasAllSubsets(font) {
+        var allOK = true;
+  
+        angular.forEach(subsets, function(active, key) {
+          if (!active || !allOK) {
+            return;
+          }
+  
+          if (font.subsets.indexOf(key) < 0) {
+            allOK = false;
+          }
+        });
+  
+        return allOK;
+      }
+  
+      return input.filter(function(font) {
+        if (angular.isUndefined(font.subsets)) {
+          // TODO: ERROR
+          // console.error('Font ' + font.name + ' is missing subset information.');
+          return true;
+        }
+  
+        return angular.isObject(font) && hasAllSubsets(font);
+      });
+    };
+  });
+
   // src/js/filter.stack-search.js
   /**
    * Get fonts by matching stacks.
@@ -1316,38 +2125,15 @@
     return stackSearchFilter;
   });
 
-  // src/js/filter.has-all-subsets.js
-  fontselectModule.filter('hasAllSubsets', function() {
-    return function(input, subsets) {
+  // src/js/filter.start-from.js
+  /* From: http://tech.small-improvements.com/2013/09/10/angularjs-performance-with-large-lists/ */
+  fontselectModule.filter('startFrom', function() {
+    return function(input, start) {
       if (!angular.isArray(input)) {
         return input;
       }
   
-      function hasAllSubsets(font) {
-        var allOK = true;
-  
-        angular.forEach(subsets, function(active, key) {
-          if (!active || !allOK) {
-            return;
-          }
-  
-          if (font.subsets.indexOf(key) < 0) {
-            allOK = false;
-          }
-        });
-  
-        return allOK;
-      }
-  
-      return input.filter(function(font) {
-        if (angular.isUndefined(font.subsets)) {
-          // TODO: ERROR
-          // console.error('Font ' + font.name + ' is missing subset information.');
-          return true;
-        }
-  
-        return angular.isObject(font) && hasAllSubsets(font);
-      });
+      return input.slice(start);
     };
   });
 
@@ -2037,793 +2823,7 @@
   
   fontselectModule.service(NAME_FONTSSERVICE, FontsService);
 
-  // src/js/directive.fontselect.js
-  var id = 1;
-  
-  fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsService) {
-    return {
-      scope: {
-        current: '=?state',
-        stack: '=?',
-        name: '=?',
-        rawText: '@?text',
-        text: '=?textObj',
-        onInit: '&?',
-        onOpen: '&?',
-        onClose: '&?',
-        onChange: '&?'
-      },
-      restrict: 'E',
-      templateUrl: 'fontselect.html',
-      replace: true,
-  
-      controller: [
-        '$scope',
-        '$element',
-        '$timeout',
-        '$document',
-        '$rootScope',
-        function(
-          $scope,
-          $element,
-          $timeout,
-          $document,
-          $rootScope
-      ) {
-        $scope.fonts = fontsService.getAllFonts();
-        $scope.id = id++;
-        $scope.stylesActive = true;
-        $scope.settingsActive = false;
-        $scope.active = false;
-        $scope.searching = false;
-        $scope.categories = fontsService.getCategories();
-        $scope.sortAttrs = SORT_ATTRIBUTES;
-        $scope.name = '';
-        $scope.meta = {};
-        if (angular.isUndefined($scope.stack)) {
-          $scope.stack = VALUE_NO_FONT_STACK;
-        }
-  
-        $scope.text = angular.extend(angular.copy(TEXT_DEFAULTS), $scope.text || {});
-        if ($scope.rawText) {
-          $scope.text = angular.extend($scope.text , $scope.$eval($scope.rawText) || {});
-        }
-  
-        function setState(extend) {
-          var globalSubsets, globalProviders;
-          $scope.current = angular.extend(
-            angular.copy(STATE_DEFAULTS),
-            extend || {}
-          );
-  
-          if (!$scope.current.sort.attr) {
-            $scope.current.sort.attr = SORT_ATTRIBUTES[0];
-          }
-  
-          if (angular.isObject($scope.current.font)) {
-            $scope.stack = $scope.current.font.stack;
-            $scope.name = $scope.current.font.name;
-          }
-  
-          globalSubsets = fontsService.getSubsets();
-          $scope.current.subsets = _objLength(globalSubsets) ?
-            globalSubsets : fontsService.setSubsets($scope.current.subsets);
-  
-          globalProviders = fontsService.getProviders();
-          $scope.current.providers = _objLength(globalProviders) ?
-            globalProviders : fontsService.setProviders($scope.current.providers);
-        }
-  
-        function outsideClickHandler(event) {
-          if ($scope.active && !_isDescendant($element[0], event.target)) {
-            $scope.toggle();
-            $rootScope.$digest();
-          }
-        }
-  
-        function escapeKeyHandler(event) {
-          if ($scope.active && event.keyCode === KEY_ESCAPE) {
-            $scope.toggle();
-            $rootScope.$digest();
-          }
-        }
-  
-        function open() {
-          $document.on('click', outsideClickHandler);
-          $document.on('keyup', escapeKeyHandler);
-  
-          $scope.$broadcast(OPEN_EVENT);
-          $scope.onOpen();
-        }
-  
-        function close() {
-          $document.off('keyup', escapeKeyHandler);
-          $document.off('click', outsideClickHandler);
-  
-          $scope.$broadcast(CLOSE_EVENT);
-          $scope.onClose();
-        }
-  
-        $scope.reverseSort = function() {
-          var sort = $scope.current.sort;
-  
-          sort.direction = !sort.direction;
-        };
-  
-        $scope.toggle = function() {
-          $scope.active = !$scope.active;
-  
-          if (!$scope.active) {
-            $scope.searching = false;
-            close();
-          } else {
-            $timeout(open);
-          }
-        };
-  
-        $scope.toggleSearch = function() {
-          if (!$scope.active) {
-            $scope.toggle();
-          }
-  
-          $scope.searching = !$scope.searching;
-  
-          if ($scope.searching) {
-            $scope.setFocus();
-          }
-        };
-  
-        $scope.tryUnfocusSearch = function() {
-          if ($scope.searching && $scope.current.search.length === 0) {
-            $scope.searching = false;
-          }
-        };
-  
-        $scope.resetSearch = function() {
-          $scope.current.search = '';
-          if ($scope.searching) {
-            $scope.setFocus();
-          }
-        };
-  
-        $scope.toName = _createName;
-  
-        $scope.setFocus = function() {
-          $timeout(function() {
-            $element[0].querySelector('.jdfs-search').focus();
-          });
-        };
-  
-        $scope.setCategoryFilter = function(category) {
-          var current = $scope.current;
-  
-          if (current.category === category) {
-            current.category = undefined;
-          } else {
-            current.category = category;
-          }
-        };
-  
-        $scope.reset = function() {
-          setState();
-        };
-  
-        $scope._setSelected = function(font) {
-          if (angular.isObject(font)) {
-            $scope.name = font.name;
-            $scope.stack = font.stack;
-          } else {
-            $scope.name = '';
-            $scope.stack = VALUE_NO_FONT_STACK;
-          }
-        };
-  
-        $scope.toggleSettings = function() {
-          $scope.settingsActive = true;
-          $scope.stylesActive = false;
-        };
-  
-        $scope.toggleStyles = function() {
-          $scope.stylesActive = true;
-          $scope.settingsActive = false;
-        };
-  
-        $scope.$on('$destroy', close);
-  
-        /* Initiate! */
-        fontsService._initGoogleFonts();
-  
-        if (angular.isObject($scope.current)) {
-          setState($scope.current);
-        }
-  
-        if ($scope.stack.length) {
-          try {
-            var font = fontsService.getFontByStack($scope.stack);
-            /* Since we're setting the font now before watchers are initiated, we need to update usage by ourself. */
-            fontsService.updateUsage(font);
-            fontsService.load(font);
-            setState({font: font});
-          } catch (e) {
-            fontsService.getFontByStackAsync($scope.stack, false).then(function(font) {
-              if (angular.isObject(font)) {
-                setState({font: font});
-              }
-            });
-          }
-        }
-  
-        $scope.onInit({$scope: $scope});
-  
-        $scope.$watch('current.font', function(newFont, oldFont) {
-          if (!angular.isObject($scope.current)) {
-            $scope.reset();
-          }
-  
-          if (oldFont !== newFont) {
-            $scope.tryUnfocusSearch();
-  
-            if (angular.isObject($scope.current.font)) {
-              newFont = $scope.current.font;
-            }
-  
-            if (angular.isObject(oldFont) && oldFont.used) {
-              fontsService.updateUsage(oldFont, false);
-            }
-            if (angular.isObject(newFont)) {
-              fontsService.updateUsage(newFont);
-              fontsService.load(newFont);
-            }
-  
-            $scope._setSelected(newFont);
-            fontsService.updateImports();
-            $scope.onChange({font: newFont});
-          }
-        });
-  
-        $scope.$watch('current.subsets', function(newSubsets, oldSubsets) {
-          if (newSubsets !== oldSubsets) {
-            fontsService.updateImports();
-          }
-        }, true);
-  
-        $scope.$watch('stack', function(newStack, oldStack) {
-          var font;
-  
-          if (newStack === oldStack || ($scope.current.font && newStack === $scope.current.font.stack)) {
-            return;
-          }
-  
-          try {
-            if (newStack && newStack.length) {
-              font = fontsService.getFontByStack(newStack, false);
-            }
-  
-            if (font) {
-              $scope.current.font = font;
-            } else {
-              $scope.reset();
-            }
-          } catch (e) {
-            $scope.reset();
-          }
-        });
-      }]
-    };
-  }]);
-
-  // src/js/directive.fontlist.js
-  var NAME_JDFONTLIST = 'jdFontlist';
-  var NAME_JDFONTLIST_CONTROLLER = NAME_JDFONTLIST + NAME_CONTROLLER;
-  
-  fontselectModule.directive(NAME_JDFONTLIST, function() {
-    return {
-      scope: {
-        id: '=fsid',
-        fonts: '=',
-        meta: '=',
-        current: '=',
-        text: '=',
-        active: '='
-      },
-      restrict: 'E',
-      templateUrl: 'fontlist.html',
-      replace: true,
-      controller: NAME_JDFONTLIST_CONTROLLER
-    };
-  });
-  
-  fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
-    '$scope',
-    '$rootScope',
-    '$filter',
-    'jdFontselect.fonts',
-    '$element',
-    '$document',  function($scope, $rootScope, $filter, fontsService, $element, $document) {    var _filteredFonts = [];
-      var _sortedFonts = [];
-      var _searchedFonts = [];
-      var _categorizedFonts = [];
-      var _fontsInSubsets = [];
-      var _fontsInProviders = [];
-      var _lastPageCount = 0;
-      var _sortCache = {};
-      var _scrollBuffer = 0;
-      var _forceNextFilters = false;
-  
-  
-      var page = $scope.page = $scope.meta.page = {
-        size: PAGE_SIZE_DEFAULT,
-        count: 0,
-        current: 0,
-        currentAbs: 0
-      };
-      var fontmeta = $scope.meta.fonts = {
-        total: 0,
-        current: 0
-      };
-  
-      function isOnCurrentPage(index) {
-        var currentMinIndex = page.current * page.size;
-  
-        return index >= currentMinIndex && index < currentMinIndex + page.size;
-      }
-  
-      $scope.keyfocus = function(direction, amount) {
-        var index = _filteredFonts.indexOf($scope.current.font);
-        var pageoffset = page.size * page.current;
-        var onPage = isOnCurrentPage(index);
-  
-        if (angular.isUndefined(amount)) {
-          amount = 1;
-        }
-  
-        index += (direction === DIRECTION_PREVIOUS ? -amount : amount);
-  
-        if (!onPage && _filteredFonts[index + pageoffset]) {
-          index += pageoffset;
-        }
-  
-        if (_filteredFonts[index]) {
-          $scope.current.font = _filteredFonts[index];
-  
-          page.currentAbs = page.current = Math.floor(index / page.size);
-  
-          $rootScope.$digest();
-        }
-      };
-  
-      function keyDownHandler(event) {
-        if (!$scope.active) {
-          return;
-        }
-  
-        function prevent() {
-          event.preventDefault();
-          return false;
-        }
-  
-        var key = event.keyCode;
-  
-        if (key === KEY_DOWN) {
-          $scope.keyfocus(DIRECTION_NEXT);
-          return prevent();
-        } else if (key === KEY_UP) {
-          $scope.keyfocus(DIRECTION_PREVIOUS);
-          return prevent();
-        }
-  
-        if (document.activeElement.tagName === 'INPUT' && document.activeElement.value) {
-          return;
-        }
-  
-        var amount = page.size;
-        if (key === KEY_RIGHT) {
-          if (!$scope.current.font) {
-            amount++;
-          }
-          $scope.keyfocus(DIRECTION_NEXT, amount);
-          return prevent();
-        } else if (key === KEY_LEFT) {
-          $scope.keyfocus(DIRECTION_PREVIOUS, page.size);
-          return prevent();
-        }
-      }
-  
-      var wheelHandler = function(event) {
-        if (!event.target) {
-          return;
-        }
-  
-        if (_isDescendant($element[0], event.target)) {
-          event.preventDefault();
-          event.stopPropagation();
-  
-          var originalEvent = event.originalEvent;
-          var subpage = 1 / page.size;
-          var delta = originalEvent.wheelDeltaY || originalEvent.wheelDelta ||
-            originalEvent.deltaY * -1 || originalEvent.detail * -1;
-          var absDelta = Math.abs(delta);
-  
-          /* For touch-pads etc., we buffer small movements */
-          if (absDelta > 1 && absDelta < SCROLL_BUFFER) {
-            _scrollBuffer += delta;
-            if (Math.abs(_scrollBuffer) < SCROLL_BUFFER) {
-              return;
-            }
-            _scrollBuffer = 0;
-          }
-  
-          if ($scope.paginate(delta > 0 ? -subpage : subpage) !== false) {
-            $scope.$digest();
-          }
-        }
-      };
-  
-      $scope.$on(OPEN_EVENT, function() {
-        $document.on('keydown', keyDownHandler);
-        $document.on('wheel', wheelHandler);
-        $document.on('mousewheel', wheelHandler);
-        $document.on('DOMMouseScroll', wheelHandler);
-      });
-  
-      $scope.$on(CLOSE_EVENT, function() {
-        $document.off('keydown', keyDownHandler);
-        $document.off('wheel', wheelHandler);
-        $document.off('mousewheel', wheelHandler);
-        $document.off('DOMMouseScroll', wheelHandler);
-      });
-  
-      /**
-       * Set the current page
-       *
-       * @param {Number} currentPage
-       * @return {void}
-       */
-      $scope.setCurrentPage = function(currentPage) {
-        page.currentAbs = page.current = currentPage;
-      };
-  
-      /**
-       * Go to the next or previous page.
-       *
-       * @param  {String} direction 'next' or 'prev'
-       * @return {void}
-       */
-      $scope.paginate = function(amount) {
-        var direction = amount;
-        if (angular.isNumber(amount)) {
-          if (amount === 0) {
-            return false;
-          }
-          direction = amount < 0 ? DIRECTION_PREVIOUS : DIRECTION_NEXT;
-        } else {
-          amount = _getAmountFromDirection(direction);
-        }
-  
-        if (!$scope.paginationButtonActive(direction)) {
-          return false;
-        }
-  
-        if (page.current + amount < 0) {
-          page.currentAbs = page.current = 0;
-        } else {
-          page.current += amount;
-          page.currentAbs = Math.floor(page.current);
-        }
-  
-        return page.current;
-      };
-  
-      /**
-       * Check if the pagination button is active
-       *
-       * @param  {String} direction 'next' or 'prev'
-       * @return {Boolean}
-       */
-      $scope.paginationButtonActive = function(direction) {
-        _updatePageCount();
-        _updateCurrentPage();
-  
-        return (
-          (direction === DIRECTION_NEXT && (page.current + 1) * page.size < _filteredFonts.length) ||
-          (direction === DIRECTION_PREVIOUS && page.current > 0)
-        );
-      };
-  
-      /**
-       * Get an array with the length similar to the
-       * amount of pages we have. (So we can use it in a repeater)
-       *
-       * Also update the current page and the current amount of pages.
-       *
-       * @return {Array}
-       */
-      $scope.getPages = function() {
-        _updatePageCount();
-        var pages = new Array(page.count);
-  
-        _updateCurrentPage();
-  
-        /* Display the page buttons only if we have at least two pages. */
-        if (pages.length <= 1) {
-          return [];
-        }
-        return pages;
-      };
-  
-      /**
-       * Apply the current provider filter to the given font list
-       * @param {Array} fonts
-       * @return {Array}
-       */
-      function _filterProviders(fonts) {
-        var providersString = JSON.stringify($scope.current.providers);
-        if (_forceNextFilters || _sortCache.providers !== providersString) {
-          _sortCache.providers = providersString;
-          _forceNextFilters = true;
-  
-          _fontsInProviders = fonts.filter(function(font) {
-            return $scope.current.providers[font.provider];
-          });
-        }
-  
-        return _fontsInProviders;
-      }
-  
-      /**
-       * Apply current subset filters to given font list
-       * @param  {Array} fonts
-       * @return {Array}
-       */
-      function _filterSubsets(fonts) {
-        var subSetString = JSON.stringify($scope.current.subsets);
-        if (_forceNextFilters || _sortCache.subsets !== subSetString) {
-          _sortCache.subsets = subSetString;
-          _forceNextFilters = true;
-  
-          _fontsInSubsets = $filter('hasAllSubsets')(
-            fonts,
-            $scope.current.subsets
-          );
-        }
-  
-        return _fontsInSubsets;
-      }
-  
-      /**
-       * Apply current sort to given font list
-       * @param  {Array} fonts
-       * @return {Array}
-       */
-      function _filterSort(fonts) {
-        var attrDirection = $scope.current.sort.attr.dir;
-        var direction = $scope.current.sort.direction;
-  
-        if (_forceNextFilters ||
-          _sortCache.sortattr !== $scope.current.sort.attr.key ||
-          _sortCache.sortdir !== direction)
-        {
-          _sortCache.sortattr = $scope.current.sort.attr.key;
-          _sortCache.sortdir = direction;
-          _forceNextFilters = true;
-  
-          _sortedFonts = $filter('orderBy')(
-            fonts,
-            $scope.current.sort.attr.key,
-            $scope.current.sort.direction ? attrDirection : !attrDirection
-          );
-        }
-  
-        return _sortedFonts;
-      }
-  
-      /**
-       * Apply current category filters to given font list.
-       * @param  {Array} fonts
-       * @return {Array}
-       */
-      function _filterCategory(fonts) {
-        var category = $scope.current.category;
-        if (_forceNextFilters || _sortCache.category !== category) {
-          _sortCache.category = category;
-          _forceNextFilters = true;
-  
-          _categorizedFonts = $filter('filter')(fonts, {category: category}, true);
-        }
-  
-        return _categorizedFonts;
-      }
-  
-      /**
-       * Apply current search to given font list.
-       * @param  {Array} fonts
-       * @return {Array}
-       */
-      function _filterSearch(fonts) {
-        var search = $scope.current.search || '';
-        if (_forceNextFilters || _sortCache.search !== search) {
-          _sortCache.search = search;
-          _forceNextFilters = true;
-  
-          /* Unset category filter so every font is visible. */
-          $scope.current.category = undefined;
-  
-          if (search.length) {
-            _searchedFonts = _priorize(
-              $filter('fuzzySearch')(fonts, {name: search}),
-              search.toLowerCase()
-            );
-          } else {
-            _searchedFonts = fonts;
-          }
-        }
-  
-        return _searchedFonts;
-      }
-  
-      /**
-       * Apply the current filters to our internal font object.
-       *
-       * Ensure we only apply filters when the filter parameters
-       * or the source have changed.
-       *
-       * @return {Array}
-       */
-      $scope.getFilteredFonts = function() {
-        if (!angular.isArray($scope.fonts)) {
-          return [];
-        }
-  
-        var fonts = $scope.fonts;
-        _forceNextFilters = _sortCache.fontAmount !== fonts.length;
-        _sortCache.fontAmount = fonts.length;
-  
-        var queue = [
-          _filterProviders,
-          _filterSubsets,
-          _filterSort,
-          _filterSearch,
-          _filterCategory
-        ];
-  
-        for (var i = 0, l = queue.length; i < l; i++) {
-          fonts = queue[i](fonts);
-        }
-  
-        _filteredFonts = fonts;
-  
-        fontmeta.total = $scope.fonts.length;
-        fontmeta.current = _filteredFonts.length;
-  
-        return _filteredFonts;
-      };
-  
-      /**
-       * Convert 'prev' and 'last' to -1 and 1
-       * @param  {Number|String} direction
-       * @return {Number}
-       */
-      function _getAmountFromDirection(direction) {
-        if (angular.isNumber(direction)) {
-          return direction;
-        }
-        return (direction === DIRECTION_PREVIOUS ? -1 : 1);
-      }
-  
-      /**
-       * Sort a list of fonts by matching them against a given search
-       * @param  {Array} fonts
-       * @param  {String} search
-       * @return {Array}
-       */
-      function _priorize(fonts, search) {
-        if (fonts.length > 1) {
-          var rgx = new RegExp('[' + search + ']+');
-  
-          fonts.sort(function(a, b) {
-            var nameA = a.name.toLowerCase();
-            var nameB = b.name.toLowerCase();
-            var firstCharA = nameA[0];
-            var firstCharB = nameB[0];
-  
-            /* Prioritize by first character... */
-            if (firstCharA !== firstCharB) {
-              if (firstCharA === search[0]) {
-                return -1;
-              } else if (firstCharB === search[0]) {
-                return 1;
-              }
-            }
-  
-            /* Prioritize by amount of matches. */
-            return (nameA.replace(rgx, '').length < nameB.replace(rgx, '').length) ? -1 : 1;
-          });
-        }
-  
-        return fonts;
-      }
-  
-      /**
-       * Calculate the amount of pages we have.
-       *
-       * @return {void}
-       */
-      function _updatePageCount() {
-        _lastPageCount = page.count;
-  
-        if (!angular.isArray($scope.fonts)) {
-          return 0;
-        }
-  
-        if (_filteredFonts.length) {
-          page.count = Math.ceil(_filteredFonts.length / page.size);
-        }
-      }
-  
-      /**
-       * Whenever the amount of pages is changing:
-       * Make sure we're not staying on a page that does not exist.
-       * And if we have a font selected, try to stay on the page of
-       * that font.
-       *
-       * @return {void}
-       */
-      function _updateCurrentPage() {
-        /* do nothing if the amount of pages hasn't change */
-        if (_lastPageCount === page.count) {
-          return;
-        }
-  
-        $scope.setCurrentPage(0);
-      }
-    }
-  ]);
-
-  // src/js/directive.font.js
-  fontselectModule.directive('jdFont', ['jdFontselect.fonts', function(fontsService) {
-    return {
-      templateUrl: 'font.html',
-      restrict: 'E',
-      replace: true,
-      controller: ['$scope', function($scope) {
-        if ($scope.active) {
-          fontsService.load($scope.font);
-        } else {
-          var destroy = $scope.$watch('active', function(newActive) {
-            if (newActive) {
-              fontsService.load($scope.font);
-              destroy();
-            }
-          });
-        }
-      }]
-    };
-  }]);
-
-  // src/js/directive.current-href.js
-  fontselectModule.directive('jdFontselectCurrentHref', [NAME_FONTSSERVICE, function(fontsService) {
-    return {
-      templateUrl: 'current-href.html',
-      restrict: 'A',
-      replace: true,
-      controller: ['$scope', function($scope) {
-        $scope.urls = fontsService.getImports();
-      }]
-    };
-  }]);
-
-  // src/js/directive.meta.js
-  var NAME_JDMETA = 'jdMeta';
-  
-  fontselectModule.directive(NAME_JDMETA, function() {
-    return {
-      restrict: 'E',
-      templateUrl: 'meta.html',
-      replace: true
-    };
-  });
-
-  // test/e2e/env/all-partials.js
+  // .tmp/all-partials.js
   angular.module('jdFontselect').run(['$templateCache', function($templateCache) {
     'use strict';
   
