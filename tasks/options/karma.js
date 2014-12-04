@@ -1,5 +1,6 @@
 var files = require('../files');
 var browsers = process.env.KARMA_BROWSERS;
+var reporters = process.env.KARMA_REPORTERS;
 
 module.exports = {
   options: {
@@ -21,7 +22,7 @@ module.exports = {
         type: 'text-summary'
       }]
     },
-    reporters: ['progress', 'coverage'],
+    reporters: (reporters || 'progress').split(',').concat('coverage'),
     singleRun: true,
     files: files.environments.karma.concat([files.unitTests])
   },
