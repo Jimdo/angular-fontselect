@@ -3,8 +3,12 @@
   "version": "0.8.15",
   "authors": [
     "Hannes Diercks <hannes.diercks@jimdo.com>",
+    "Lasse Diercks <lasse@jimdo.com>",
     "Joscha Feth <joscha@feth.com>",
-    "Hauke Stange <hauke@jimdo.com>"
+    "Ole Michaelis <Ole.Michaelis@googlemail.com>",
+    "Hauke Stange <hauke@jimdo.com>",
+    "HerrBertling <markus277@gmail.com>",
+    "ldiercks <lasse@jimdo.com>"
   ],
   "description": "A fontselect directive for AngularJS",
   "main": "dist/angular-fontselect.js",
