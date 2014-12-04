@@ -4,6 +4,16 @@
   "description": "A fontselect directive for AngularJS",
   "homepage": "https://github.com/Jimdo/angular-fontselect",
   "author": "Jimdo GmbH",
+  "maintainers": [
+    "Hannes Diercks <hannes.diercks@jimdo.com>",
+    "Lasse Diercks <lasse@jimdo.com>",
+    "Joscha Feth <joscha@feth.com>",
+    "Ole Michaelis <Ole.Michaelis@googlemail.com>",
+    "Hauke Stange <hauke@jimdo.com>"
+  ],
+  "contributors": [
+    "HerrBertling <markus277@gmail.com>"
+  ],
   "main": "Gruntfile.js",
   "keywords": [
     "fonts",
@@ -56,16 +66,5 @@
     "load-grunt-tasks": "~1.0.0",
     "mkdirp": "^0.5.0",
     "protractor": "~1.4.0"
-  },
-  "contributors": [
-    "HerrBertling <markus277@gmail.com>",
-    "ldiercks <lasse@jimdo.com>"
-  ],
-  "maintainers": [
-    "Hannes Diercks <hannes.diercks@jimdo.com>",
-    "Lasse Diercks <lasse@jimdo.com>",
-    "Joscha Feth <joscha@feth.com>",
-    "Ole Michaelis <Ole.Michaelis@googlemail.com>",
-    "Hauke Stange <hauke@jimdo.com>"
-  ]
+  }
 }
