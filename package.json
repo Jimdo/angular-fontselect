@@ -45,7 +45,7 @@
     "grunt-npm": "https://github.com/Xiphe/grunt-npm/tarball/98187270151e53d45214d778de394a557e81958c",
     "grunt-parallel": "^0.3.1",
     "grunt-protractor-runner": "~1.1.4",
-    "grunt-shell-spawn": "sergkr/grunt-shell-spawn#b92a666fa43161ebde1ab3dae9121793dab4d5cc",
+    "grunt-shell-spawn": "~0.3.0",
     "jasmine-spec-reporter": "^1.1.0",
     "karma-chrome-launcher": "~0.1.6",
     "karma-coffee-preprocessor": "~0.2.1",
