@@ -30,7 +30,7 @@ module.exports = function(grunt) {
         watcher = 'watch:andtestunit';
       }
       if (!suite || suite === 'e2e') {
-        tasks.push('connect:test', 'shell:startsilenium');
+        tasks.push('connect:test', 'protractor_webdriver');
         watcher = 'watch:andteste2e';
       }
       if (!suite) {
