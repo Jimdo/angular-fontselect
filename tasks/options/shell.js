@@ -4,10 +4,7 @@ var base = process.cwd();
 
 module.exports = {
   opendemo: {
-    command: 'sleep 1; open http://localhost:' + (optPort || process.env.DEMO_PORT || 8000) + '/',
-    options: {
-      async: true
-    }
+    command: 'sleep 1; open http://localhost:' + (optPort || process.env.DEMO_PORT || 8000) + '/'
   },
   deleteCoverages: {
     command: [
