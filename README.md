@@ -38,7 +38,7 @@ Directive Attributes
 
 #### Current State
 
-	<jd-fontselect current="myStateObject" />
+	<jd-fontselect state="myStateObject" />
 
 The State object is meant to be read only and can be used for initiation with a
 certain state.
