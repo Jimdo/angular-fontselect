@@ -1,5 +1,5 @@
 /*!
- * angular-fontselect v0.9.3
+ * angular-fontselect v0.9.4
  * https://github.com/Jimdo/angular-fontselect
  *
  * A fontselect directive for AngularJS
@@ -1749,6 +1749,7 @@
         $scope.$on(DO_CLOSE_EVENT, function() {
           if ($scope.active) {
             $scope.toggle();
+            $scope.$apply();
           }
         });
   
