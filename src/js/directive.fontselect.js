@@ -14,7 +14,8 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsSer
       onInit: '&?',
       onOpen: '&?',
       onClose: '&?',
-      onChange: '&?'
+      onChange: '&?',
+      idSuffix: '@?'
     },
     restrict: 'E',
     templateUrl: 'fontselect.html',
@@ -35,6 +36,7 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsSer
     ) {
       $scope.fonts = fontsService.getAllFonts();
       $scope.id = id++;
+      $scope.suffixedId = $scope.idSuffix ? $scope.idSuffix : $scope.id;
       $scope.stylesActive = true;
       $scope.settingsActive = false;
       $scope.active = false;

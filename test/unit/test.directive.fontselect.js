@@ -141,12 +141,25 @@ describe('fontselect directive', function() {
     expect(elm.find('li').length).toBe(length + 1);
   });
 
-  it('should have an id', function() {
-    expect(elm.find('.jdfs-main').attr('id')).toBe('jd-fontselect-1');
-  });
+  describe('ids', function() {
+    it('should have an id', function() {
+      expect(elm.find('.jdfs-main').attr('id')).toBe('jd-fontselect-1');
+    });
 
-  it('should increase the id for every instance', function() {
-    expect(createNewDirective().elm.find('.jdfs-main').attr('id')).toBe('jd-fontselect-2');
+    it('should increase the id for every instance', function() {
+      expect(createNewDirective().elm.find('.jdfs-main').attr('id')).toBe('jd-fontselect-2');
+    });
+
+    it('should have a customizable idSuffix', function() {
+      var d = createNewDirective('id-suffix="hase"');
+      expect(d.elm.find('#jd-fontselect-hase').length).toBe(1);
+    });
+
+    it('should have suffixed sub-elements', function() {
+      var d = createNewDirective('id-suffix="fuxx"');
+      expect(d.elm.find('#jd-fontselect-fuxx-toggle').length).toBe(1);
+      expect(d.elm.find('#jd-fontselect-fuxx-toggle-search').length).toBe(1);
+    });
   });
 
   describe('toName method', function() {
