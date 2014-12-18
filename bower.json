@@ -7,7 +7,8 @@
     "Joscha Feth <joscha@feth.com>",
     "Ole Michaelis <Ole.Michaelis@googlemail.com>",
     "Hauke Stange <hauke@jimdo.com>",
-    "HerrBertling <markus277@gmail.com>"
+    "HerrBertling <markus277@gmail.com>",
+    "Sebastian Eichner <mail@sebastian-eichner.de>"
   ],
   "description": "A fontselect directive for AngularJS",
   "main": "dist/angular-fontselect.js",
