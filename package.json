@@ -9,10 +9,10 @@
     "Lasse Diercks <lasse@jimdo.com>",
     "Joscha Feth <joscha@feth.com>",
     "Ole Michaelis <Ole.Michaelis@googlemail.com>",
-    "Hauke Stange <hauke@jimdo.com>"
+    "Hauke Stange <hauke@jimdo.com>",
+    "Sebastian Eichner <mail@sebastian-eichner.de>"
   ],
   "contributors": [
-    "Sebastian Eichner <mail@sebastian-eichner.de>",
     "HerrBertling <markus277@gmail.com>"
   ],
   "main": "Gruntfile.js",
