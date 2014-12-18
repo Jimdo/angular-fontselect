@@ -6,7 +6,6 @@ var reporters = process.env.KARMA_REPORTERS;
 module.exports = {
   options: {
     browsers: (browsers || 'Chrome').split(','),
-    reporters: (reporters || 'progress').split(',').concat('coverage'),
     preprocessors: {
       'src/**/*.+(js|coffee)': ['coverage'],
       '**/*.coffee': ['coffee']
@@ -24,6 +23,7 @@ module.exports = {
         type: 'text-summary'
       }]
     },
+    reporters: (reporters || 'progress').split(',').concat('coverage'),
     singleRun: true,
     files: files.environments.karma.concat([files.unitTests])
   },

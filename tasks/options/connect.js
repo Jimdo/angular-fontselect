@@ -34,7 +34,7 @@ function middleware(dir, env) {
 
 module.exports = {
   options: {
-    hostname: '*',
+    hostname: '*'
   },
   test: {
     options: {

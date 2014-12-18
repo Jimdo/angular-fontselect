@@ -17,7 +17,7 @@ if (browsers) {
 var reporters = grunt.option('reporter') || grunt.option('reporters');
 if (reporters) {
   process.env.KARMA_REPORTERS = reporters;
-  process.env.PROTRACTOR_REPORTER = reporters;
+  process.env.PROTRACTOR_REPORTERS = reporters;
 }
 
 Helpers.config = {

@@ -3,8 +3,17 @@
  */
 /* jshint undef: false, unused: false  */
 
-/* some globals we might need later on, set in beforeEach */
-var $rootScope, $compile, $injector, $httpBackend, $scope, $q, $controller, $googleScope, elm, fontsService, $timeout;
+/* some globals we might need later on, set in initGlobals */
+var basicGlobals = [
+  '$rootScope',
+  '$compile',
+  '$injector',
+  '$httpBackend',
+  '$q',
+  '$controller',
+  'fontsService',
+  '$timeout'
+];
 
 /* Request Regex for catching Google Font API calls. */
 /** @const */
@@ -38,60 +47,69 @@ var AND_SOME_FONT_MORE = {
 var DEFAULT_WEBSAFE_FONTS_BACKUP;
 var directiveID = 1;
 
-function createNewDirective(attributeStr) {
-  var e, scope;
+/**
+ * Initiate the angular module we want to test on and initiate
+ * global angular modules required for testing (like $rootScope etc.)
+ *
+ * @param {bool} [withModule]  disable automatic module initiation
+ *                             (by default, the module is initiated
+ *                             automatically for you)
+ * @paran {array} [additional] array of strings for additional modules
+ *                             to be exposed on the window, can also be the first
+ *                             parameter if withModule should be true
+ */
+function initGlobals(withModule, additional) {
+  if (angular.isArray(withModule)) {
+    additional = withModule;
+    withModule = true;
+  }
+
+  if (!angular.isArray(additional)) {
+    additional = [];
+  }
+
+  if (withModule !== false) {
+    /* Initiate the main module */
+    module('jdFontselect');
+  }
+
+  inject(function($injector) {
+    basicGlobals.concat(additional).forEach(function(global) {
+      initGlobals.cleanup.push({name: global, value: window[global]});
+      window[global] = $injector.get(global);
+    });
+  });
+}
+initGlobals.cleanup = [];
+
+function createDirective() {
+  if (!$compile) {
+    throw new Error('globals were not initiated');
+  }
+
+  var r = {};
+
+  $httpBackend.when('GET', GOOGLE_FONT_API_RGX).respond(GOOGLE_FONTS_RESPONSE);
+  $httpBackend.expectGET(GOOGLE_FONT_API_RGX);
 
   /* Create the element for our directive */
-  e = angular.element(
+  r.elm = angular.element(
     '<div id="wrap-' + directiveID + '">' +
       '<jd-fontselect ' + attributeStr + '/>' +
     '</div>');
 
   /* Apply the directive */
-  $compile(e)($rootScope);
+  $compile(r.elm)($rootScope);
   $rootScope.$digest();
 
   /* Save a reference to the directive scope */
-  scope = e.find('.jdfs-main div').scope();
-
-  directiveID++;
-
-  return {
-    elm: e,
-    scope: scope
-  };
-}
-
-beforeEach(function() {
-  DEFAULT_WEBSAFE_FONTS_BACKUP = angular.copy(DEFAULT_WEBSAFE_FONTS);
-
-  /* Initiate the main module */
-  module('jdFontselect');
-
-  /* jshint maxparams: 10 */
-  inject(function(_$rootScope_, _$compile_, _$injector_, _$httpBackend_, _$q_, _$controller_, _$timeout_) {
-  /* jshint maxparams: 3 */
-    $rootScope   = _$rootScope_;
-    $compile     = _$compile_;
-    $injector    = _$injector_;
-    $httpBackend = _$httpBackend_;
-    $q           = _$q_;
-    $controller  = _$controller_;
-    $timeout     = _$timeout_;
-  });
-
-  fontsService = $injector.get(NAME_FONTSSERVICE);
-
-  $httpBackend.when('GET', GOOGLE_FONT_API_RGX).respond(GOOGLE_FONTS_RESPONSE);
-  $httpBackend.expectGET(GOOGLE_FONT_API_RGX);
-
-  var d = createNewDirective();
-
-  elm = d.elm;
-  $scope = d.scope;
+  r.scope = r.elm.isolateScope() || r.elm.scope();
 
   $httpBackend.flush(1);
-});
+  directiveID++;
+
+  return r;
+}
 
 afterEach(function(done) {
   /* Each directive gets it's own id, we want to test only on id 1 */
@@ -100,12 +118,28 @@ afterEach(function(done) {
   _googleFontsInitiated = false;
   DEFAULT_WEBSAFE_FONTS = DEFAULT_WEBSAFE_FONTS_BACKUP;
 
-  /* Since verifyNoOutstandingExpectation will do a digest we do not want
-     that to collide with any digests we're doing in tests. -> timeout. */
-  setTimeout(function() {
-    /* Make sure, there are no unexpected request */
-    $httpBackend.verifyNoOutstandingExpectation();
-    $httpBackend.verifyNoOutstandingRequest();
+  if (window.$httpBackend) {
+    /* Make sure, there are no unexpected request!
+       Since verifyNoOutstandingExpectation will do a digest we do not want
+       that to collide with any digests we're doing in tests. -> timeout. */
+    setTimeout(function() {
+      $httpBackend.verifyNoOutstandingExpectation();
+      $httpBackend.verifyNoOutstandingRequest();
+      done();
+    }, 0);
+  } else {
     done();
-  }, 0);
+  }
+});
+
+/* Clean-up globals initiated by initGlobals */
+afterEach(function() {
+  initGlobals.cleanup.forEach(function(global) {
+    if (angular.isUndefined(global.value)) {
+      delete window[global.name];
+    } else {
+      window[global.name] = global.value;
+    }
+  });
+  initGlobals.cleanup = [];
 });

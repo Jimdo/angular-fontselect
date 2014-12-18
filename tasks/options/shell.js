@@ -20,19 +20,8 @@ module.exports = {
       'mv ' + files.wflDir + 'target/webfont.js ' + files.libsDir + 'webfontloader.js'
     ].join(';')
   },
-  startsilenium: {
-    command: process.cwd() + '/node_modules/protractor/bin/webdriver-manager start',
-    options: {
-      async: true,
-      stdout: false,
-      stderr: false
-    }
-  },
   opendemo: {
-    command: 'sleep 1; open http://localhost:' + (optPort || process.env.DEMO_PORT || 8000) + '/',
-    options: {
-      async: true
-    }
+    command: 'sleep 1; open http://localhost:' + (optPort || process.env.DEMO_PORT || 8000) + '/'
   },
   deleteCoverages: {
     command: [
