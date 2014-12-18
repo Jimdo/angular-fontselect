@@ -12,6 +12,7 @@
     "Hauke Stange <hauke@jimdo.com>"
   ],
   "contributors": [
+    "Sebastian Eichner <mail@sebastian-eichner.de>",
     "HerrBertling <markus277@gmail.com>"
   ],
   "main": "Gruntfile.js",
