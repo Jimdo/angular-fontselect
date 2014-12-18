@@ -42,6 +42,9 @@ var NAME_FONTSSERVICE = 'jdFontselect.fonts';
 var CLOSE_EVENT = 'jdFontselectEventClose';
 
 /** @const */
+var DO_CLOSE_EVENT = 'jdFontselectEventDoClose';
+
+/** @const */
 var OPEN_EVENT = 'jdFontselectEventOpen';
 
 /** @const */

@@ -1,5 +1,5 @@
 /* global STATE_DEFAULTS, NAME_FONTSSERVICE, SORT_ATTRIBUTES, TEXT_DEFAULTS */
-/* global KEY_ESCAPE, VALUE_NO_FONT_STACK, CLOSE_EVENT, OPEN_EVENT */
+/* global KEY_ESCAPE, VALUE_NO_FONT_STACK, CLOSE_EVENT, OPEN_EVENT, DO_CLOSE_EVENT */
 /* jshint maxparams: 5 */
 var id = 1;
 
@@ -108,6 +108,12 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsSer
         $scope.$broadcast(CLOSE_EVENT);
         $scope.onClose();
       }
+
+      $scope.$on(DO_CLOSE_EVENT, function() {
+        if ($scope.active) {
+          $scope.toggle();
+        }
+      });
 
       $scope.reverseSort = function() {
         var sort = $scope.current.sort;

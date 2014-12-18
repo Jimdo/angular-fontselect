@@ -1,4 +1,4 @@
-/* global DEFAULT_WEBSAFE_FONTS, $injector, initGlobals, createDirective,
+/* global DEFAULT_WEBSAFE_FONTS, $injector, initGlobals, createDirective, DO_CLOSE_EVENT,
           NAME_JDFONTLIST_CONTROLLER, $controller, ANOTHER_FONT, AND_SOME_FONT_MORE,
           $rootScope, LIST_CONTAINER_CLASS, PROVIDER_GOOGLE, NAME_FONTSSERVICE */
 
@@ -91,6 +91,12 @@ describe('fontselect directive', function() {
       $scope.current.font = fontsService._fonts[0];
       $scope.$digest();
       expect($scope.searching).toBe(true);
+    });
+
+    it('should be closable by event', function() {
+      $scope.active = true;
+      $rootScope.$broadcast(DO_CLOSE_EVENT);
+      expect($scope.active).toBe(false);
     });
 
     describe('reset search button', function() {
