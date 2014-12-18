@@ -1,8 +1,8 @@
 /* global $rootScope, DEFAULT_WEBSAFE_FONTS, PROVIDER_GOOGLE, STATE_DEFAULTS,
-          createNewDirective, fontsService, PROVIDERS,
-          VALUE_NO_FONT_STACK, $httpBackend, $timeout */
+          initGlobals, createDirective, PROVIDERS, $injector,
+          VALUE_NO_FONT_STACK, $timeout, NAME_FONTSSERVICE */
 describe('api', function() {
-  var elm, $scope;
+  var elm, $scope, fontsService;
 
   function setupWithState(defaults) {
 
@@ -12,7 +12,7 @@ describe('api', function() {
 
     $rootScope.state = defaults;
 
-    var d = createNewDirective('state="state" stack="stack" name="name"');
+    var d = createDirective('state="state" stack="stack" name="name"');
     $scope = d.scope;
     elm = d.elm;
   }
@@ -21,6 +21,11 @@ describe('api', function() {
     $scope.current.font = fontsService.searchFont({provider: PROVIDER_GOOGLE});
     $scope.$apply();
   }
+
+  beforeEach(function() {
+    initGlobals();
+    fontsService = $injector.get(NAME_FONTSSERVICE);
+  });
 
   it('should expand api data into current', function() {
     setupWithState({foo: 'bar'});
@@ -39,17 +44,20 @@ describe('api', function() {
   it('should call an init method when passed', function() {
     $rootScope.initFS = jasmine.createSpy('external initiation');
 
-    createNewDirective('on-init="initFS()"');
+    createDirective('on-init="initFS()"');
     expect($rootScope.initFS).toHaveBeenCalled();
   });
 
   it('should pass the scope into external init callback', function(done) {
+    /* a first directive */
+    createDirective();
+
     $rootScope.initFS = function($scope) {
       expect($scope.id).toBe(2);
       done();
     };
 
-    createNewDirective('on-init="initFS($scope)"');
+    createDirective('on-init="initFS($scope)"');
   });
 
   describe('events', function() {
@@ -57,7 +65,7 @@ describe('api', function() {
     it('should call optional onOpen callback', function() {
       $rootScope.openFs = jasmine.createSpy('openFs');
 
-      var $toggle = createNewDirective('on-open="openFs()"').elm.find('button.jdfs-toggle');
+      var $toggle = createDirective('on-open="openFs()"').elm.find('button.jdfs-toggle');
 
       expect($rootScope.openFs).not.toHaveBeenCalled();
       $toggle.click();
@@ -68,7 +76,7 @@ describe('api', function() {
     it('should call optional onClose callback', function() {
       $rootScope.closeFs = jasmine.createSpy('closeFs');
 
-      var $toggle = createNewDirective('on-close="closeFs()"').elm.find('button.jdfs-toggle');
+      var $toggle = createDirective('on-close="closeFs()"').elm.find('button.jdfs-toggle');
 
       expect($rootScope.closeFs).not.toHaveBeenCalled();
       $toggle.click();
@@ -84,7 +92,7 @@ describe('api', function() {
         isOn: true
       };
 
-     createNewDirective('on-close="closeFs()" ng-if="toggle.isOn"');
+     createDirective('on-close="closeFs()" ng-if="toggle.isOn"');
 
      expect($rootScope.closeFs).not.toHaveBeenCalled();
      $rootScope.toggle.isOn = false;
@@ -94,7 +102,7 @@ describe('api', function() {
 
     it('should call onChange when font changes', function() {
       $rootScope.onChangeCb = jasmine.createSpy('onChange');
-      var d = createNewDirective('on-change="onChangeCb(font)"');
+      var d = createDirective('on-change="onChangeCb(font)"');
 
       d.scope.current.font = DEFAULT_WEBSAFE_FONTS[3];
       d.scope.$digest();
@@ -130,7 +138,6 @@ describe('api', function() {
     });
 
     describe('font service', function() {
-
       it('should have a blank list of urls when only one webfont ist selected', function() {
         expect(fontsService.getUrls()).toEqual({});
       });
@@ -277,13 +284,13 @@ describe('api', function() {
       });
 
       it('should be able to find a preselected font from google', function() {
+        createDirective();
         var font = fontsService.searchFont({provider: PROVIDER_GOOGLE});
         fontsService._fonts = [];
         expect(fontsService.getUsedFonts().length).toBe(0);
 
         window._googleFontsInitiated = false;
         setupWithState({ font: font });
-        $httpBackend.flush(1);
 
         expect(fontsService.getUsedFonts()[0].name).toEqual(font.name);
       });
@@ -316,6 +323,8 @@ describe('api', function() {
     describe('get globals from fontsService', function() {
       var providers, subsets;
       beforeEach(function() {
+        createDirective();
+
         providers = {};
         subsets = {};
 
@@ -332,29 +341,28 @@ describe('api', function() {
       });
 
       it('should set default providers to fontService when we initiate a new font selection', function() {
-        createNewDirective();
+        createDirective();
         expect(providers).toEqual(PROVIDERS);
       });
 
       it('should set default subsets to fontService when we initiate a new font selection', function() {
-        createNewDirective();
+        createDirective();
         expect(subsets).toEqual(STATE_DEFAULTS.subsets);
       });
 
       it ('should not expand the default providers once they are initiated', function() {
         var fakeProviders = {foo: 'fara'};
         fontsService.setProviders(fakeProviders);
-        createNewDirective();
+        createDirective();
         expect(providers).toEqual(fakeProviders);
       });
 
       it ('should not expand the default subsets once they are initiated', function() {
         var fakeSubsets = {lorem: 'dolor'};
         fontsService.setSubsets(fakeSubsets);
-        createNewDirective();
+        createDirective();
         expect(subsets).toEqual(fakeSubsets);
       });
     });
   });
-
 });

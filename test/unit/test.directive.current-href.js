@@ -1,9 +1,13 @@
-/* global $compile, $rootScope, $scope, PROVIDER_GOOGLE, URL_GOOGLE_FONTS_CSS,
-          fontsService, SUBSET_LATIN_EXT */
+/* global $compile, $rootScope, PROVIDER_GOOGLE, URL_GOOGLE_FONTS_CSS, $injector,
+          SUBSET_LATIN_EXT, initGlobals, createDirective, NAME_FONTSSERVICE */
 describe('current href directive', function() {
-  var cfElm, $cfScope;
+  var cfElm, $cfScope, $scope, fontsService;
 
   beforeEach(function() {
+    initGlobals();
+
+    $scope = createDirective().scope;
+
     cfElm = angular.element(
       '<div><link rel="stylesheet/css" type="text/css" jd-fontselect-current-href class="foob" /></div>'
     );
@@ -12,6 +16,8 @@ describe('current href directive', function() {
     $rootScope.$digest();
 
     $cfScope = cfElm.scope();
+
+    fontsService = $injector.get(NAME_FONTSSERVICE);
   });
 
   it('should not exist when we have no external provider', function() {

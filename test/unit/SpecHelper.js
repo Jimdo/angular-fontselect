@@ -11,7 +11,6 @@ var basicGlobals = [
   '$httpBackend',
   '$q',
   '$controller',
-  'fontsService',
   '$timeout'
 ];
 
@@ -46,6 +45,10 @@ var AND_SOME_FONT_MORE = {
 
 var DEFAULT_WEBSAFE_FONTS_BACKUP;
 var directiveID = 1;
+
+beforeEach(function() {
+  DEFAULT_WEBSAFE_FONTS_BACKUP = angular.copy(DEFAULT_WEBSAFE_FONTS);
+});
 
 /**
  * Initiate the angular module we want to test on and initiate
@@ -82,15 +85,24 @@ function initGlobals(withModule, additional) {
 }
 initGlobals.cleanup = [];
 
-function createDirective() {
+function createDirective(attributeStr, flush) {
   if (!$compile) {
     throw new Error('globals were not initiated');
   }
 
   var r = {};
+  var googleActive = false;
 
-  $httpBackend.when('GET', GOOGLE_FONT_API_RGX).respond(GOOGLE_FONTS_RESPONSE);
-  $httpBackend.expectGET(GOOGLE_FONT_API_RGX);
+  angular.forEach($injector.get(NAME_FONTSSERVICE).getProviders(), function(active, provider) {
+    if (provider === PROVIDER_GOOGLE && active) {
+      googleActive = true;
+    }
+  });
+
+  if (googleActive) {
+    $httpBackend.when('GET', GOOGLE_FONT_API_RGX).respond(GOOGLE_FONTS_RESPONSE);
+    $httpBackend.expectGET(GOOGLE_FONT_API_RGX);
+  }
 
   /* Create the element for our directive */
   r.elm = angular.element(
@@ -103,9 +115,12 @@ function createDirective() {
   $rootScope.$digest();
 
   /* Save a reference to the directive scope */
-  r.scope = r.elm.isolateScope() || r.elm.scope();
+  r.scope = r.elm.children().isolateScope() || r.elm.children().scope();
 
-  $httpBackend.flush(1);
+  if (googleActive && flush !== false) {
+    $httpBackend.flush(1);
+  }
+
   directiveID++;
 
   return r;

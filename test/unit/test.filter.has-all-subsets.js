@@ -1,10 +1,12 @@
-/* global DEFAULT_WEBSAFE_FONTS */
+/* global DEFAULT_WEBSAFE_FONTS, initGlobals, $injector */
 describe('hasAllSubsets filter', function() {
   var filter;
-  beforeEach(inject(function($filter) {
-    filter = $filter('hasAllSubsets');
+
+  beforeEach(function() {
+    initGlobals();
+    filter = $injector.get('$filter')('hasAllSubsets');
     expect(DEFAULT_WEBSAFE_FONTS.length).toBe(6);
-  }));
+  });
 
   it('should exist', function() {
     expect(filter).toBeInstanceOf(Function);

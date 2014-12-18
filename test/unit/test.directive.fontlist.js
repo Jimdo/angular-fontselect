@@ -1,11 +1,16 @@
-/* global elm, $scope, LIST_CONTAINER_CLASS, PROVIDER_WEBSAFE, PROVIDER_GOOGLE */
-/* global CATEGORY_SERIF */
+/* global LIST_CONTAINER_CLASS, PROVIDER_WEBSAFE, PROVIDER_GOOGLE, initGlobals */
+/* global CATEGORY_SERIF, createDirective */
 describe('fontlist directive', function() {
   'use strict';
 
-  var fontlist, $childScope;
+  var fontlist, $childScope, $scope, elm;
 
   beforeEach(function() {
+    initGlobals();
+    var d = createDirective();
+    $scope = d.scope;
+    elm = d.elm;
+
     fontlist = elm.find(LIST_CONTAINER_CLASS);
     $childScope = fontlist.children().first().scope();
   });

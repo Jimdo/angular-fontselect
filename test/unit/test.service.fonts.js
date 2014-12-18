@@ -1,8 +1,16 @@
-/* global PROVIDER_WEBSAFE, PROVIDER_GOOGLE, $scope, $rootScope, createNewDirective, fontsService */
-/* global CATEGORY_OBJECTS, CATEGORY_OTHER, CATEGORY_HANDWRITING, $httpBackend, GOOGLE_FONTS_RESPONSE */
+/* global PROVIDER_WEBSAFE, PROVIDER_GOOGLE, $rootScope, $injector, initGlobals,
+          CATEGORY_OBJECTS, CATEGORY_OTHER, CATEGORY_HANDWRITING, $httpBackend, GOOGLE_FONTS_RESPONSE,
+          NAME_FONTSSERVICE, createDirective */
 
 describe('fontsService', function() {
   'use strict';
+
+  var fontsService;
+
+  beforeEach(function() {
+    initGlobals();
+    fontsService = $injector.get(NAME_FONTSSERVICE);
+  });
 
   var customFont = {
     name: 'Foo',
@@ -131,7 +139,7 @@ describe('fontsService', function() {
 
   describe('google fonts', function() {
     it('should not load google fonts twice, when we open two directives', function() {
-      createNewDirective();
+      createDirective();
     });
 
     it('should gracefully fall back to the other category', function() {
@@ -140,6 +148,8 @@ describe('fontsService', function() {
     });
 
     it('should have the variant appended to imports', function() {
+      var $scope = createDirective().scope;
+
       $scope.current.font = fontsService.searchFont({provider: PROVIDER_GOOGLE});
       $scope.$digest();
       expect(fontsService.getImports().google).toMatch('%3Aregular');
@@ -183,6 +193,8 @@ describe('fontsService', function() {
     }
 
     it('should return a google url for Roboto when we pass a Roboto stack (google)', function(done) {
+      createDirective();
+
       var robotoFont = fontsService.getFontByKey('roboto', PROVIDER_GOOGLE);
       var oswaldFont = fontsService.getFontByKey('oswald', PROVIDER_GOOGLE);
       getImportStacks([robotoFont.stack, oswaldFont.stack], function(importUrls) {
@@ -204,6 +216,8 @@ describe('fontsService', function() {
     });
 
     it('should return the some found fonts when strict mode is off', function(done) {
+      createDirective();
+
       getImportStacks([
         'Arial, sans-serif',
         '"Roboto", sans-serif, "google"',
@@ -307,85 +321,93 @@ describe('fontsService', function() {
     });
   });
 
-  describe('current fonts', function() {
-    it('should return an empty list when no fonts are selected', function() {
-      expect(fontsService.getUsedFonts().length).toBe(0);
+  describe('with scope', function() {
+    var $scope;
+
+    beforeEach(function() {
+      $scope = createDirective().scope;
     });
 
-    it('should know which fonts are active', function() {
-      $scope.current.font = $scope.fonts[2];
-      $scope.$digest();
+    describe('current fonts', function() {
+      it('should return an empty list when no fonts are selected', function() {
+        expect(fontsService.getUsedFonts().length).toBe(0);
+      });
 
-      expect($scope.current.font).toBeDefined();
-      expect(fontsService.getUsedFonts()[0]).toBe([$scope.current.font][0]);
-      expect(fontsService.getUsedFonts().length).toBe(1);
+      it('should know which fonts are active', function() {
+        $scope.current.font = $scope.fonts[2];
+        $scope.$digest();
+
+        expect($scope.current.font).toBeDefined();
+        expect(fontsService.getUsedFonts()[0]).toBe([$scope.current.font][0]);
+        expect(fontsService.getUsedFonts().length).toBe(1);
+      });
+
+      it('should keep track of used fonts for all directives', function() {
+        var d = createDirective('', false);
+
+        d.scope.current.font = $scope.fonts[1];
+        $scope.current.font = $scope.fonts[2];
+        $rootScope.$digest();
+
+        expect(fontsService.getUsedFonts().length).toBe(2);
+        expect($scope.fonts[1].used).toBe(1);
+
+        d.scope.current.font = $scope.fonts[2];
+        d.scope.$digest();
+
+        expect(fontsService.getUsedFonts().length).toBe(1);
+        expect(fontsService.getUsedFonts()[0].used).toBe(2);
+        expect($scope.fonts[1].used).toBe(0);
+      });
+
+      it('should update _usedProviders object, according to the font usage', function() {
+        expect(fontsService._usedProviders[PROVIDER_WEBSAFE]).toBe(false);
+        $scope.current.font = $scope.fonts[2];
+        $scope.$digest();
+        expect(fontsService._usedProviders[PROVIDER_WEBSAFE]).toBe(true);
+        $scope.fonts[4].provider = PROVIDER_GOOGLE;
+        $scope.current.font = $scope.fonts[4];
+
+        $scope.$digest();
+        expect(fontsService._usedProviders[PROVIDER_WEBSAFE]).toBe(false);
+        expect(fontsService._usedProviders[PROVIDER_GOOGLE]).toBe(true);
+      });
+
+      it('should update _usedProviders object when we reset', function() {
+        $scope.current.font = $scope.fonts[2];
+        $scope.$digest();
+        expect(fontsService._usedProviders[PROVIDER_WEBSAFE]).toBe(true);
+        $scope.reset();
+        $scope.$digest();
+        expect(fontsService._usedProviders[PROVIDER_WEBSAFE]).toBe(false);
+      });
+
+      it('should repair _usedProviders on update', function() {
+        fontsService._usedProviders[PROVIDER_GOOGLE] = true;
+        $scope.current.font = $scope.fonts[2];
+        $scope.$digest();
+        expect(fontsService._usedProviders[PROVIDER_GOOGLE]).toBe(false);
+      });
     });
 
-    it('should keep track of used fonts for all directives', function() {
-      var d = createNewDirective();
+    describe('subsets', function() {
+      it('should use one global subset object for all directives', function() {
+        var d = createDirective('', false);
+        expect($scope.current.subsets).toBe(d.scope.current.subsets);
 
-      d.scope.current.font = $scope.fonts[1];
-      $scope.current.font = $scope.fonts[2];
-      $rootScope.$digest();
-
-      expect(fontsService.getUsedFonts().length).toBe(2);
-      expect($scope.fonts[1].used).toBe(1);
-
-      d.scope.current.font = $scope.fonts[2];
-      d.scope.$digest();
-
-      expect(fontsService.getUsedFonts().length).toBe(1);
-      expect(fontsService.getUsedFonts()[0].used).toBe(2);
-      expect($scope.fonts[1].used).toBe(0);
+        $scope.current.subsets.foo = 'fara';
+        expect(d.scope.current.subsets.foo).toBe('fara');
+      });
     });
 
-    it('should update _usedProviders object, according to the font usage', function() {
-      expect(fontsService._usedProviders[PROVIDER_WEBSAFE]).toBe(false);
-      $scope.current.font = $scope.fonts[2];
-      $scope.$digest();
-      expect(fontsService._usedProviders[PROVIDER_WEBSAFE]).toBe(true);
-      $scope.fonts[4].provider = PROVIDER_GOOGLE;
-      $scope.current.font = $scope.fonts[4];
+    describe('providers', function() {
+      it('should use one global provider object for all directives', function() {
+        var d = createDirective('', false);
+        expect($scope.current.providers).toBe(d.scope.current.providers);
 
-      $scope.$digest();
-      expect(fontsService._usedProviders[PROVIDER_WEBSAFE]).toBe(false);
-      expect(fontsService._usedProviders[PROVIDER_GOOGLE]).toBe(true);
-    });
-
-    it('should update _usedProviders object when we reset', function() {
-      $scope.current.font = $scope.fonts[2];
-      $scope.$digest();
-      expect(fontsService._usedProviders[PROVIDER_WEBSAFE]).toBe(true);
-      $scope.reset();
-      $scope.$digest();
-      expect(fontsService._usedProviders[PROVIDER_WEBSAFE]).toBe(false);
-    });
-
-    it('should repair _usedProviders on update', function() {
-      fontsService._usedProviders[PROVIDER_GOOGLE] = true;
-      $scope.current.font = $scope.fonts[2];
-      $scope.$digest();
-      expect(fontsService._usedProviders[PROVIDER_GOOGLE]).toBe(false);
-    });
-  });
-
-  describe('subsets', function() {
-    it('should use one global subset object for all directives', function() {
-      var d = createNewDirective();
-      expect($scope.current.subsets).toBe(d.scope.current.subsets);
-
-      $scope.current.subsets.foo = 'fara';
-      expect(d.scope.current.subsets.foo).toBe('fara');
-    });
-  });
-
-  describe('providers', function() {
-    it('should use one global provider object for all directives', function() {
-      var d = createNewDirective();
-      expect($scope.current.providers).toBe(d.scope.current.providers);
-
-      $scope.current.providers.foo = 'fara';
-      expect(d.scope.current.providers.foo).toBe('fara');
+        $scope.current.providers.foo = 'fara';
+        expect(d.scope.current.providers.foo).toBe('fara');
+      });
     });
   });
 
@@ -445,6 +467,8 @@ describe('fontsService', function() {
     });
 
     it('should have an internal promise for the google api request', function() {
+      createDirective();
+
       expect(fontsService._initPromises.length).toBe(1);
     });
 
@@ -465,6 +489,8 @@ describe('fontsService', function() {
     });
 
     it('should reject when a initial font could not be found', function(done) {
+      createDirective();
+
       var voidStack = 'Hase Igel Fuchs';
       var error;
 
@@ -484,6 +510,8 @@ describe('fontsService', function() {
     });
 
     it('should not reject after an initial font could not be found', function(done) {
+      createDirective();
+
       var invalidStack = 'Hase Igel Fuchs';
       var expectedFont = fontsService._fonts[0];
       var okStack = expectedFont.stack;

@@ -1,3 +1,4 @@
+/* global $injector, initGlobals */
 describe('fuzzy search filter', function() {
   var filter;
 
@@ -30,9 +31,8 @@ describe('fuzzy search filter', function() {
   };
 
   beforeEach(function() {
-    inject(['$filter', function(fltr) {
-      filter = fltr('fuzzySearch');
-    }]);
+    initGlobals();
+    filter = $injector.get('$filter')('fuzzySearch');
   });
 
   it('should exist', function() {

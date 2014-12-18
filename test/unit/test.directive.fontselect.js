@@ -1,14 +1,22 @@
-/* global DEFAULT_WEBSAFE_FONTS, $injector, $scope, elm, createNewDirective,
+/* global DEFAULT_WEBSAFE_FONTS, $injector, initGlobals, createDirective,
           NAME_JDFONTLIST_CONTROLLER, $controller, ANOTHER_FONT, AND_SOME_FONT_MORE,
-          $rootScope, fontsService, LIST_CONTAINER_CLASS, PROVIDER_GOOGLE */
+          $rootScope, LIST_CONTAINER_CLASS, PROVIDER_GOOGLE, NAME_FONTSSERVICE */
+
 describe('fontselect directive', function() {
   'use strict';
 
   var mainToggleButton, closeButton, mainSearchToggleButton, resetSearchButton,
-      $listScope, listElm;
-
+      $listScope, listElm, $scope, elm, fontsService;
 
   beforeEach(function() {
+    initGlobals();
+
+    var d = createDirective();
+    $scope = d.scope;
+    elm = d.elm;
+
+    fontsService = $injector.get(NAME_FONTSSERVICE);
+
     listElm = elm.find(LIST_CONTAINER_CLASS);
     $listScope = listElm.isolateScope();
 
@@ -146,7 +154,7 @@ describe('fontselect directive', function() {
   });
 
   it('should increase the id for every instance', function() {
-    expect(createNewDirective().elm.find('.jdfs-main').attr('id')).toBe('jd-fontselect-2');
+    expect(createDirective('', false).elm.find('.jdfs-main').attr('id')).toBe('jd-fontselect-2');
   });
 
   describe('toName method', function() {
@@ -388,12 +396,12 @@ describe('fontselect directive', function() {
       $rootScope.text = {
         toggleSearchLabel: 'Foo'
       };
-      var d = createNewDirective('text-obj="text"');
+      var d = createDirective('text-obj="text"', false);
       expect(jQuery('.jdfs-toggle-search', d.elm).first().text()).toBe('Foo');
     });
 
     it('should be able to evaluate raw text, passed to the directive', function() {
-      var d = createNewDirective('text="{toggleSearchLabel: \'{{\'Fa\' + \'ra\'}}\'}"');
+      var d = createDirective('text="{toggleSearchLabel: \'{{\'Fa\' + \'ra\'}}\'}"', false);
       expect(jQuery('.jdfs-toggle-search', d.elm).first().text()).toBe('Fara');
     });
   });
