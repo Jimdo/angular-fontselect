@@ -1,5 +1,5 @@
 /*!
- * angular-fontselect v0.9.2
+ * angular-fontselect v0.9.3
  * https://github.com/Jimdo/angular-fontselect
  *
  * A fontselect directive for AngularJS
@@ -54,6 +54,9 @@
   
   /** @const */
   var CLOSE_EVENT = 'jdFontselectEventClose';
+  
+  /** @const */
+  var DO_CLOSE_EVENT = 'jdFontselectEventDoClose';
   
   /** @const */
   var OPEN_EVENT = 'jdFontselectEventOpen';
@@ -1743,6 +1746,12 @@
           $scope.onClose();
         }
   
+        $scope.$on(DO_CLOSE_EVENT, function() {
+          if ($scope.active) {
+            $scope.toggle();
+          }
+        });
+  
         $scope.reverseSort = function() {
           var sort = $scope.current.sort;
   
@@ -2831,11 +2840,6 @@
   
     $templateCache.put('current-href.html',
       "<link ng-href={{url}} ng-repeat=\"url in urls\">"
-    );
-  
-  
-    $templateCache.put('directive.html',
-      "<div><h1>My Directive</h1><h2>{{foo}}</h2></div>"
     );
   
   
