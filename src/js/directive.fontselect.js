@@ -112,6 +112,7 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsSer
       $scope.$on(DO_CLOSE_EVENT, function() {
         if ($scope.active) {
           $scope.toggle();
+          $scope.$apply();
         }
       });
 
