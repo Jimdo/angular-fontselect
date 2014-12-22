@@ -1,4 +1,4 @@
-/* global element, by */
+/* global element, by, runs */
 describe('fontlist directive', function() {
 
   var Helpers = require('./SpecHelper');
