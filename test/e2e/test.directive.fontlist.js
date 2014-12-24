@@ -1,7 +1,7 @@
 /* global element, by, runs */
-describe('fontlist directive', function() {
+var Helpers = require('./SpecHelper');
 
-  var Helpers = require('./SpecHelper');
+describe('fontlist directive', function() {
 
   beforeEach(Helpers.toggle);
 

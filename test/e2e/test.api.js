@@ -1,5 +1,6 @@
+var Helpers = require('./SpecHelper');
+
 describe('api', function() {
-  var Helpers = require('./SpecHelper');
 
   describe('events', function() {
     it('should be possible to use the open callback', function() {

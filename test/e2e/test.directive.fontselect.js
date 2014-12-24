@@ -1,7 +1,8 @@
 /* global element, by, protractor */
+var Helpers = require('./SpecHelper');
+
 describe('fontselect directive', function() {
 
-  var Helpers = require('./SpecHelper');
   var prot;
 
   beforeEach(function() {
