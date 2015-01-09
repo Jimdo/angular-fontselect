@@ -1,11 +1,10 @@
 /* global browser, element, by, protractor */
 var sandboxUrl = 'http://localhost:8765/';
-var active, prot, searching;
+var active, searching;
 
 beforeEach(function() {
   searching = false;
   active = false;
-  prot = protractor.getInstance();
   browser.get(sandboxUrl);
 });
 

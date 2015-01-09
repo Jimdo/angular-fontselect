@@ -31,7 +31,7 @@
     "test",
     "demo",
     "src",
-    "peonsfile.js",
+    "Gruntfile.js",
     "package.json"
   ],
   "dependencies": {

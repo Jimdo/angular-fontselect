@@ -19,7 +19,7 @@ before_script:
   - sh -e /etc/init.d/xvfb start
 
 script:
-  - peons test --reporter=spec
+  - grunt test --reporter=spec
 
 after_success:
-  - peons coveralls
+  - grunt coveralls

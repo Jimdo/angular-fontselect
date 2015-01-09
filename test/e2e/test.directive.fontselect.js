@@ -1,13 +1,7 @@
-/* global element, by, protractor */
+/* global element, by, protractor, browser */
 var Helpers = require('./SpecHelper');
 
 describe('fontselect directive', function() {
-
-  var prot;
-
-  beforeEach(function() {
-    prot = protractor.getInstance();
-  });
 
   it('should have a button', function() {
     expect(element.all(by.css('.jdfs-toggle')).count()).toBe(1);
@@ -118,7 +112,7 @@ describe('fontselect directive', function() {
       });
 
       it('should exist', function() {
-        expect(prot.isElementPresent(by.css(selector))).toBe(true);
+        expect(browser.isElementPresent(by.css(selector))).toBe(true);
       });
 
       it('should change it\'s label when we click on it', function() {
@@ -247,7 +241,7 @@ describe('fontselect directive', function() {
     it('should be focused when the directive gets activated by clicking on search', function() {
       Helpers.toggleBySearch();
 
-      prot.actions().sendKeys('foo').perform();
+      browser.actions().sendKeys('foo').perform();
       expect(element(by.model('current.search')).getAttribute('value')).toBe('foo');
     });
   });
@@ -257,20 +251,20 @@ describe('fontselect directive', function() {
 
     it('should close the directive when we hit ESC', function() {
       expect(element(by.className('jdfs-window')).isDisplayed()).toBe(true);
-      prot.actions().sendKeys(protractor.Key.ESCAPE).perform();
+      browser.actions().sendKeys(protractor.Key.ESCAPE).perform();
       expect(element(by.className('jdfs-window')).isDisplayed()).toBe(false);
     });
 
     it('should select the first font when we hit the down arrow key', function() {
       var font = Helpers.getFontLabel(0);
       expect(font.getAttribute('class')).not.toContain('jdfs-active');
-      prot.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+      browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
       expect(font.getAttribute('class')).toContain('jdfs-active');
     });
 
     it('should select the first font of the second page when we hit the right arrow key', function() {
       expect(Helpers.currentPage()).toBe(1);
-      prot.actions().sendKeys(protractor.Key.ARROW_RIGHT).perform();
+      browser.actions().sendKeys(protractor.Key.ARROW_RIGHT).perform();
       expect(Helpers.currentPage()).toBe(2);
       expect(Helpers.getFontLabel(0).getAttribute('class')).toContain('jdfs-active');
     });
@@ -279,15 +273,15 @@ describe('fontselect directive', function() {
       var font1 = Helpers.getFontLabel(0);
       var font2 = Helpers.getFontLabel(1);
 
-      prot.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+      browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
       expect(font1.getAttribute('class')).toContain('jdfs-active');
       expect(font2.getAttribute('class')).not.toContain('jdfs-active');
 
-      prot.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+      browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
       expect(font1.getAttribute('class')).not.toContain('jdfs-active');
       expect(font2.getAttribute('class')).toContain('jdfs-active');
 
-      prot.actions().sendKeys(protractor.Key.ARROW_UP).perform();
+      browser.actions().sendKeys(protractor.Key.ARROW_UP).perform();
       expect(font1.getAttribute('class')).toContain('jdfs-active');
       expect(font2.getAttribute('class')).not.toContain('jdfs-active');
     });
@@ -296,36 +290,36 @@ describe('fontselect directive', function() {
       expect(Helpers.currentPage()).toBe(1);
 
       Helpers.getFontLabel(9).click();
-      prot.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+      browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
       expect(Helpers.currentPage()).toBe(2);
 
-      prot.actions().sendKeys(protractor.Key.ARROW_UP).perform();
+      browser.actions().sendKeys(protractor.Key.ARROW_UP).perform();
       expect(Helpers.currentPage()).toBe(1);
     });
 
     it('should not change pages or selections when we try to go up/left on the first page', function() {
       var font = Helpers.getFontLabel(0);
 
-      prot.actions().sendKeys(protractor.Key.ARROW_LEFT).perform();
+      browser.actions().sendKeys(protractor.Key.ARROW_LEFT).perform();
       expect(Helpers.currentPage()).toBe(1);
       expect(font.getAttribute('class')).not.toContain('jdfs-active');
 
-      prot.actions().sendKeys(protractor.Key.ARROW_UP).perform();
+      browser.actions().sendKeys(protractor.Key.ARROW_UP).perform();
       expect(Helpers.currentPage()).toBe(1);
       expect(font.getAttribute('class')).not.toContain('jdfs-active');
     });
 
     it('should change the page when we hit the right left arrows', function() {
       expect(Helpers.currentPage()).toBe(1);
-      prot.actions().sendKeys(protractor.Key.ARROW_RIGHT).perform();
+      browser.actions().sendKeys(protractor.Key.ARROW_RIGHT).perform();
       expect(Helpers.currentPage()).toBe(2);
-      prot.actions().sendKeys(protractor.Key.ARROW_LEFT).perform();
+      browser.actions().sendKeys(protractor.Key.ARROW_LEFT).perform();
       expect(Helpers.currentPage()).toBe(1);
     });
 
     it('should not change the page, when the search is focused and has value', function() {
       Helpers.toggleBySearch();
-      prot.actions()
+      browser.actions()
         .sendKeys('D')
         .sendKeys(protractor.Key.ARROW_RIGHT)
         .perform();
@@ -338,7 +332,7 @@ describe('fontselect directive', function() {
       Helpers.toggleBySearch();
       Helpers.searchFor('Fo');
       Helpers.getFontLabel(3).click();
-      prot.actions().sendKeys(protractor.Key.ARROW_RIGHT).perform();
+      browser.actions().sendKeys(protractor.Key.ARROW_RIGHT).perform();
 
       expect(Helpers.currentPage()).toBe(2);
     });
@@ -351,7 +345,7 @@ describe('fontselect directive', function() {
       expect(Helpers.currentPage()).toBe(2);
       expect(Helpers.pageCount()).toBe(2);
 
-      prot.actions().sendKeys(protractor.Key.ARROW_RIGHT).perform();
+      browser.actions().sendKeys(protractor.Key.ARROW_RIGHT).perform();
 
       expect(Helpers.currentPage()).toBe(2);
 
@@ -359,7 +353,7 @@ describe('fontselect directive', function() {
         var label = labels[labels.length - 1];
 
         label.click();
-        prot.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+        browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
 
         expect(Helpers.currentPage()).toBe(2);
         expect(label.getAttribute('class')).toContain('jdfs-active');

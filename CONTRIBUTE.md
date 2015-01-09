@@ -17,12 +17,12 @@ For building, [ruby](https://www.ruby-lang.org/) and [bundler](http://bundler.io
 are required since the typekit webfontloader needs to be compiled before
 we can ship it.
 
-We also recommend installing peons-cli globally
+We also recommend installing grunt-cli globally
 ```sh
-npm install -g peons-cli
+npm install -g grunt-cli
 ```
-If this is not possible, you can use `./node_modules/.bin/peons`
-instead of `peons`.
+If this is not possible, you can use `./node_modules/.bin/grunt`
+instead of `grunt`.
 
 
 Setup
@@ -40,7 +40,7 @@ Build
 -----
 
 ```sh
-peons build
+grunt build
 ```
 
 This builds the typekit webfontloader and our dist-files.  
@@ -51,7 +51,7 @@ Demo/Sandbox
 ------------
 
 ```sh
-peons demo
+grunt demo
 ```
 
 The `--port` is changeable, defaults to 8000
@@ -73,19 +73,19 @@ Note that the End to End tests require a [Google API KEY](#api-keys).
 #### Single run
 ```sh
 # end to end and unit tests
-peons test
+grunt test
 # only one of both
-peons test:unit
-peons test:e2e
+grunt test:unit
+grunt test:e2e
 ```
 
 #### Test driven development.
 ```sh
 # end to end and unit tests
-peons tdd
+grunt tdd
 # only one of both
-peons tdd:unit
-peons tdd:e2e
+grunt tdd:unit
+grunt tdd:e2e
 ```
 
 #### Options
@@ -115,7 +115,7 @@ Coverage
 Start a server to serve the coverage reports.
 
 ```sh
-peons coverage
+grunt coverage
 ```
 
 The `--port` is changeable, defaults to 8000
