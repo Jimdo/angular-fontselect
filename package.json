@@ -33,7 +33,7 @@
   "devDependencies": {
     "bower": "^1.3.12",
     "grunt": "^0.4.5",
-    "grunt-angular-toolbox": "0.0.3",
+    "grunt-angular-toolbox": "0.0.6",
     "grunt-cli": "^0.1.13"
   }
 }
