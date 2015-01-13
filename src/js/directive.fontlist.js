@@ -320,7 +320,11 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
         _sortCache.category = category;
         _forceNextFilters = true;
 
-        _categorizedFonts = $filter('filter')(fonts, {category: category}, true);
+        if (angular.isUndefined(category)) {
+          _categorizedFonts = fonts;
+        } else {
+          _categorizedFonts = $filter('filter')(fonts, {category: category}, true);
+        }
       }
 
       return _categorizedFonts;
@@ -333,12 +337,15 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
      */
     function _filterSearch(fonts) {
       var search = $scope.current.search || '';
-      if (_forceNextFilters || _sortCache.search !== search) {
+      var searchTermChanged = _sortCache.search !== search;
+      if (_forceNextFilters || searchTermChanged) {
         _sortCache.search = search;
         _forceNextFilters = true;
 
         /* Unset category filter so every font is visible. */
-        $scope.current.category = undefined;
+        if (searchTermChanged) {
+          $scope.current.category = undefined;
+        }
 
         if (search.length) {
           _searchedFonts = _priorize(
