@@ -73,7 +73,11 @@ function initGlobals(withModule, additional) {
 
   if (withModule !== false) {
     /* Initiate the main module */
-    module('jdFontselect');
+    module('jdFontselect', function($provide) {
+      $provide.value('jdfsWebFont', {
+        load: function() {}
+      });
+    });
   }
 
   inject(function($injector) {

@@ -3,7 +3,7 @@
 /* global VARIANT_PRIORITY, SUBSET_PRIORITY, METHOD_GET, URL_GOOGLE_FONTS_API  */
 /* global STATE_DEFAULTS, CATEGORY_OTHER, CATEGORY_OBJECTS  */
 
-var _fontsServiceDeps = ['$http', '$q', 'jdFontselectConfig', '$filter'];
+var _fontsServiceDeps = ['$http', '$q', 'jdFontselectConfig', '$filter', 'jdfsWebFont'];
 
 var _googleFontsInitiated = false;
 
@@ -672,7 +672,7 @@ FontsService.prototype = {
     var self = this;
 
     try {
-      WebFont.load({
+      self.jdfsWebFont.load({
         google: {
           families: [font.name + ':' + self._getBestVariantOf(font.variants)],
           text: font.name,

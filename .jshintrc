@@ -67,7 +67,6 @@
         "angular",
         "jasmine",
         "jQuery",
-        "WebFont",
         "beforeEach",
         "afterEach",
         "describe",

@@ -397,14 +397,16 @@ describe('fontselect directive', function() {
   describe('current font name preview', function() {
     it('should load the correct google font preview for the current font', function() {
       var googleFont = fontsService.searchFont({provider: PROVIDER_GOOGLE});
+      var jdfsWebFont = $injector.get('jdfsWebFont');
+
       expect(fontsService._fonts[0].provider).not.toBe(PROVIDER_GOOGLE);
-      spyOn(WebFont, 'load');
+      spyOn(jdfsWebFont, 'load');
       $listScope.page.size = 1;
       $scope.current.font = googleFont;
       $scope.$digest();
 
-      expect(WebFont.load).toHaveBeenCalled();
-      expect(WebFont.load.calls.argsFor(0)[0].google.text).toBe(googleFont.name);
+      expect(jdfsWebFont.load).toHaveBeenCalled();
+      expect(jdfsWebFont.load.calls.argsFor(0)[0].google.text).toBe(googleFont.name);
     });
   });
 

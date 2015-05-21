@@ -1,5 +1,5 @@
 /* global LIST_CONTAINER_CLASS, PROVIDER_WEBSAFE, PROVIDER_GOOGLE, initGlobals */
-/* global CATEGORY_SERIF, createDirective */
+/* global CATEGORY_SERIF, createDirective, $injector */
 describe('fontlist directive', function() {
   'use strict';
 
@@ -29,16 +29,18 @@ describe('fontlist directive', function() {
   });
 
   it('should load the preview fonts when we open the font selection', function() {
-    spyOn(WebFont, 'load');
+    var jdfsWebFont = $injector.get('jdfsWebFont');
+    spyOn(jdfsWebFont, 'load');
     $scope.active = true;
     $scope.$digest();
-    expect(WebFont.load).toHaveBeenCalled();
+    expect(jdfsWebFont.load).toHaveBeenCalled();
   });
 
   it('should not load the preview fonts when the font selection is not active', function() {
-    spyOn(WebFont, 'load');
+    var jdfsWebFont = $injector.get('jdfsWebFont');
+    spyOn(jdfsWebFont, 'load');
     $scope.$digest();
-    expect(WebFont.load).not.toHaveBeenCalled();
+    expect(jdfsWebFont.load).not.toHaveBeenCalled();
   });
 
   describe('pagination', function() {
