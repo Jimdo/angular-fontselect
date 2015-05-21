@@ -6,18 +6,39 @@ Angular Font-Selector
 
 A font selection directive for AngularJS - [Try it, it's beautiful](http://jimdo.github.io/angular-fontselect/).
 
-#### Bower:
 
-	bower install jd-fontselect
+Usage
+-----
 
-#### Directive:
+#### install bower package:
 
-	<jd-fontselect />
+	bower install jd-fontselect --save
 
+#### add scripts and styles to your project
 
-#### Provider Name
+```html
+<script type="bower_components/angular-fontselect/dist/libs/webfontloader.js"></script>
+<script type="bower_components/angular-fontselect/dist/angular-fontselect.js"></script>
+```
 
-	jdFontselect
+```html
+<link rel="stylesheet" type="text/css" href="bower_components/angular-fontselect/dist/angular-fontselect.css">
+```
+
+or use [wiredep](https://www.google.de/search?q=wiredep+js)
+
+#### set as dependency in your module
+
+```js
+angular.module('myModule', ['jdFontselect']);
+```
+
+#### use the directive in your views
+
+```html
+<h1>Now select a font:</h1>
+<jd-fontselect />
+```
 
 
 Api Keys
