@@ -11,7 +11,11 @@
     "HerrBertling <markus277@gmail.com>"
   ],
   "description": "A fontselect directive for AngularJS",
-  "main": "dist/angular-fontselect.js",
+  "main": [
+    "dist/libs/webfontloader.js",
+    "dist/angular-fontselect.js",
+    "dist/angular-fontselect.css"
+  ],
   "keywords": [
     "fonts",
     "directive",
