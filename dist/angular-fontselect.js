@@ -1,5 +1,5 @@
 /*!
- * angular-fontselect v0.9.5
+ * angular-fontselect v0.10.0
  * https://github.com/Jimdo/angular-fontselect
  *
  * A fontselect directive for AngularJS
@@ -1939,6 +1939,16 @@
     };
   });
 
+  // src/js/factory.webfont.js
+  fontselectModule.factory('jdfsWebFont', function() {
+    if (typeof window.WebFont === 'undefined') {
+      throw new Error('WebFontLoader is not available.' +
+        'Please include angular-fontselect/dist/libs/webfontloader.js');
+    }
+
+    return window.WebFont;
+  });
+
   // src/js/filter.fuzzy-search.js
   /**
    * Fuzzy search filter for angular.
@@ -2157,7 +2167,7 @@
   });
 
   // src/js/service.fonts.js
-  var _fontsServiceDeps = ['$http', '$q', 'jdFontselectConfig', '$filter'];
+  var _fontsServiceDeps = ['$http', '$q', 'jdFontselectConfig', '$filter', 'jdfsWebFont'];
 
   var _googleFontsInitiated = false;
 
@@ -2826,7 +2836,7 @@
       var self = this;
 
       try {
-        WebFont.load({
+        self.jdfsWebFont.load({
           google: {
             families: [font.name + ':' + self._getBestVariantOf(font.variants)],
             text: font.name,
