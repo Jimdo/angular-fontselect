@@ -12,7 +12,7 @@ Usage
 
 #### install bower package:
 
-	bower install jd-fontselect --save
+	bower install angular-fontselect --save
 
 #### add scripts and styles to your project
 
