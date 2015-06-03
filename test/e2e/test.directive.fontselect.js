@@ -207,13 +207,13 @@ describe('fontselect directive', function() {
       var previousAmount = Helpers.currentFontAmount();
 
       Helpers.openSettings();
-      Helpers.getProviderCheckbox().then(function(checkboxes) {
-        checkboxes.forEach(function(checkbox) {
-          checkbox.click();
-          expect(Helpers.currentFontAmount()).toBeLessThan(previousAmount);
-          checkbox.click();
-        });
-      });
+      Helpers.getProviderCheckbox(0).click();
+      expect(Helpers.currentFontAmount()).toBeLessThan(previousAmount);
+      Helpers.getProviderCheckbox(0).click();
+
+      Helpers.getProviderCheckbox(1).click();
+      expect(Helpers.currentFontAmount()).toBeLessThan(previousAmount);
+      Helpers.getProviderCheckbox(1).click();
     });
   });
 
