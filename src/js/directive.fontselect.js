@@ -98,7 +98,9 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsSer
         $document.on('keyup', escapeKeyHandler);
 
         $scope.$broadcast(OPEN_EVENT);
-        $scope.onOpen();
+        if (angular.isFunction($scope.onOpen)) {
+          $scope.onOpen();
+        }
       }
 
       function close() {
@@ -106,7 +108,9 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsSer
         $document.off('click', outsideClickHandler);
 
         $scope.$broadcast(CLOSE_EVENT);
-        $scope.onClose();
+        if (angular.isFunction($scope.onClose)) {
+          $scope.onClose();
+        }
       }
 
       $scope.$on(DO_CLOSE_EVENT, function() {
@@ -225,7 +229,9 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsSer
         }
       }
 
-      $scope.onInit({$scope: $scope});
+      if (angular.isFunction($scope.onInit)) {
+        $scope.onInit({$scope: $scope});        
+      }
 
       $scope.$watch('current.font', function(newFont, oldFont) {
         if (!angular.isObject($scope.current)) {
@@ -249,7 +255,9 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsSer
 
           $scope._setSelected(newFont);
           fontsService.updateImports();
-          $scope.onChange({font: newFont});
+          if (angular.isFunction($scope.onChange)) {
+            $scope.onChange({font: newFont});
+          }
         }
       });
 
