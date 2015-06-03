@@ -1,5 +1,5 @@
 /*!
- * angular-fontselect v0.10.0
+ * angular-fontselect v0.11.0
  * https://github.com/Jimdo/angular-fontselect
  *
  * A fontselect directive for AngularJS
@@ -1742,7 +1742,9 @@
           $document.on('keyup', escapeKeyHandler);
 
           $scope.$broadcast(OPEN_EVENT);
-          $scope.onOpen();
+          if (angular.isFunction($scope.onOpen)) {
+            $scope.onOpen();
+          }
         }
 
         function close() {
@@ -1750,7 +1752,9 @@
           $document.off('click', outsideClickHandler);
 
           $scope.$broadcast(CLOSE_EVENT);
-          $scope.onClose();
+          if (angular.isFunction($scope.onClose)) {
+            $scope.onClose();
+          }
         }
 
         $scope.$on(DO_CLOSE_EVENT, function() {
@@ -1869,7 +1873,9 @@
           }
         }
 
-        $scope.onInit({$scope: $scope});
+        if (angular.isFunction($scope.onInit)) {
+          $scope.onInit({$scope: $scope});        
+        }
 
         $scope.$watch('current.font', function(newFont, oldFont) {
           if (!angular.isObject($scope.current)) {
@@ -1893,7 +1899,9 @@
 
             $scope._setSelected(newFont);
             fontsService.updateImports();
-            $scope.onChange({font: newFont});
+            if (angular.isFunction($scope.onChange)) {
+              $scope.onChange({font: newFont});
+            }
           }
         });
 
@@ -2852,7 +2860,7 @@
 
   fontselectModule.service(NAME_FONTSSERVICE, FontsService);
 
-  // /Users/hannesdiercks/Sites/angular-fontselect/node_modules/grunt-angular-toolbox/.tmp/ng_templates.js
+  // /Users/christian/dev/jimdo-bower-components/angular-fontselect/node_modules/grunt-angular-toolbox/.tmp/ng_templates.js
   angular.module('jdFontselect').run(['$templateCache', function($templateCache) {
     'use strict';
 
