@@ -1296,7 +1296,12 @@
           event.preventDefault();
           event.stopPropagation();
 
-          var originalEvent = event.originalEvent;
+          var originalEvent;
+          if(event.type === 'wheel')
+            originalEvent = event;
+          else
+            originalEvent = event.originalEvent;
+
           var subpage = 1 / page.size;
           var delta = originalEvent.wheelDeltaY || originalEvent.wheelDelta ||
             originalEvent.deltaY * -1 || originalEvent.detail * -1;
