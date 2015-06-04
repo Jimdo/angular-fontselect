@@ -29,7 +29,7 @@ describe('fontlist directive', function() {
   });
 
   it('should load the preview fonts when we open the font selection', function() {
-    var jdfsWebFont = $injector.get('jdfsWebFont');
+    var jdfsWebFont = $injector.get('jdfsWebFont').getFontLoader();
     spyOn(jdfsWebFont, 'load');
     $scope.active = true;
     $scope.$digest();
@@ -37,7 +37,7 @@ describe('fontlist directive', function() {
   });
 
   it('should not load the preview fonts when the font selection is not active', function() {
-    var jdfsWebFont = $injector.get('jdfsWebFont');
+    var jdfsWebFont = $injector.get('jdfsWebFont').getFontLoader();
     spyOn(jdfsWebFont, 'load');
     $scope.$digest();
     expect(jdfsWebFont.load).not.toHaveBeenCalled();

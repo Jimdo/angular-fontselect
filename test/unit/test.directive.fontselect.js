@@ -397,7 +397,7 @@ describe('fontselect directive', function() {
   describe('current font name preview', function() {
     it('should load the correct google font preview for the current font', function() {
       var googleFont = fontsService.searchFont({provider: PROVIDER_GOOGLE});
-      var jdfsWebFont = $injector.get('jdfsWebFont');
+      var jdfsWebFont = $injector.get('jdfsWebFont').getFontLoader();
 
       expect(fontsService._fonts[0].provider).not.toBe(PROVIDER_GOOGLE);
       spyOn(jdfsWebFont, 'load');

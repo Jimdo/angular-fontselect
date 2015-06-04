@@ -7,13 +7,13 @@ describe('webfont factory', function() {
 
   it('should provide the WebFont global', function() {
     window.WebFont = {};
-    expect($injector.get('jdfsWebFont')).toBe(window.WebFont);
+    expect($injector.get('jdfsWebFont').getFontLoader()).toBe(window.WebFont);
     delete window.WebFont;
   });
 
   it('should throw when WebFont is not available', function() {
     expect(function() {
-      $injector.get('jdfsWebFont');
+      $injector.get('jdfsWebFont').getFontLoader();
     }).toThrow();
   });
 });

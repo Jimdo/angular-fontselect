@@ -670,9 +670,8 @@ FontsService.prototype = {
 
   _loadGoogleFont: function(font) {
     var self = this;
-
     try {
-      self.jdfsWebFont.load({
+      self.jdfsWebFont.getFontLoader().load({
         google: {
           families: [font.name + ':' + self._getBestVariantOf(font.variants)],
           text: font.name,
