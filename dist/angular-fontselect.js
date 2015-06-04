@@ -1,5 +1,5 @@
 /*!
- * angular-fontselect v0.11.0
+ * angular-fontselect v0.11.2
  * https://github.com/Jimdo/angular-fontselect
  *
  * A fontselect directive for AngularJS
@@ -1949,12 +1949,18 @@
 
   // src/js/factory.webfont.js
   fontselectModule.factory('jdfsWebFont', function() {
-    if (typeof window.WebFont === 'undefined') {
-      throw new Error('WebFontLoader is not available.' +
-        'Please include angular-fontselect/dist/libs/webfontloader.js');
-    }
+    var jdfsWebFont = {
+      getFontLoader: function() {
+        if (typeof window.WebFont === 'undefined') {
+          throw new Error('WebFontLoader is not available.' +
+            'Please include angular-fontselect/dist/libs/webfontloader.js');
+        }
 
-    return window.WebFont;
+        return window.WebFont;
+      }
+    };
+
+    return jdfsWebFont;
   });
 
   // src/js/filter.fuzzy-search.js
@@ -2842,9 +2848,8 @@
 
     _loadGoogleFont: function(font) {
       var self = this;
-
       try {
-        self.jdfsWebFont.load({
+        self.jdfsWebFont.getFontLoader().load({
           google: {
             families: [font.name + ':' + self._getBestVariantOf(font.variants)],
             text: font.name,
