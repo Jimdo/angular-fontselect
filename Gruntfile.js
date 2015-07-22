@@ -8,17 +8,17 @@ module.exports = function(grunt) {
 
   var helpers = {
     setUpApiKeyFile: function() {
-      var keys = {}, hasKeys = false;
+      var googleApiKey = {}, hasKeys = false;
 
       if (process.env.JD_FONTSELECT_GOOGLE_FONTS_API_KEY) {
-        keys.googleApiKey = process.env.JD_FONTSELECT_GOOGLE_FONTS_API_KEY;
+        googleApiKey = process.env.JD_FONTSELECT_GOOGLE_FONTS_API_KEY;
         hasKeys = true;
       }
 
       if (hasKeys) {
         fs.writeFileSync(
           API_KEY_FILENAME,
-          'angular.module("jdFontselect").constant("jdFontselectConfig", ' + JSON.stringify(keys) + ');'
+          'window._jdFontselectGoogleApiKey = \'' + googleApiKey + '\';'
         );
       }
     },
@@ -34,7 +34,7 @@ module.exports = function(grunt) {
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
-    'angular-toolbox': {
+    angularToolbox: {
       moduleName: 'jdFontselect',
       files: {
         src: {
@@ -47,33 +47,16 @@ module.exports = function(grunt) {
           ]
         },
         test: {
-          unit: ['test/unit/**/*.js'],
+          unit: [
+            'test/default-websafe-fonts.js',
+            'test/unit/**/*.+(js|coffee)'
+          ],
           e2e: [
             'test/e2e/SpecHelper.js',
             'test/e2e/test.*.js'
           ]
         },
-        vendor: {
-          js: {
-            top: [
-              'bower_components/jquery/dist/jquery.js',
-              'dist/libs/webfontloader.js'
-            ],
-            bottom: [
-              'test/default-websafe-fonts.js'
-            ]
-          }
-        }
       },
-      envFilter: function(env) {
-        env.splice(
-          env.indexOf('src/js/helper.module.js') + 1,
-          0,
-          API_KEY_FILENAME
-        );
-
-        return env;
-      }
     },
     shell: {
       buildWFL: {
@@ -96,13 +79,13 @@ module.exports = function(grunt) {
   });
 
   grunt.loadNpmTasks('grunt-angular-toolbox');
-  require('grunt-angular-toolbox').addTasks();
 
   grunt.registerTask('_buildapikeys', function() {
     helpers.setUpApiKeyFile();
     helpers.ensureApiKeyFileExists();
   });
 
+  grunt.registerTask('demo:before', ['_buildapikeys']);
   grunt.registerTask('test:before', ['_buildapikeys']);
   grunt.registerTask('build:before', ['_buildapikeys', 'shell:buildWFL']);
 

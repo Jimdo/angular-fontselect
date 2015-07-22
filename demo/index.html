@@ -9,9 +9,15 @@
     }
   </style>
   <base href="/" />
+  <!-- bower:css -->
+  <!-- endbower -->
+  <!-- injector:scss -->
+  <!-- endinjector -->
+  <!-- injector:less -->
+  <link rel="stylesheet" href="/src/less/fontselect.css">
+  <!-- endinjector -->
   <link rel="stylesheet" type="text/css" jd-fontselect-current-href />
   <link rel="stylesheet" type="text/css" href="demo/style.css" />
-  <!-- [[src/less]] -->
 </head>
 <body ng-cloak>
   <div class="wrap">
@@ -38,7 +44,29 @@
     </div>
   </div>
 
-  <!-- [[src/js]] -->
+  <!-- bower:js -->
+  <script src="../bower_components/angular/angular.js"></script>
+  <!-- endbower -->
+  <script src="/tmp.apikeys.js"></script>
+  <script src="/dist/libs/webfontloader.js"></script>
+  <!-- injector:js -->
+  <script src="/src/js/helper.module.js"></script>
+  <script src="/src/js/helper.defaults.js"></script>
+  <script src="/src/js/helper.google-font-categories.js"></script>
+  <script src="/src/js/helper.functions.js"></script>
+  <script src="/src/js/directive.current-href.js"></script>
+  <script src="/src/js/directive.font.js"></script>
+  <script src="/src/js/directive.fontlist.js"></script>
+  <script src="/src/js/directive.fontselect.js"></script>
+  <script src="/src/js/directive.meta.js"></script>
+  <script src="/src/js/factory.webfont.js"></script>
+  <script src="/src/js/filter.fuzzy-search.js"></script>
+  <script src="/src/js/filter.has-all-subsets.js"></script>
+  <script src="/src/js/filter.stack-search.js"></script>
+  <script src="/src/js/filter.start-from.js"></script>
+  <script src="/src/js/service.fonts.js"></script>
+  <script src="/ng_templates.js"></script>
+  <!-- endinjector -->
   <script type="text/javascript" src="demo/app.js"></script>
 </body>
 </html>

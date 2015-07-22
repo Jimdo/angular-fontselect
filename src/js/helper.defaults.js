@@ -372,9 +372,8 @@ var TEXT_DEFAULTS = {
     desc: '▼',
     asc: '▲'
   }
-
 };
 
 fontselectModule.constant('jdFontselectConfig', {
-  googleApiKey: false
+  googleApiKey: window._jdFontselectGoogleApiKey || false
 });

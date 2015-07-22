@@ -5,7 +5,6 @@ describe('api', function() {
   var elm, $scope, fontsService;
 
   function setupWithState(defaults) {
-
     if (!angular.isObject(defaults)) {
       defaults = {};
     }
@@ -64,7 +63,6 @@ describe('api', function() {
 
     it('should call optional onOpen callback', function() {
       $rootScope.openFs = jasmine.createSpy('openFs');
-
       var $toggle = createDirective('on-open="openFs()"').elm.find('button.jdfs-toggle');
 
       expect($rootScope.openFs).not.toHaveBeenCalled();

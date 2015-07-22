@@ -7,7 +7,13 @@
   <style>
    .ng-cloak { display: none; }
   </style>
-  <!-- [[src/less]] -->
+  <!-- bower:css -->
+  <!-- endbower -->
+  <!-- injector:scss -->
+  <!-- endinjector -->
+  <!-- injector:less -->
+  <link rel="stylesheet" href="/src/less/fontselect.css">
+  <!-- endinjector -->
 </head>
 <body ng-controller="e2ehelper">
   <!--       THIS IS NOT A SANDBOX, IT'S FOR E2E TESTING!      -->
@@ -21,7 +27,29 @@
   <input type="checkbox" ng-model="second" id="activate-second">
   <label for="activate-second">Activate second</label>
   <span id="events" class="ng-cloak">{{events()}}</span>
-  <!-- [[src/js]] -->
+  <!-- bower:js -->
+  <script src="../../../bower_components/angular/angular.js"></script>
+  <!-- endbower -->
+  <script src="/tmp.apikeys.js"></script>
+  <script src="/dist/libs/webfontloader.js"></script>
+  <!-- injector:js -->
+  <script src="/instrumented/src/js/helper.module.js"></script>
+  <script src="/instrumented/src/js/helper.defaults.js"></script>
+  <script src="/instrumented/src/js/helper.google-font-categories.js"></script>
+  <script src="/instrumented/src/js/helper.functions.js"></script>
+  <script src="/instrumented/src/js/directive.current-href.js"></script>
+  <script src="/instrumented/src/js/directive.font.js"></script>
+  <script src="/instrumented/src/js/directive.fontlist.js"></script>
+  <script src="/instrumented/src/js/directive.fontselect.js"></script>
+  <script src="/instrumented/src/js/directive.meta.js"></script>
+  <script src="/instrumented/src/js/factory.webfont.js"></script>
+  <script src="/instrumented/src/js/filter.fuzzy-search.js"></script>
+  <script src="/instrumented/src/js/filter.has-all-subsets.js"></script>
+  <script src="/instrumented/src/js/filter.stack-search.js"></script>
+  <script src="/instrumented/src/js/filter.start-from.js"></script>
+  <script src="/instrumented/src/js/service.fonts.js"></script>
+  <script src="/ng_templates.js"></script>
+  <!-- endinjector -->
   <script type="text/javascript" src="app.js"></script>
 </body>
 </html>

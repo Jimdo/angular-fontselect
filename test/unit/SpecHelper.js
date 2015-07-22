@@ -78,6 +78,10 @@ function initGlobals(withModule, additional) {
         load: function() {}
       };
 
+      $provide.constant('jdFontselectConfig', {
+        googleApiKey: 'foobar'
+      });
+
       $provide.value('jdfsWebFont', {
         getFontLoader: function() {
           return webFont;

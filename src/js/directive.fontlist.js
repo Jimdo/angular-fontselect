@@ -130,10 +130,9 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
         event.preventDefault();
         event.stopPropagation();
 
-        var originalEvent = event.originalEvent;
         var subpage = 1 / page.size;
-        var delta = originalEvent.wheelDeltaY || originalEvent.wheelDelta ||
-          originalEvent.deltaY * -1 || originalEvent.detail * -1;
+        var delta = event.wheelDeltaY || event.wheelDelta ||
+          event.deltaY * -1 || event.detail * -1;
         var absDelta = Math.abs(delta);
 
         /* For touch-pads etc., we buffer small movements */

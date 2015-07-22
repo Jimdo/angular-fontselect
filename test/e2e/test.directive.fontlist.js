@@ -1,4 +1,4 @@
-/* global element, by, runs */
+/* global element, by, browser */
 var Helpers = require('./SpecHelper');
 
 describe('fontlist directive', function() {
@@ -72,13 +72,10 @@ describe('fontlist directive', function() {
     it('should keep radios selected over page changes.', function() {
       Helpers.getFontLabel(5).click();
       Helpers.getPaginator(1).click();
-      runs(function() {
-        Helpers.getPaginator(0).click();
-      });
-      /* Need to delay our expectation to make this less flaky. */
-      runs(function() {
-        expect(Helpers.getFontLabel(5).getAttribute('class')).toContain('jdfs-active');
-      });
+      Helpers.getPaginator(0).click();
+
+      browser.sleep(10);
+      expect(Helpers.getFontLabel(5).getAttribute('class')).toContain('jdfs-active');
     });
 
     it('should not reset the page when we close and reopen the directive', function() {
