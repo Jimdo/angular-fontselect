@@ -1,5 +1,5 @@
 /*!
- * angular-fontselect v0.11.2
+ * angular-fontselect v0.12.0
  * https://github.com/Jimdo/angular-fontselect
  *
  * A fontselect directive for AngularJS
@@ -47,10 +47,10 @@
   var DIR_PARTIALS = 'src/partials/';
 
   /** @const */
-  var NAME_CONTROLLER = '.controller';
+  var NAME_CONTROLLER = 'Controller';
 
   /** @const */
-  var NAME_FONTSSERVICE = 'jdFontselect.fonts';
+  var NAME_FONTSSERVICE = 'jdFontselectFonts';
 
   /** @const */
   var CLOSE_EVENT = 'jdFontselectEventClose';
@@ -386,11 +386,10 @@
       desc: '▼',
       asc: '▲'
     }
-
   };
 
   fontselectModule.constant('jdFontselectConfig', {
-    googleApiKey: false
+    googleApiKey: window._jdFontselectGoogleApiKey || false
   });
 
   // src/js/helper.google-font-categories.js
@@ -1150,7 +1149,7 @@
   }]);
 
   // src/js/directive.font.js
-  fontselectModule.directive('jdFont', ['jdFontselect.fonts', function(fontsService) {
+  fontselectModule.directive('jdFont', [NAME_FONTSSERVICE, function(fontsService) {
     return {
       templateUrl: 'font.html',
       restrict: 'E',
@@ -1195,7 +1194,7 @@
     '$scope',
     '$rootScope',
     '$filter',
-    'jdFontselect.fonts',
+    NAME_FONTSSERVICE,
     '$element',
     '$document',  function($scope, $rootScope, $filter, fontsService, $element, $document) {    var _filteredFonts = [];
       var _sortedFonts = [];
@@ -1296,10 +1295,9 @@
           event.preventDefault();
           event.stopPropagation();
 
-          var originalEvent = event.originalEvent;
           var subpage = 1 / page.size;
-          var delta = originalEvent.wheelDeltaY || originalEvent.wheelDelta ||
-            originalEvent.deltaY * -1 || originalEvent.detail * -1;
+          var delta = event.wheelDeltaY || event.wheelDelta ||
+            event.deltaY * -1 || event.detail * -1;
           var absDelta = Math.abs(delta);
 
           /* For touch-pads etc., we buffer small movements */
@@ -2865,7 +2863,7 @@
 
   fontselectModule.service(NAME_FONTSSERVICE, FontsService);
 
-  // /Users/christian/dev/jimdo-bower-components/angular-fontselect/node_modules/grunt-angular-toolbox/.tmp/ng_templates.js
+  // /node_modules/grunt-angular-toolbox/.tmp/ng_templates.js
   angular.module('jdFontselect').run(['$templateCache', function($templateCache) {
     'use strict';
 
