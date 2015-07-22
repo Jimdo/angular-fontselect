@@ -7,6 +7,17 @@ Angular Font-Selector
 A font selection directive for AngularJS - [Try it, it's beautiful](http://jimdo.github.io/angular-fontselect/).
 
 
+Breaking Changes
+----------------
+
+### `0.12`
+
+  - `jdFontselect.fonts` has been renamed to `jdFontselectFonts`
+  - `jdFontlist.controller` has been renamed to `jdFontlistController`
+
+  In order to enable usage of [ngAnnotate](https://github.com/olov/ng-annotate).
+
+
 Usage
 -----
 
