@@ -336,7 +336,7 @@ describe('fontselect directive', function() {
     });
 
     it('should call all filters when we change the source', function() {
-      $injector.get('jdFontselect.fonts').add(ANOTHER_FONT);
+      $injector.get(NAME_FONTSSERVICE).add(ANOTHER_FONT);
       $listScope.getFilteredFonts();
       expectAllSpiesCalled(2);
     });

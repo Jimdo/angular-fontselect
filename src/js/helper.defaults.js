@@ -33,10 +33,10 @@ var PAGE_SIZE_DEFAULT = 10;
 var DIR_PARTIALS = 'src/partials/';
 
 /** @const */
-var NAME_CONTROLLER = '.controller';
+var NAME_CONTROLLER = 'Controller';
 
 /** @const */
-var NAME_FONTSSERVICE = 'jdFontselect.fonts';
+var NAME_FONTSSERVICE = 'jdFontselectFonts';
 
 /** @const */
 var CLOSE_EVENT = 'jdFontselectEventClose';

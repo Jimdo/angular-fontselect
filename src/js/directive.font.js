@@ -1,4 +1,5 @@
-fontselectModule.directive('jdFont', ['jdFontselect.fonts', function(fontsService) {
+/* global NAME_FONTSSERVICE */
+fontselectModule.directive('jdFont', [NAME_FONTSSERVICE, function(fontsService) {
   return {
     templateUrl: 'font.html',
     restrict: 'E',

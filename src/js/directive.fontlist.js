@@ -1,6 +1,6 @@
 /* global NAME_CONTROLLER, DIRECTION_NEXT, DIRECTION_PREVIOUS, KEY_DOWN */
 /* global KEY_UP, KEY_RIGHT, KEY_LEFT, PAGE_SIZE_DEFAULT, SCROLL_BUFFER, CLOSE_EVENT */
-/* global OPEN_EVENT */
+/* global OPEN_EVENT, NAME_FONTSSERVICE */
 var NAME_JDFONTLIST = 'jdFontlist';
 var NAME_JDFONTLIST_CONTROLLER = NAME_JDFONTLIST + NAME_CONTROLLER;
 
@@ -25,7 +25,7 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
   '$scope',
   '$rootScope',
   '$filter',
-  'jdFontselect.fonts',
+  NAME_FONTSSERVICE,
   '$element',
   '$document',
   /* jshint maxparams: 6 */
