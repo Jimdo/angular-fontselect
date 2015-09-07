@@ -125,7 +125,7 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
       var delta = event.wheelDeltaY || event.wheelDelta ||
         event.deltaY * -1 || event.detail * -1;
 
-      if (angular.isUndefined(delta) &&
+      if (!isFinite(delta) &&
         !angular.isUndefined(event.originalEvent)) {
         delta = getDeltaFromEvent(event.originalEvent);
       }
