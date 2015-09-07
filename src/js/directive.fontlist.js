@@ -121,6 +121,18 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
       }
     }
 
+    function getDeltaFromEvent(event) {
+      var delta = event.wheelDeltaY || event.wheelDelta ||
+        event.deltaY * -1 || event.detail * -1;
+
+      if (angular.isUndefined(delta) &&
+        !angular.isUndefined(event.originalEvent)) {
+        delta = getDeltaFromEvent(event.originalEvent);
+      }
+
+      return delta;
+    }
+
     var wheelHandler = function(event) {
       if (!event.target) {
         return;
@@ -131,8 +143,7 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
         event.stopPropagation();
 
         var subpage = 1 / page.size;
-        var delta = event.wheelDeltaY || event.wheelDelta ||
-          event.deltaY * -1 || event.detail * -1;
+        var delta = getDeltaFromEvent(event);
         var absDelta = Math.abs(delta);
 
         /* For touch-pads etc., we buffer small movements */
