@@ -241,6 +241,7 @@ describe('fontselect directive', function() {
     it('should be focused when the directive gets activated by clicking on search', function() {
       Helpers.toggleBySearch();
 
+      browser.sleep(100);
       browser.actions().sendKeys('foo').perform();
       expect(element(by.model('current.search')).getAttribute('value')).toBe('foo');
     });
