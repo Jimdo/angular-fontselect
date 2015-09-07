@@ -1,5 +1,5 @@
 /*!
- * angular-fontselect v0.12.0
+ * angular-fontselect v0.12.1
  * https://github.com/Jimdo/angular-fontselect
  *
  * A fontselect directive for AngularJS
@@ -1286,6 +1286,18 @@
         }
       }
 
+      function getDeltaFromEvent(event) {
+        var delta = event.wheelDeltaY || event.wheelDelta ||
+          event.deltaY * -1 || event.detail * -1;
+
+        if (angular.isUndefined(delta) &&
+          !angular.isUndefined(event.originalEvent)) {
+          delta = getDeltaFromEvent(event.originalEvent);
+        }
+
+        return delta;
+      }
+
       var wheelHandler = function(event) {
         if (!event.target) {
           return;
@@ -1296,8 +1308,7 @@
           event.stopPropagation();
 
           var subpage = 1 / page.size;
-          var delta = event.wheelDeltaY || event.wheelDelta ||
-            event.deltaY * -1 || event.detail * -1;
+          var delta = getDeltaFromEvent(event);
           var absDelta = Math.abs(delta);
 
           /* For touch-pads etc., we buffer small movements */
