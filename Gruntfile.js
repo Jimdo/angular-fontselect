@@ -80,6 +80,25 @@ module.exports = function(grunt) {
 
   grunt.loadNpmTasks('grunt-angular-toolbox');
 
+  /* Ensure jquery, angular and angular mocks are loaded correctly */
+  var unitSuite = grunt.config('angularToolbox.files.test.unitSuite');
+  function indexFor(lib) {
+    var index = -1;
+    unitSuite.forEach(function(entry, i) {
+      if (entry.indexOf(lib) !== -1) {
+        index = i;
+      }
+    });
+    return index;
+  }
+
+  var jQuery = unitSuite.splice(indexFor('bower_components/jquery/'), 1)[0];
+  var angular = unitSuite.splice(indexFor('bower_components/angular/'), 1)[0];
+  var angularMocks = unitSuite.splice(indexFor('bower_components/angular-mocks/'), 1)[0];
+
+  unitSuite = [jQuery, angular, angularMocks].concat(unitSuite);
+  grunt.config('angularToolbox.files.test.unitSuite', unitSuite);
+
   grunt.registerTask('_buildapikeys', function() {
     helpers.setUpApiKeyFile();
     helpers.ensureApiKeyFileExists();
