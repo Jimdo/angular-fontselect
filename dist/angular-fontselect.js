@@ -1,5 +1,5 @@
 /*!
- * angular-fontselect v0.12.2
+ * angular-fontselect v0.12.3
  * https://github.com/Jimdo/angular-fontselect
  *
  * A fontselect directive for AngularJS
@@ -220,7 +220,7 @@
   var URL_GOOGLE_FONTS_API = 'https://www.googleapis.com/webfonts/v1/webfonts';
 
   /** @const */
-  var URL_GOOGLE_FONTS_CSS = 'http://fonts.googleapis.com/css';
+  var URL_GOOGLE_FONTS_CSS = 'https://fonts.googleapis.com/css';
 
   /** @const */
   var SUBSET_CYRILLIC = 'cyrillic';
