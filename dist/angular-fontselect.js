@@ -1,10 +1,10 @@
 /*!
- * angular-fontselect v0.12.3
+ * angular-fontselect v0.12.4
  * https://github.com/Jimdo/angular-fontselect
  *
  * A fontselect directive for AngularJS
  *
- * Copyright 2015, Jimdo GmbH
+ * Copyright 2016, Jimdo GmbH
  * Released under the MIT license
  */
 (function(angular, undefined) {
@@ -1356,7 +1356,11 @@
        * @param  {String} direction 'next' or 'prev'
        * @return {void}
        */
-      $scope.paginate = function(amount) {
+      $scope.paginate = function(amount, $event) {
+        if ($event && $event.preventDefault) {
+          $event.preventDefault();
+        }
+
         var direction = amount;
         if (angular.isNumber(amount)) {
           if (amount === 0) {
@@ -1779,7 +1783,11 @@
           sort.direction = !sort.direction;
         };
 
-        $scope.toggle = function() {
+        $scope.toggle = function($event) {
+          if ($event && $event.preventDefault) {
+            $event.preventDefault();
+          }
+
           $scope.active = !$scope.active;
 
           if (!$scope.active) {
@@ -1790,7 +1798,9 @@
           }
         };
 
-        $scope.toggleSearch = function() {
+        $scope.toggleSearch = function($event) {
+          $event.preventDefault();
+
           if (!$scope.active) {
             $scope.toggle();
           }
@@ -1808,7 +1818,9 @@
           }
         };
 
-        $scope.resetSearch = function() {
+        $scope.resetSearch = function($event) {
+          $event.preventDefault();
+
           $scope.current.search = '';
           if ($scope.searching) {
             $scope.setFocus();
@@ -1823,7 +1835,11 @@
           });
         };
 
-        $scope.setCategoryFilter = function(category) {
+        $scope.setCategoryFilter = function(category, $event) {
+          if ($event && $event.preventDefault) {
+            $event.preventDefault();
+          }
+
           var current = $scope.current;
 
           if (current.category === category) {
@@ -1883,7 +1899,7 @@
         }
 
         if (angular.isFunction($scope.onInit)) {
-          $scope.onInit({$scope: $scope});        
+          $scope.onInit({$scope: $scope});
         }
 
         $scope.$watch('current.font', function(newFont, oldFont) {
@@ -2889,12 +2905,12 @@
 
 
     $templateCache.put('fontlist.html',
-      "<div class=jdfs-fontlistcon ng-class=\"{'jdfs-active': isActive()}\"><button class=\"jdfs-fontpagination jdfs-fontpagination-prev\" ng-click=\"paginate('prev')\" ng-class=\"{'jdfs-disabled': !paginationButtonActive('prev')}\" ng-disabled=\"!paginationButtonActive('prev')\">{{text.page.prev}}</button><ul class=jdfs-fontlist><li ng-if=\"getFilteredFonts().length === 0\" class=jdfs-fontlist-noresults>{{text.noResultsLabel}}</li><jd-font ng-repeat=\"font in getFilteredFonts() | startFrom: page.current * page.size | limitTo: page.size\"></ul><button class=\"jdfs-fontpagination jdfs-fontpagination-next\" ng-click=\"paginate('next')\" ng-class=\"{'jdfs-disabled': !paginationButtonActive('next')}\" ng-disabled=\"!paginationButtonActive('next')\">{{text.page.next}}</button></div>"
+      "<div class=jdfs-fontlistcon ng-class=\"{'jdfs-active': isActive()}\"><button class=\"jdfs-fontpagination jdfs-fontpagination-prev\" ng-click=\"paginate('prev', $event)\" ng-class=\"{'jdfs-disabled': !paginationButtonActive('prev')}\" ng-disabled=\"!paginationButtonActive('prev')\">{{text.page.prev}}</button><ul class=jdfs-fontlist><li ng-if=\"getFilteredFonts().length === 0\" class=jdfs-fontlist-noresults>{{text.noResultsLabel}}</li><jd-font ng-repeat=\"font in getFilteredFonts() | startFrom: page.current * page.size | limitTo: page.size\"></ul><button class=\"jdfs-fontpagination jdfs-fontpagination-next\" ng-click=\"paginate('next', $event)\" ng-class=\"{'jdfs-disabled': !paginationButtonActive('next')}\" ng-disabled=\"!paginationButtonActive('next')\">{{text.page.next}}</button></div>"
     );
 
 
     $templateCache.put('fontselect.html',
-      "<div class=jdfs-main id=jd-fontselect-{{suffixedId}}><button ng-click=toggleSearch() ng-class=\"{'jdfs-highlight': searching}\" class=jdfs-search-indicator>{{text.searchToggleLabel}}</button> <button ng-click=toggleSearch() class=jdfs-toggle-search id=jd-fontselect-{{suffixedId}}-toggle-search ng-show=!searching><span class=jdfs-font-name style=\"font-family: {{current.font.stack}}\">{{current.font.name || text.toggleSearchLabel}}</span></button> <input class=jdfs-search placeholder={{text.search}} name=jdfs-{{id}}-search ng-show=searching ng-model=\"current.search\"> <button class=jdfs-reset-search ng-click=resetSearch() ng-show=\"searching && current.search.length > 0\">x</button> <button class=jdfs-toggle ng-click=toggle() id=jd-fontselect-{{suffixedId}}-toggle ng-class=\"{'jdfs-highlight': active}\">{{active ? text.toggleCloseLabel : text.toggleOpenLabel}}</button><div class=jdfs-window ng-show=active><jd-fontlist fsid=id text=text meta=meta current=current fonts=fonts active=active></jd-fontlist><div class=jdfs-footer-con><a class=\"jdfs-footer-tab-toggle jdfs-styles-label\" ng-click=toggleStyles() ng-class=\"{'jdfs-footer-tab-open': stylesActive}\">{{text.styleLabel}}</a> <a class=\"jdfs-footer-tab-toggle jdfs-settings-label\" ng-click=toggleSettings() ng-class=\"{'jdfs-footer-tab-open': settingsActive}\">{{text.settingsLabel}}</a><div class=jdfs-footer><div class=jdfs-styles ng-show=stylesActive><button class=\"jdfs-filterbtn jdfs-fontstyle-{{category.key}}\" ng-repeat=\"category in categories\" ng-class=\"{'jdfs-active jdfs-highlight': category.key == current.category}\" ng-click=setCategoryFilter(category.key) ng-model=current.category>{{text.category[category.key] || toName(category.key)}}</button></div><div class=jdfs-settings ng-show=settingsActive><div class=jdfs-provider-list><h4 class=jdfs-settings-headline>{{text.providerLabel}}</h4><div ng-repeat=\"(provider, active) in current.providers\" class=jdfs-provider ng-class=\"{'jdfs-active jdfs-highlight': current.providers[provider]}\"><input ng-model=current.providers[provider] type=checkbox id=\"jdfs-{{id}}-provider-{{provider}}\"><label for=jdfs-{{id}}-provider-{{provider}}>{{text.provider[provider] || toName(provider)}}</label></div></div><div class=jdfs-subsets><h4 class=jdfs-settings-headline>{{text.subsetLabel}}</h4><div ng-repeat=\"(key, name) in current.subsets\" class=jdfs-subset ng-class=\"{'jdfs-active jdfs-highlight': current.subsets[key]}\"><input ng-model=current.subsets[key] type=checkbox id=\"jdfs-{{id}}-subset-{{key}}\"><label for=jdfs-{{id}}-subset-{{key}}>{{text.subset[key] || toName(key)}}</label></div></div></div></div></div><jd-meta meta=meta></jd-meta><button ng-click=toggle() class=jdfs-close><span>{{text.closeButton}}</span></button></div></div>"
+      "<div class=jdfs-main id=jd-fontselect-{{suffixedId}}><button ng-click=toggleSearch($event) ng-class=\"{'jdfs-highlight': searching}\" class=jdfs-search-indicator>{{text.searchToggleLabel}}</button> <button ng-click=toggleSearch($event) class=jdfs-toggle-search id=jd-fontselect-{{suffixedId}}-toggle-search ng-show=!searching><span class=jdfs-font-name style=\"font-family: {{current.font.stack}}\">{{current.font.name || text.toggleSearchLabel}}</span></button> <input class=jdfs-search placeholder={{text.search}} name=jdfs-{{id}}-search ng-show=searching ng-model=\"current.search\"> <button class=jdfs-reset-search ng-click=resetSearch($event) ng-show=\"searching && current.search.length > 0\">x</button> <button class=jdfs-toggle ng-click=toggle($event) id=jd-fontselect-{{suffixedId}}-toggle ng-class=\"{'jdfs-highlight': active}\">{{active ? text.toggleCloseLabel : text.toggleOpenLabel}}</button><div class=jdfs-window ng-show=active><jd-fontlist fsid=id text=text meta=meta current=current fonts=fonts active=active></jd-fontlist><div class=jdfs-footer-con><a class=\"jdfs-footer-tab-toggle jdfs-styles-label\" ng-click=toggleStyles() ng-class=\"{'jdfs-footer-tab-open': stylesActive}\">{{text.styleLabel}}</a> <a class=\"jdfs-footer-tab-toggle jdfs-settings-label\" ng-click=toggleSettings() ng-class=\"{'jdfs-footer-tab-open': settingsActive}\">{{text.settingsLabel}}</a><div class=jdfs-footer><div class=jdfs-styles ng-show=stylesActive><button class=\"jdfs-filterbtn jdfs-fontstyle-{{category.key}}\" ng-repeat=\"category in categories\" ng-class=\"{'jdfs-active jdfs-highlight': category.key == current.category}\" ng-click=\"setCategoryFilter(category.key, $event)\" ng-model=current.category>{{text.category[category.key] || toName(category.key)}}</button></div><div class=jdfs-settings ng-show=settingsActive><div class=jdfs-provider-list><h4 class=jdfs-settings-headline>{{text.providerLabel}}</h4><div ng-repeat=\"(provider, active) in current.providers\" class=jdfs-provider ng-class=\"{'jdfs-active jdfs-highlight': current.providers[provider]}\"><input ng-model=current.providers[provider] type=checkbox id=\"jdfs-{{id}}-provider-{{provider}}\"><label for=jdfs-{{id}}-provider-{{provider}}>{{text.provider[provider] || toName(provider)}}</label></div></div><div class=jdfs-subsets><h4 class=jdfs-settings-headline>{{text.subsetLabel}}</h4><div ng-repeat=\"(key, name) in current.subsets\" class=jdfs-subset ng-class=\"{'jdfs-active jdfs-highlight': current.subsets[key]}\"><input ng-model=current.subsets[key] type=checkbox id=\"jdfs-{{id}}-subset-{{key}}\"><label for=jdfs-{{id}}-subset-{{key}}>{{text.subset[key] || toName(key)}}</label></div></div></div></div></div><jd-meta meta=meta></jd-meta><button ng-click=toggle($event) class=jdfs-close><span>{{text.closeButton}}</span></button></div></div>"
     );
 
 
