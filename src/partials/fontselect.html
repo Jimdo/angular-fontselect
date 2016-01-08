@@ -1,7 +1,7 @@
 <div class="jdfs-main" id="jd-fontselect-{{suffixedId}}">
 
 		<button
-			ng-click="toggleSearch()"
+			ng-click="toggleSearch($event)"
 			ng-class="{'jdfs-highlight': searching}"
 			class="jdfs-search-indicator"
 		>
@@ -9,7 +9,7 @@
 
 		</button>
 		<button
-			ng-click="toggleSearch()"
+			ng-click="toggleSearch($event)"
 			class="jdfs-toggle-search"
 			id="jd-fontselect-{{suffixedId}}-toggle-search"
 			ng-show="!searching"
@@ -32,14 +32,14 @@
 
 		<button
 		class="jdfs-reset-search"
-		ng-click="resetSearch()"
+		ng-click="resetSearch($event)"
 		ng-show="searching && current.search.length > 0"
 		>
 		x
 		</button>
 	<button
 		class="jdfs-toggle"
-		ng-click="toggle()"
+		ng-click="toggle($event)"
 		id="jd-fontselect-{{suffixedId}}-toggle"
 		ng-class="{'jdfs-highlight': active}"
 	>
@@ -75,7 +75,7 @@
 						class="jdfs-filterbtn jdfs-fontstyle-{{category.key}}"
 						ng-repeat="category in categories"
 						ng-class="{'jdfs-active jdfs-highlight': category.key == current.category}"
-						ng-click="setCategoryFilter(category.key)"
+						ng-click="setCategoryFilter(category.key, $event)"
 						ng-model="current.category"
 					>
 						{{text.category[category.key] || toName(category.key)}}
@@ -116,7 +116,7 @@
 		<jd-meta meta="meta"></jd-meta>
 
 		<button
-			ng-click="toggle()"
+			ng-click="toggle($event)"
 			class="jdfs-close"
 			>
 			<span>

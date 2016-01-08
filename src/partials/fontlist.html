@@ -1,7 +1,7 @@
 <div class="jdfs-fontlistcon" ng-class="{'jdfs-active': isActive()}">
 		<button
 			class="jdfs-fontpagination jdfs-fontpagination-prev"
-			ng-click="paginate('prev')"
+			ng-click="paginate('prev', $event)"
 			ng-class="{'jdfs-disabled': !paginationButtonActive('prev')}"
 			ng-disabled="!paginationButtonActive('prev')"
 		>{{text.page.prev}}</button>
@@ -15,7 +15,7 @@
 
 		<button
 				class="jdfs-fontpagination jdfs-fontpagination-next"
-				ng-click="paginate('next')"
+				ng-click="paginate('next', $event)"
 				ng-class="{'jdfs-disabled': !paginationButtonActive('next')}"
 				ng-disabled="!paginationButtonActive('next')"
 			>{{text.page.next}}

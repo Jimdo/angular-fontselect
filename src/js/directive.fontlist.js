@@ -191,7 +191,11 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
      * @param  {String} direction 'next' or 'prev'
      * @return {void}
      */
-    $scope.paginate = function(amount) {
+    $scope.paginate = function(amount, $event) {
+      if ($event && $event.preventDefault) {
+        $event.preventDefault();
+      }
+
       var direction = amount;
       if (angular.isNumber(amount)) {
         if (amount === 0) {

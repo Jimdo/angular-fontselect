@@ -126,7 +126,11 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsSer
         sort.direction = !sort.direction;
       };
 
-      $scope.toggle = function() {
+      $scope.toggle = function($event) {
+        if ($event && $event.preventDefault) {
+          $event.preventDefault();
+        }
+
         $scope.active = !$scope.active;
 
         if (!$scope.active) {
@@ -137,7 +141,9 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsSer
         }
       };
 
-      $scope.toggleSearch = function() {
+      $scope.toggleSearch = function($event) {
+        $event.preventDefault();
+
         if (!$scope.active) {
           $scope.toggle();
         }
@@ -155,7 +161,9 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsSer
         }
       };
 
-      $scope.resetSearch = function() {
+      $scope.resetSearch = function($event) {
+        $event.preventDefault();
+
         $scope.current.search = '';
         if ($scope.searching) {
           $scope.setFocus();
@@ -170,7 +178,11 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsSer
         });
       };
 
-      $scope.setCategoryFilter = function(category) {
+      $scope.setCategoryFilter = function(category, $event) {
+        if ($event && $event.preventDefault) {
+          $event.preventDefault();
+        }
+
         var current = $scope.current;
 
         if (current.category === category) {
@@ -230,7 +242,7 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsSer
       }
 
       if (angular.isFunction($scope.onInit)) {
-        $scope.onInit({$scope: $scope});        
+        $scope.onInit({$scope: $scope});
       }
 
       $scope.$watch('current.font', function(newFont, oldFont) {
