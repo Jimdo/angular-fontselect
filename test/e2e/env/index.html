@@ -18,7 +18,9 @@
 <body ng-controller="e2ehelper">
   <!--       THIS IS NOT A SANDBOX, IT'S FOR E2E TESTING!      -->
   <!-- PLEASE USE demo/index.html IF YOU'D LIKE TO PLAY AROUND -->
-  <jd-fontselect class='fs-1' on-open="onOpenA()" on-close="onCloseA()"></jd-fontselect>
+  <form action="GET" style="display: inline">
+    <jd-fontselect class='fs-1' on-open="onOpenA()" on-close="onCloseA()"></jd-fontselect>
+  </form>
 
   <span ng-if="second">
     <jd-fontselect class='fs-2' on-open="onOpenB()" on-close="onCloseB()"></jd-fontselect>
