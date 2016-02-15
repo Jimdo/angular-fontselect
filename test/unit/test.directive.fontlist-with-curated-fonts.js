@@ -2,13 +2,13 @@
 describe('fontlist directive with curated fonts', function() {
   'use strict';
 
-  var $fontlist, $scope, curatedFonts;
+  var $fontlist, $scope, curatedFontKeys;
 
   beforeEach(function() {
-    curatedFonts = [];
+    curatedFontKeys = [];
 
     module('jdFontselect', function(jdfsCuratedFontsProvider) {
-      jdfsCuratedFontsProvider.setCuratedFonts(curatedFonts);
+      jdfsCuratedFontsProvider.setCuratedFontKeys(curatedFontKeys);
     });
     initGlobals(false);
 
@@ -29,7 +29,7 @@ describe('fontlist directive with curated fonts', function() {
   });
 
   it('should return true if curated fonts are configured', function() {
-    curatedFonts.push('foo');
+    curatedFontKeys.push('foo');
     expect($scope.hasCuratedFonts()).toBeTruthy();
   });
 
@@ -39,7 +39,7 @@ describe('fontlist directive with curated fonts', function() {
   });
 
   it('should render headlines if curated fonts exists', function() {
-    curatedFonts.push('foo');
+    curatedFontKeys.push('foo');
     $rootScope.$digest();
     var headlines = $fontlist.find('.jdfs-fontlist-headline');
     expect(headlines.length).toBe(2);

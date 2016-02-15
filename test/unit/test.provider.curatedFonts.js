@@ -12,14 +12,14 @@ describe('curated fonts provider', function() {
   });
 
   it('should provide a list of curated fonts', function() {
-    var fakeFonts = ['foo'];
+    var fakeFontKeys = ['foo'];
 
     module('jdFontselect', function(jdfsCuratedFontsProvider) {
-      jdfsCuratedFontsProvider.setCuratedFonts(fakeFonts);
+      jdfsCuratedFontsProvider.setCuratedFontKeys(fakeFontKeys);
     });
     initGlobals(false);
     var jdfsCuratedFonts = $injector.get('jdfsCuratedFonts');
 
-    expect(jdfsCuratedFonts).toBe(fakeFonts);
+    expect(jdfsCuratedFonts).toBe(fakeFontKeys);
   });
 });

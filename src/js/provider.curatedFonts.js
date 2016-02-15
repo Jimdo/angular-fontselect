@@ -1,11 +1,11 @@
 fontselectModule.provider('jdfsCuratedFonts', function jdfsCuratedFontsProvider() {
-  var curatedFonts = [];
+  var curatedFontKeys = [];
 
-  this.setCuratedFonts = function (curated) {
-    curatedFonts = curated;
+  this.setCuratedFontKeys = function (curatedKeys) {
+    curatedFontKeys = curatedKeys;
   };
 
   this.$get = function jdfsCuratedFontsFactory() {
-    return curatedFonts;
+    return curatedFontKeys;
   };
 });
