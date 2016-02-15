@@ -337,6 +337,8 @@ var TEXT_DEFAULTS = {
   pageLabel: 'Page: ',
   fontFabel: 'Fonts: ',
   closeButton: 'Close',
+  allFontsListHeadline: 'All Fonts',
+  curatedFontsListHeadline: 'Curated Fonts',
   page: {
     prev: '▲',
     next: '▼'

@@ -9,9 +9,10 @@
 			<li ng-if="getFilteredFonts().length === 0" class="jdfs-fontlist-noresults">
 				{{text.noResultsLabel}}
 			</li>
+			<li ng-if="hasCuratedFonts()" class="jdfs-fontlist-headline">{{text.curatedFontsListHeadline}}</li>
+			<li ng-if="hasCuratedFonts()" class="jdfs-fontlist-headline">{{text.allFontsListHeadline}}</li>
 			<jd-font ng-repeat="font in getFilteredFonts() | startFrom: page.current * page.size | limitTo: page.size" />
 		</ul>
-
 
 		<button
 				class="jdfs-fontpagination jdfs-fontpagination-next"

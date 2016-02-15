@@ -28,8 +28,9 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
   NAME_FONTSSERVICE,
   '$element',
   '$document',
-  /* jshint maxparams: 6 */
-  function($scope, $rootScope, $filter, fontsService, $element, $document) {
+  'jdfsCuratedFonts',
+  /* jshint maxparams: 7 */
+  function($scope, $rootScope, $filter, fontsService, $element, $document, jdfsCuratedFonts) {
   /* jshint maxparams: 3 */
     var _filteredFonts = [];
     var _sortedFonts = [];
@@ -489,5 +490,9 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
 
       $scope.setCurrentPage(0);
     }
+
+    $scope.hasCuratedFonts = function() {
+      return jdfsCuratedFonts.length > 0;
+    };
   }
 ]);
