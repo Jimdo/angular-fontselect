@@ -57,7 +57,7 @@ beforeEach(function() {
  * @param {bool} [withModule]  disable automatic module initiation
  *                             (by default, the module is initiated
  *                             automatically for you)
- * @paran {array} [additional] array of strings for additional modules
+ * @param {array} [additional] array of strings for additional modules
  *                             to be exposed on the window, can also be the first
  *                             parameter if withModule should be true
  */
