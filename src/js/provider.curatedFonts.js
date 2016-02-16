@@ -1,3 +1,4 @@
+/* global NAME_FONTSSERVICE */
 fontselectModule.provider('jdfsCuratedFonts', function jdfsCuratedFontsProvider() {
   var curatedFontKeys = [];
 
@@ -5,7 +6,22 @@ fontselectModule.provider('jdfsCuratedFonts', function jdfsCuratedFontsProvider(
     curatedFontKeys = curatedKeys;
   };
 
-  this.$get = function jdfsCuratedFontsFactory() {
-    return curatedFontKeys;
-  };
+  function getCuratedFontObjects(fonts, curatedFontKeys) {
+    return fonts.filter(function(font) {
+      return curatedFontKeys.indexOf(font.provider + '.' + font.key) !== -1;
+    });
+  }
+
+  this.$get = [NAME_FONTSSERVICE, function jdfsCuratedFontsFactory(fontService) {
+    var futureCuratedFonts = [];
+
+    futureCuratedFonts.promise = fontService.ready().then(function() {
+      return angular.extend(
+        futureCuratedFonts,
+        getCuratedFontObjects(fontService._fonts, curatedFontKeys)
+      );
+    });
+
+    return futureCuratedFonts;
+  }];
 });
