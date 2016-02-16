@@ -1,5 +1,5 @@
 /* global LIST_CONTAINER_CLASS, PROVIDER_WEBSAFE, PROVIDER_GOOGLE, initGlobals */
-/* global CATEGORY_SERIF, createDirective, $injector */
+/* global CATEGORY_SERIF, createDirective, $rootScope */
 describe('fontlist directive', function() {
   'use strict';
 
@@ -10,6 +10,8 @@ describe('fontlist directive', function() {
     var d = createDirective();
     $scope = d.scope;
     elm = d.elm;
+    $scope.toggle();
+    $rootScope.$digest();
 
     fontlist = elm.find(LIST_CONTAINER_CLASS);
     $childScope = fontlist.children().first().scope();
@@ -26,21 +28,6 @@ describe('fontlist directive', function() {
 
   it('should have two pagination buttons', function() {
     expect(fontlist.find('button').length).toBe(2);
-  });
-
-  it('should load the preview fonts when we open the font selection', function() {
-    var jdfsWebFont = $injector.get('jdfsWebFont').getFontLoader();
-    spyOn(jdfsWebFont, 'load');
-    $scope.active = true;
-    $scope.$digest();
-    expect(jdfsWebFont.load).toHaveBeenCalled();
-  });
-
-  it('should not load the preview fonts when the font selection is not active', function() {
-    var jdfsWebFont = $injector.get('jdfsWebFont').getFontLoader();
-    spyOn(jdfsWebFont, 'load');
-    $scope.$digest();
-    expect(jdfsWebFont.load).not.toHaveBeenCalled();
   });
 
   describe('pagination', function() {

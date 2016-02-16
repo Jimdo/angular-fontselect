@@ -1,6 +1,6 @@
-/* global initGlobals, $compile, $rootScope, $,
+/* global initGlobals, $compile, $rootScope, $, $injector,
           CATEGORY_SANS_SERIF, FONTLIST_ENTRY_TYPE_FONT,
-          FONTLIST_ENTRY_TYPE_HEADLINE */
+          FONTLIST_ENTRY_TYPE_HEADLINE, NAME_FONTSSERVICE */
 describe('font list entry', function() {
   'use strict';
 
@@ -8,6 +8,8 @@ describe('font list entry', function() {
 
   beforeEach(function() {
     initGlobals();
+
+    spyOn($injector.get(NAME_FONTSSERVICE), 'load');
 
     exampleFont = {
       name: 'Arial',

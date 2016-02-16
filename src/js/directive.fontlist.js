@@ -11,8 +11,7 @@ fontselectModule.directive(NAME_JDFONTLIST, function() {
       fonts: '=',
       meta: '=',
       current: '=',
-      text: '=',
-      active: '='
+      text: '='
     },
     restrict: 'E',
     templateUrl: 'fontlist.html',
@@ -39,17 +38,19 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
     var _fontsInSubsets = [];
     var _fontsInProviders = [];
     var _lastPageCount = 0;
-    var _sortCache = {};
+    var _sortCache = { search: $scope.current.search };
     var _scrollBuffer = 0;
     var _forceNextFilters = false;
 
-
-    var page = $scope.page = $scope.meta.page = {
+    var defaultPage = {
       size: PAGE_SIZE_DEFAULT,
       count: 0,
-      current: 0,
+      current:  0,
       currentAbs: 0
     };
+
+    var page = $scope.page = $scope.meta.page = angular.extend({}, defaultPage, $scope.meta.page);
+
     var fontmeta = $scope.meta.fonts = {
       total: 0,
       current: 0
@@ -86,10 +87,6 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
     };
 
     function keyDownHandler(event) {
-      if (!$scope.active) {
-        return;
-      }
-
       function prevent() {
         event.preventDefault();
         return false;
