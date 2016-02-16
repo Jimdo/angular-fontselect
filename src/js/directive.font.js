@@ -1,6 +1,10 @@
 /* global NAME_FONTSSERVICE */
 fontselectModule.directive('jdFont', [NAME_FONTSSERVICE, function(fontsService) {
   return {
+    scope: {
+      font: '=',
+      active: '='
+    },
     templateUrl: 'font.html',
     restrict: 'E',
     replace: true,
