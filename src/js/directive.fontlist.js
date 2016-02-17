@@ -1,6 +1,7 @@
 /* global NAME_CONTROLLER, DIRECTION_NEXT, DIRECTION_PREVIOUS, KEY_DOWN */
 /* global KEY_UP, KEY_RIGHT, KEY_LEFT, PAGE_SIZE_DEFAULT, SCROLL_BUFFER, CLOSE_EVENT */
-/* global OPEN_EVENT, NAME_FONTSSERVICE */
+/* global OPEN_EVENT, NAME_FONTSSERVICE, FONTLIST_ENTRY_TYPE_FONT, WeakMap */
+/* global FONTLIST_ENTRY_TYPE_HEADLINE */
 var NAME_JDFONTLIST = 'jdFontlist';
 var NAME_JDFONTLIST_CONTROLLER = NAME_JDFONTLIST + NAME_CONTROLLER;
 
@@ -372,6 +373,7 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
       return _searchedFonts;
     }
 
+    var emptyFilteredFonts = [];
     /**
      * Apply the current filters to our internal font object.
      *
@@ -382,7 +384,7 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
      */
     $scope.getFilteredFonts = function() {
       if (!angular.isArray($scope.fonts)) {
-        return [];
+        return emptyFilteredFonts;
       }
 
       var fonts = $scope.fonts;
@@ -407,6 +409,38 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
       fontmeta.current = _filteredFonts.length;
 
       return _filteredFonts;
+    };
+
+    function convertFontToFontlistEntry(font) {
+      return {
+        type: FONTLIST_ENTRY_TYPE_FONT,
+        content: font
+      };
+    }
+
+    function createHeadlineEntry(content) {
+      return {
+        type: FONTLIST_ENTRY_TYPE_HEADLINE,
+        content: content
+      };
+    }
+
+    var entryMap = new WeakMap();
+    $scope.getFontlistEntries = function() {
+      var filteredFonts = $scope.getFilteredFonts();
+      if (!entryMap.has(filteredFonts)) {
+        var fontlistEntries = filteredFonts.map(convertFontToFontlistEntry);
+        if (jdfsCuratedFonts.length !== 0) {
+          fontlistEntries = [createHeadlineEntry($scope.text.curatedFontsListHeadline)]
+            .concat(jdfsCuratedFonts.map(convertFontToFontlistEntry))
+            .concat([createHeadlineEntry($scope.text.allFontsListHeadline)])
+            .concat(fontlistEntries);
+        }
+
+        entryMap.set(filteredFonts, fontlistEntries);
+      }
+
+      return entryMap.get(filteredFonts);
     };
 
     /**
@@ -487,9 +521,5 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
 
       $scope.setCurrentPage(0);
     }
-
-    $scope.hasCuratedFonts = function() {
-      return jdfsCuratedFonts.length > 0;
-    };
   }
 ]);
