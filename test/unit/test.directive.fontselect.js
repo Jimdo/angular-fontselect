@@ -352,36 +352,36 @@ describe('fontselect directive', function() {
       });
 
       expectAllSpiesCalled(0);
-      $listScope.getFilteredFonts();
+      $listScope.getFontlistEntries();
       expectAllSpiesCalled(1);
     });
 
     it('should not execute the filters twice if the filters have not changed', function() {
-      $listScope.getFilteredFonts();
+      $listScope.getFontlistEntries();
       expectAllSpiesCalled(1);
     });
 
     it('should call all filters when we change the source', function() {
       $injector.get(NAME_FONTSSERVICE).add(ANOTHER_FONT);
-      $listScope.getFilteredFonts();
+      $listScope.getFontlistEntries();
       expectAllSpiesCalled(2);
     });
 
     it('should call all filters when we change the subset', function() {
       expectAllSpiesCalled(1);
       $listScope.current.subsets = {foo: true};
-      $listScope.getFilteredFonts();
+      $listScope.getFontlistEntries();
       expectAllSpiesCalled(2);
     });
 
     it('should call all next filters when we resort', function() {
       $listScope.current.category = CATEGORY_SERIF;
       $listScope.current.sort.direction = false;
-      $listScope.getFilteredFonts();
+      $listScope.getFontlistEntries();
       filterCalled('filter', 1);
       filterCalled('fuzzySearch', 2);
       $listScope.current.sort.attr = false;
-      $listScope.getFilteredFonts();
+      $listScope.getFontlistEntries();
       filterCalled('filter', 2);
       filterCalled('fuzzySearch', 3);
     });
@@ -389,24 +389,24 @@ describe('fontselect directive', function() {
     it('should not call orderBy filter when we change the category or search', function() {
       filterCalled('orderBy', 1);
       $listScope.current.category = CATEGORY_SERIF;
-      $listScope.getFilteredFonts();
+      $listScope.getFontlistEntries();
       filterCalled('orderBy', 1);
       $listScope.current.search = 'foob';
-      $listScope.getFilteredFonts();
+      $listScope.getFontlistEntries();
       filterCalled('orderBy', 1);
     });
 
     it('should not call filter filter when we search ', function() {
       filterCalled('filter', 0);
       $listScope.current.search = 'foob';
-      $listScope.getFilteredFonts();
+      $listScope.getFontlistEntries();
       filterCalled('filter', 0);
     });
 
     it('should call the fuzzySearch filter when we search', function() {
       filterCalled('fuzzySearch', 1);
       $listScope.current.search = 'olive';
-      $listScope.getFilteredFonts();
+      $listScope.getFontlistEntries();
       filterCalled('fuzzySearch', 2);
     });
 
@@ -414,7 +414,7 @@ describe('fontselect directive', function() {
       filterCalled('orderBy', 1);
       filterCalled('fuzzySearch', 1);
       $listScope.current.category = CATEGORY_SERIF;
-      $listScope.getFilteredFonts();
+      $listScope.getFontlistEntries();
       filterCalled('orderBy', 1);
       filterCalled('fuzzySearch', 1);
     });
