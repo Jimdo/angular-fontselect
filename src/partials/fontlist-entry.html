@@ -1,4 +1,5 @@
 <li>
   <jd-font ng-if="entry.type === 'FONT'" font="entry.content"></jd-font>
   <span ng-if="entry.type === 'HEADLINE'" class="jdfs-fontlist-headline">{{entry.content}}</span>
+  <span ng-if="entry.type === 'TEXT'" class="jdfs-fontlist-text">{{entry.content}}</span>
 </li>

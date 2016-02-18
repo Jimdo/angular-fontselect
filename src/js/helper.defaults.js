@@ -382,3 +382,4 @@ fontselectModule.constant('jdFontselectConfig', {
 
 var FONTLIST_ENTRY_TYPE_HEADLINE = 'HEADLINE';
 var FONTLIST_ENTRY_TYPE_FONT = 'FONT';
+var FONTLIST_ENTRY_TYPE_TEXT = 'TEXT';

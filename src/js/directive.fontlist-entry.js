@@ -12,6 +12,7 @@ fontselectModule.directive(NAME_JDFONTLIST_ENTRY, function() {
     link: function($scope) {
       $scope.isHeadline = $scope.entry.type === FONTLIST_ENTRY_TYPE_HEADLINE;
       $scope.isFont = $scope.entry.type === FONTLIST_ENTRY_TYPE_FONT;
+      $scope.isText = $scope.entry.type === FONTLIST_ENTRY_TYPE_TEXT;
     }
   };
 });

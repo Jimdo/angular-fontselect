@@ -1,6 +1,7 @@
 /* global initGlobals, $compile, $rootScope, $, $injector,
           CATEGORY_SANS_SERIF, FONTLIST_ENTRY_TYPE_FONT,
-          FONTLIST_ENTRY_TYPE_HEADLINE, NAME_FONTSSERVICE */
+          FONTLIST_ENTRY_TYPE_HEADLINE, NAME_FONTSSERVICE,
+          FONTLIST_ENTRY_TYPE_TEXT */
 describe('font list entry', function() {
   'use strict';
 
@@ -44,5 +45,17 @@ describe('font list entry', function() {
     var headline = $fontlistEntry.find('.jdfs-fontlist-headline');
     expect(headline.length).toBe(1);
     expect(headline.text()).toBe(testHeadline);
+  });
+
+  it('should render a text if the entrys type is text', function() {
+    var testText = 'Foo Baz';
+    $rootScope.entry = {
+      type: FONTLIST_ENTRY_TYPE_TEXT,
+      content: testText
+    };
+    $rootScope.$digest();
+    var text = $fontlistEntry.find('.jdfs-fontlist-text');
+    expect(text.length).toBe(1);
+    expect(text.text()).toBe(testText);
   });
 });

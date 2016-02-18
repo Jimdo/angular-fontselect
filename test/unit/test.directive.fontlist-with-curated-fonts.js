@@ -1,5 +1,5 @@
 /* global initGlobals, $rootScope, $, $compile, $injector, CATEGORY_SANS_SERIF,
-          NAME_FONTSSERVICE, FONTLIST_ENTRY_TYPE_HEADLINE */
+          NAME_FONTSSERVICE, FONTLIST_ENTRY_TYPE_HEADLINE, FONTLIST_ENTRY_TYPE_TEXT */
 describe('fontlist directive with curated fonts', function() {
   'use strict';
 
@@ -28,6 +28,7 @@ describe('fontlist directive with curated fonts', function() {
     $rootScope.fonts = [exampleFont];
 
     $fontlist = $('<jd-fontlist meta="meta" current="current" fonts="fonts" text="text"></jd-fontlist>');
+
     $compile($fontlist)($rootScope);
     $rootScope.$digest();
 
@@ -50,7 +51,6 @@ describe('fontlist directive with curated fonts', function() {
     });
 
     it('should return different arrays if fonts change', function() {
-      $scope.fonts = [exampleFont];
       var fontlistEntries = $scope.getFontlistEntries();
       var fakeFilteredFonts = [];
       $scope.fonts = fakeFilteredFonts;
@@ -58,15 +58,23 @@ describe('fontlist directive with curated fonts', function() {
     });
 
     it('should return curated fonts', function() {
+      // fonts have to be set and reset in order to invalidate weakmap
       $scope.fonts = [];
       $injector.get('jdfsCuratedFonts').push(exampleFont);
-      expect($scope.getFontlistEntries().length).toBe(3);
+      $rootScope.$digest();
+      $scope.fonts = [exampleFont];
+
+      expect($scope.getFontlistEntries().length).toBe(4);
       expect($scope.getFontlistEntries()[1].content).toBe(exampleFont);
     });
 
     it('should return headlines if curated fonts', function() {
+      // fonts have to be set and reset in order to invalidate weakmap
       $scope.fonts = [];
       $injector.get('jdfsCuratedFonts').push(exampleFont);
+      $rootScope.$digest();
+      $scope.fonts = [exampleFont];
+
       expect($scope.getFontlistEntries()[0].type)
         .toBe(FONTLIST_ENTRY_TYPE_HEADLINE);
     });
@@ -78,11 +86,24 @@ describe('fontlist directive with curated fonts', function() {
   });
 
   it('should render headlines if curated fonts exists', function() {
+    // fonts have to be set and reset in order to invalidate weakmap
     $scope.fonts = [];
     $injector.get('jdfsCuratedFonts').push(exampleFont);
     $rootScope.$digest();
-    expect($scope.getFontlistEntries().length).toBe(3);
+    $scope.fonts = [exampleFont];
+    $scope.$digest();
+
+    expect($scope.getFontlistEntries().length).toBe(4);
     var headlines = $fontlist.find('.jdfs-fontlist-headline');
     expect(headlines.length).toBe(2);
+  });
+
+  it('should display info message if there are no fonts', function() {
+    $scope.fonts = [];
+    $rootScope.$digest();
+    var emptyMessage = $fontlist.find('.jdfs-fontlist-text');
+    expect(emptyMessage.length).toBe(1);
+    expect($scope.getFontlistEntries()[0].type)
+      .toBe(FONTLIST_ENTRY_TYPE_TEXT);
   });
 });

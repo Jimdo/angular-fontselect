@@ -1,7 +1,7 @@
 /* global NAME_CONTROLLER, DIRECTION_NEXT, DIRECTION_PREVIOUS, KEY_DOWN */
 /* global KEY_UP, KEY_RIGHT, KEY_LEFT, PAGE_SIZE_DEFAULT, SCROLL_BUFFER, CLOSE_EVENT */
 /* global OPEN_EVENT, NAME_FONTSSERVICE, FONTLIST_ENTRY_TYPE_FONT, WeakMap */
-/* global FONTLIST_ENTRY_TYPE_HEADLINE */
+/* global FONTLIST_ENTRY_TYPE_HEADLINE, FONTLIST_ENTRY_TYPE_TEXT */
 var NAME_JDFONTLIST = 'jdFontlist';
 var NAME_JDFONTLIST_CONTROLLER = NAME_JDFONTLIST + NAME_CONTROLLER;
 
@@ -416,20 +416,36 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
       };
     }
 
+    function createTextEntry(content) {
+      return {
+        type: FONTLIST_ENTRY_TYPE_TEXT,
+        content: content
+      };
+    }
+
     var entryMap = new WeakMap();
 
     $scope.getFontlistEntries = function() {
       var filteredFonts = filterFontList($scope.fonts || EMPTY_FILTERED_FONTS, ALL_FONTS_FILTER_STATE);
       if (!entryMap.has(filteredFonts)) {
+
+        var fontlistEntries = [];
+        if (filteredFonts.length === 0) {
+          fontlistEntries.push(createTextEntry($scope.text.noResultsLabel));
+        } else {
+          fontlistEntries = filteredFonts.map(convertFontToFontlistEntry);
+
+          if (jdfsCuratedFonts.length !== 0) {
+            fontlistEntries = [createHeadlineEntry($scope.text.curatedFontsListHeadline)]
+              .concat(jdfsCuratedFonts.map(convertFontToFontlistEntry))
+              .concat([createHeadlineEntry($scope.text.allFontsListHeadline)])
+              .concat(fontlistEntries);
+          }
+        }
+
         fontmeta.total = $scope.fonts.length;
         fontmeta.current = filteredFonts.length;
-        var fontlistEntries = filteredFonts.map(convertFontToFontlistEntry);
-        if (jdfsCuratedFonts.length !== 0) {
-          fontlistEntries = [createHeadlineEntry($scope.text.curatedFontsListHeadline)]
-            .concat(jdfsCuratedFonts.map(convertFontToFontlistEntry))
-            .concat([createHeadlineEntry($scope.text.allFontsListHeadline)])
-            .concat(fontlistEntries);
-        }
+
         _fontlistEntries = fontlistEntries;
         entryMap.set(filteredFonts, fontlistEntries);
       }
