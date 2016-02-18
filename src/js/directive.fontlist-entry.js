@@ -4,7 +4,8 @@ var NAME_JDFONTLIST_ENTRY = 'jdFontlistEntry';
 fontselectModule.directive(NAME_JDFONTLIST_ENTRY, function() {
   return {
     scope: {
-      entry: '='
+      entry: '=',
+      current: '='
     },
     restrict: 'E',
     templateUrl: 'fontlist-entry.html',
