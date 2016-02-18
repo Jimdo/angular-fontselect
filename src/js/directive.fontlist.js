@@ -436,8 +436,9 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
           fontlistEntries = filteredFonts.map(convertFontToFontlistEntry);
 
           if (jdfsCuratedFonts.length !== 0) {
+            var filteredCuratedFonts = filterFontList(jdfsCuratedFonts, CURATED_FONTS_FILTER_STATE);
             fontlistEntries = [createHeadlineEntry($scope.text.curatedFontsListHeadline)]
-              .concat(jdfsCuratedFonts.map(convertFontToFontlistEntry))
+              .concat(filteredCuratedFonts.map(convertFontToFontlistEntry))
               .concat([createHeadlineEntry($scope.text.allFontsListHeadline)])
               .concat(fontlistEntries);
           }
