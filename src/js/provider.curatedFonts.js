@@ -13,15 +13,6 @@ fontselectModule.provider('jdfsCuratedFonts', function jdfsCuratedFontsProvider(
   }
 
   this.$get = [NAME_FONTSSERVICE, function jdfsCuratedFontsFactory(fontService) {
-    var futureCuratedFonts = [];
-
-    futureCuratedFonts.promise = fontService.ready().then(function() {
-      return angular.extend(
-        futureCuratedFonts,
-        getCuratedFontObjects(fontService._fonts, curatedFontKeys)
-      );
-    });
-
-    return futureCuratedFonts;
+    return getCuratedFontObjects(fontService.getAllFonts(), curatedFontKeys);
   }];
 });
