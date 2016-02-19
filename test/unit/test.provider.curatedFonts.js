@@ -1,4 +1,4 @@
-/* global module, initGlobals, $injector, spyOn, NAME_FONTSSERVICE, $rootScope */
+/* global module, initGlobals, $injector, NAME_FONTSSERVICE, $rootScope */
 describe('curated fonts provider', function() {
   'use strict';
 
