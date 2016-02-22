@@ -99,7 +99,7 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsSer
 
         $scope.$broadcast(OPEN_EVENT);
         if (angular.isFunction($scope.onOpen)) {
-          $scope.onOpen();
+          $scope.onOpen({$scope: $scope});
         }
       }
 
@@ -109,7 +109,7 @@ fontselectModule.directive('jdFontselect', [NAME_FONTSSERVICE, function(fontsSer
 
         $scope.$broadcast(CLOSE_EVENT);
         if (angular.isFunction($scope.onClose)) {
-          $scope.onClose();
+          $scope.onClose({$scope: $scope});
         }
       }
 
