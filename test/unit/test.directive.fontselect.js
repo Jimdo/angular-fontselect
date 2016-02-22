@@ -245,7 +245,7 @@ describe('fontselect directive', function() {
     it('should link the labels to the radio buttons', function() {
       var radio = elm.find('input[type="radio"]');
       expect(radio.attr('id'))
-        .toBe(radio.siblings('label').first().attr('for'));
+        .toBe(radio.first().parent().attr('for'));
     });
 
     it('should provide a preview of the font', function() {
