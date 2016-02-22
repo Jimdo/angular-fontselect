@@ -1,5 +1,5 @@
 /*!
- * angular-fontselect v0.12.4
+ * angular-fontselect v0.13.0
  * https://github.com/Jimdo/angular-fontselect
  *
  * A fontselect directive for AngularJS
@@ -351,6 +351,8 @@
     pageLabel: 'Page: ',
     fontFabel: 'Fonts: ',
     closeButton: 'Close',
+    allFontsListHeadline: 'All Fonts',
+    curatedFontsListHeadline: 'Curated Fonts',
     page: {
       prev: '▲',
       next: '▼'
@@ -391,6 +393,10 @@
   fontselectModule.constant('jdFontselectConfig', {
     googleApiKey: window._jdFontselectGoogleApiKey || false
   });
+
+  var FONTLIST_ENTRY_TYPE_HEADLINE = 'HEADLINE';
+  var FONTLIST_ENTRY_TYPE_FONT = 'FONT';
+  var FONTLIST_ENTRY_TYPE_TEXT = 'TEXT';
 
   // src/js/helper.google-font-categories.js
   /** @const */
@@ -1151,23 +1157,38 @@
   // src/js/directive.font.js
   fontselectModule.directive('jdFont', [NAME_FONTSSERVICE, function(fontsService) {
     return {
+      scope: {
+        font: '=',
+        current: '='
+      },
       templateUrl: 'font.html',
       restrict: 'E',
       replace: true,
       controller: ['$scope', function($scope) {
-        if ($scope.active) {
-          fontsService.load($scope.font);
-        } else {
-          var destroy = $scope.$watch('active', function(newActive) {
-            if (newActive) {
-              fontsService.load($scope.font);
-              destroy();
-            }
-          });
-        }
+        fontsService.load($scope.font);
       }]
     };
   }]);
+
+  // src/js/directive.fontlist-entry.js
+  var NAME_JDFONTLIST_ENTRY = 'jdFontlistEntry';
+
+  fontselectModule.directive(NAME_JDFONTLIST_ENTRY, function() {
+    return {
+      scope: {
+        entry: '=',
+        current: '='
+      },
+      restrict: 'E',
+      templateUrl: 'fontlist-entry.html',
+      replace: true,
+      link: function($scope) {
+        $scope.isHeadline = $scope.entry.type === FONTLIST_ENTRY_TYPE_HEADLINE;
+        $scope.isFont = $scope.entry.type === FONTLIST_ENTRY_TYPE_FONT;
+        $scope.isText = $scope.entry.type === FONTLIST_ENTRY_TYPE_TEXT;
+      }
+    };
+  });
 
   // src/js/directive.fontlist.js
   var NAME_JDFONTLIST = 'jdFontlist';
@@ -1180,8 +1201,7 @@
         fonts: '=',
         meta: '=',
         current: '=',
-        text: '=',
-        active: '='
+        text: '='
       },
       restrict: 'E',
       templateUrl: 'fontlist.html',
@@ -1196,24 +1216,32 @@
     '$filter',
     NAME_FONTSSERVICE,
     '$element',
-    '$document',  function($scope, $rootScope, $filter, fontsService, $element, $document) {    var _filteredFonts = [];
-      var _sortedFonts = [];
-      var _searchedFonts = [];
-      var _categorizedFonts = [];
-      var _fontsInSubsets = [];
-      var _fontsInProviders = [];
+    '$document',
+    'jdfsCuratedFonts',  function($scope, $rootScope, $filter, fontsService, $element, $document, jdfsCuratedFonts) {    var _fontlistEntries = [];
       var _lastPageCount = 0;
-      var _sortCache = {};
       var _scrollBuffer = 0;
-      var _forceNextFilters = false;
 
+      var ALL_FONTS_FILTER_STATE = {
+        forceNext: false,
+        fontsInProviders: [],
+        fontsInSubsets: [],
+        sortedFonts: [],
+        categorizedFonts: [],
+        searchedFonts: [],
+        sortCache: { search: $scope.current.search }
+      };
 
-      var page = $scope.page = $scope.meta.page = {
+      var CURATED_FONTS_FILTER_STATE = angular.copy(ALL_FONTS_FILTER_STATE);
+
+      var defaultPage = {
         size: PAGE_SIZE_DEFAULT,
         count: 0,
-        current: 0,
+        current:  0,
         currentAbs: 0
       };
+
+      var page = $scope.page = $scope.meta.page = angular.extend({}, defaultPage, $scope.meta.page);
+
       var fontmeta = $scope.meta.fonts = {
         total: 0,
         current: 0
@@ -1226,7 +1254,15 @@
       }
 
       $scope.keyfocus = function(direction, amount) {
-        var index = _filteredFonts.indexOf($scope.current.font);
+        var index = -1;
+        var i, l = _fontlistEntries.length;
+        for (i = 0; i < l; i++) {
+          if (_fontlistEntries[i].content === $scope.current.font) {
+            index = i;
+            break;
+          }
+        }
+
         var pageoffset = page.size * page.current;
         var onPage = isOnCurrentPage(index);
 
@@ -1236,12 +1272,16 @@
 
         index += (direction === DIRECTION_PREVIOUS ? -amount : amount);
 
-        if (!onPage && _filteredFonts[index + pageoffset]) {
+        if (!onPage && _fontlistEntries[index + pageoffset]) {
           index += pageoffset;
         }
 
-        if (_filteredFonts[index]) {
-          $scope.current.font = _filteredFonts[index];
+        while (_fontlistEntries[index] && _fontlistEntries[index].type !== FONTLIST_ENTRY_TYPE_FONT) {
+          index += (direction === DIRECTION_PREVIOUS ? -1 : 1);
+        }
+
+        if (_fontlistEntries[index]) {
+          $scope.current.font = _fontlistEntries[index].content;
 
           page.currentAbs = page.current = Math.floor(index / page.size);
 
@@ -1250,10 +1290,6 @@
       };
 
       function keyDownHandler(event) {
-        if (!$scope.active) {
-          return;
-        }
-
         function prevent() {
           event.preventDefault();
           return false;
@@ -1320,7 +1356,7 @@
             _scrollBuffer = 0;
           }
 
-          if ($scope.paginate(delta > 0 ? -subpage : subpage) !== false) {
+          if (delta !== 0 && $scope.paginate(delta > 0 ? -subpage : subpage) !== false) {
             $scope.$digest();
           }
         }
@@ -1353,7 +1389,8 @@
       /**
        * Go to the next or previous page.
        *
-       * @param  {String} direction 'next' or 'prev'
+       * @param  {Number} amount subpage steps
+       * @param  {Object} $event jQuery scroll event
        * @return {void}
        */
       $scope.paginate = function(amount, $event) {
@@ -1396,7 +1433,7 @@
         _updateCurrentPage();
 
         return (
-          (direction === DIRECTION_NEXT && (page.current + 1) * page.size < _filteredFonts.length) ||
+          (direction === DIRECTION_NEXT && (page.current + 1) * page.size < _fontlistEntries.length) ||
           (direction === DIRECTION_PREVIOUS && page.current > 0)
         );
       };
@@ -1427,38 +1464,40 @@
        * @param {Array} fonts
        * @return {Array}
        */
-      function _filterProviders(fonts) {
+      function _filterProviders(fonts, filterState) {
         var providersString = JSON.stringify($scope.current.providers);
-        if (_forceNextFilters || _sortCache.providers !== providersString) {
-          _sortCache.providers = providersString;
-          _forceNextFilters = true;
+        if (filterState.forceNext || filterState.sortCache.providers !== providersString) {
+          filterState.sortCache.providers = providersString;
+          filterState.forceNext = true;
 
-          _fontsInProviders = fonts.filter(function(font) {
+          filterState.fontsInProviders = fonts.filter(function(font) {
             return $scope.current.providers[font.provider];
           });
         }
 
-        return _fontsInProviders;
+        return filterState.fontsInProviders;
       }
+
+
 
       /**
        * Apply current subset filters to given font list
        * @param  {Array} fonts
        * @return {Array}
        */
-      function _filterSubsets(fonts) {
+      function _filterSubsets(fonts, filterState) {
         var subSetString = JSON.stringify($scope.current.subsets);
-        if (_forceNextFilters || _sortCache.subsets !== subSetString) {
-          _sortCache.subsets = subSetString;
-          _forceNextFilters = true;
+        if (filterState.forceNext || filterState.sortCache.subsets !== subSetString) {
+          filterState.sortCache.subsets = subSetString;
+          filterState.forceNext = true;
 
-          _fontsInSubsets = $filter('hasAllSubsets')(
+          filterState.fontsInSubsets = $filter('hasAllSubsets')(
             fonts,
             $scope.current.subsets
           );
         }
 
-        return _fontsInSubsets;
+        return filterState.fontsInSubsets;
       }
 
       /**
@@ -1466,26 +1505,26 @@
        * @param  {Array} fonts
        * @return {Array}
        */
-      function _filterSort(fonts) {
+      function _filterSort(fonts, filterState) {
         var attrDirection = $scope.current.sort.attr.dir;
         var direction = $scope.current.sort.direction;
 
-        if (_forceNextFilters ||
-          _sortCache.sortattr !== $scope.current.sort.attr.key ||
-          _sortCache.sortdir !== direction)
+        if (filterState.forceNext ||
+          filterState.sortCache.sortattr !== $scope.current.sort.attr.key ||
+          filterState.sortCache.sortdir !== direction)
         {
-          _sortCache.sortattr = $scope.current.sort.attr.key;
-          _sortCache.sortdir = direction;
-          _forceNextFilters = true;
+          filterState.sortCache.sortattr = $scope.current.sort.attr.key;
+          filterState.sortCache.sortdir = direction;
+          filterState.forceNext = true;
 
-          _sortedFonts = $filter('orderBy')(
+          filterState.sortedFonts = $filter('orderBy')(
             fonts,
             $scope.current.sort.attr.key,
             $scope.current.sort.direction ? attrDirection : !attrDirection
           );
         }
 
-        return _sortedFonts;
+        return filterState.sortedFonts;
       }
 
       /**
@@ -1493,20 +1532,20 @@
        * @param  {Array} fonts
        * @return {Array}
        */
-      function _filterCategory(fonts) {
+      function _filterCategory(fonts, filterState) {
         var category = $scope.current.category;
-        if (_forceNextFilters || _sortCache.category !== category) {
-          _sortCache.category = category;
-          _forceNextFilters = true;
+        if (filterState.forceNext || filterState.sortCache.category !== category) {
+          filterState.sortCache.category = category;
+          filterState.forceNext = true;
 
           if (angular.isUndefined(category)) {
-            _categorizedFonts = fonts;
+            filterState.categorizedFonts = fonts;
           } else {
-            _categorizedFonts = $filter('filter')(fonts, {category: category}, true);
+            filterState.categorizedFonts = $filter('filter')(fonts, {category: category}, true);
           }
         }
 
-        return _categorizedFonts;
+        return filterState.categorizedFonts;
       }
 
       /**
@@ -1514,12 +1553,12 @@
        * @param  {Array} fonts
        * @return {Array}
        */
-      function _filterSearch(fonts) {
+      function _filterSearch(fonts, filterState) {
         var search = $scope.current.search || '';
-        var searchTermChanged = _sortCache.search !== search;
-        if (_forceNextFilters || searchTermChanged) {
-          _sortCache.search = search;
-          _forceNextFilters = true;
+        var searchTermChanged = filterState.sortCache.search !== search;
+        if (filterState.forceNext || searchTermChanged) {
+          filterState.sortCache.search = search;
+          filterState.forceNext = true;
 
           /* Unset category filter so every font is visible. */
           if (searchTermChanged) {
@@ -1527,34 +1566,23 @@
           }
 
           if (search.length) {
-            _searchedFonts = _priorize(
+            filterState.searchedFonts = _priorize(
               $filter('fuzzySearch')(fonts, {name: search}),
               search.toLowerCase()
             );
           } else {
-            _searchedFonts = fonts;
+            filterState.searchedFonts = fonts;
           }
         }
 
-        return _searchedFonts;
+        return filterState.searchedFonts;
       }
 
-      /**
-       * Apply the current filters to our internal font object.
-       *
-       * Ensure we only apply filters when the filter parameters
-       * or the source have changed.
-       *
-       * @return {Array}
-       */
-      $scope.getFilteredFonts = function() {
-        if (!angular.isArray($scope.fonts)) {
-          return [];
-        }
+      var EMPTY_FILTERED_FONTS = [];
 
-        var fonts = $scope.fonts;
-        _forceNextFilters = _sortCache.fontAmount !== fonts.length;
-        _sortCache.fontAmount = fonts.length;
+      function filterFontList(fonts, filterState) {
+        filterState.forceNext = filterState.sortCache.fontAmount !== fonts.length;
+        filterState.sortCache.fontAmount = fonts.length;
 
         var queue = [
           _filterProviders,
@@ -1564,16 +1592,64 @@
           _filterCategory
         ];
 
+        var filteredList = fonts;
         for (var i = 0, l = queue.length; i < l; i++) {
-          fonts = queue[i](fonts);
+          filteredList = queue[i](filteredList, filterState);
         }
 
-        _filteredFonts = fonts;
+        return filteredList;
+      }
 
-        fontmeta.total = $scope.fonts.length;
-        fontmeta.current = _filteredFonts.length;
+      function convertFontToFontlistEntry(font) {
+        return {
+          type: FONTLIST_ENTRY_TYPE_FONT,
+          content: font
+        };
+      }
 
-        return _filteredFonts;
+      function createHeadlineEntry(content) {
+        return {
+          type: FONTLIST_ENTRY_TYPE_HEADLINE,
+          content: content
+        };
+      }
+
+      function createTextEntry(content) {
+        return {
+          type: FONTLIST_ENTRY_TYPE_TEXT,
+          content: content
+        };
+      }
+
+      var entryMap = new WeakMap();
+
+      $scope.getFontlistEntries = function() {
+        var filteredFonts = filterFontList($scope.fonts || EMPTY_FILTERED_FONTS, ALL_FONTS_FILTER_STATE);
+        if (!entryMap.has(filteredFonts)) {
+
+          var fontlistEntries = [];
+          if (filteredFonts.length === 0) {
+            fontlistEntries.push(createTextEntry($scope.text.noResultsLabel));
+          } else {
+            fontlistEntries = filteredFonts.map(convertFontToFontlistEntry);
+
+            if (jdfsCuratedFonts.length !== 0) {
+              var filteredCuratedFonts = filterFontList(jdfsCuratedFonts, CURATED_FONTS_FILTER_STATE);
+              fontlistEntries = [createHeadlineEntry($scope.text.curatedFontsListHeadline)]
+                .concat(filteredCuratedFonts.map(convertFontToFontlistEntry))
+                .concat([createHeadlineEntry($scope.text.allFontsListHeadline)])
+                .concat(fontlistEntries);
+            }
+          }
+
+          fontmeta.total = $scope.fonts.length;
+          fontmeta.current = filteredFonts.length;
+
+          _fontlistEntries = fontlistEntries;
+          entryMap.set(filteredFonts, fontlistEntries);
+        }
+
+        return entryMap.get(filteredFonts);
       };
 
       /**
@@ -1633,8 +1709,8 @@
           return 0;
         }
 
-        if (_filteredFonts.length) {
-          page.count = Math.ceil(_filteredFonts.length / page.size);
+        if (_fontlistEntries.length) {
+          page.count = Math.ceil(_fontlistEntries.length / page.size);
         }
       }
 
@@ -2203,6 +2279,27 @@
 
       return input.slice(start);
     };
+  });
+
+  // src/js/provider.curatedFonts.js
+  fontselectModule.provider('jdfsCuratedFonts', function jdfsCuratedFontsProvider() {
+    var curatedFontKeys = [];
+
+    this.setCuratedFontKeys = function (curatedKeys) {
+      curatedFontKeys = curatedKeys;
+    };
+
+    function getCuratedFontObjects(fonts, curatedFontKeys) {
+      return fonts.filter(function(font) {
+        return curatedFontKeys.indexOf(font.provider + '.' + font.key) !== -1;
+      }).map(function(font) {
+        return angular.copy(font);
+      });
+    }
+
+    this.$get = [NAME_FONTSSERVICE, function jdfsCuratedFontsFactory(fontService) {
+      return getCuratedFontObjects(fontService.getAllFonts(), curatedFontKeys);
+    }];
   });
 
   // src/js/service.fonts.js
@@ -2900,17 +2997,22 @@
 
 
     $templateCache.put('font.html',
-      "<li><input type=radio ng-model=current.font ng-value=font name=jdfs-{{id}}-font id=\"jdfs-{{id}}-font-{{font.key}}\"><label ng-class=\"{'jdfs-active jdfs-highlight': current.font.name == font.name}\" for=jdfs-{{id}}-font-{{font.key}} style=\"font-family: {{font.stack}}\">{{font.name}}</label></li>"
+      "<label class=jdfs-fontlist-font ng-class=\"{'jdfs-active jdfs-highlight': current.font.name == font.name}\" for=jdfs-{{id}}-font-{{font.key}} style=\"font-family: {{font.stack}}\"><input type=radio ng-model=current.font ng-value=font name=jdfs-{{id}}-font id=\"jdfs-{{id}}-font-{{font.key}}\"> {{font.name}}</label>"
+    );
+
+
+    $templateCache.put('fontlist-entry.html',
+      "<ng-switch on=entry.type><li ng-switch-when=FONT><jd-font current=current font=entry.content></jd-font></li><li ng-switch-when=HEADLINE class=jdfs-fontlist-headline>{{entry.content}}</li><li ng-switch-when=TEXT class=jdfs-fontlist-text>{{entry.content}}</li></ng-switch>"
     );
 
 
     $templateCache.put('fontlist.html',
-      "<div class=jdfs-fontlistcon ng-class=\"{'jdfs-active': isActive()}\"><button class=\"jdfs-fontpagination jdfs-fontpagination-prev\" ng-click=\"paginate('prev', $event)\" ng-class=\"{'jdfs-disabled': !paginationButtonActive('prev')}\" ng-disabled=\"!paginationButtonActive('prev')\">{{text.page.prev}}</button><ul class=jdfs-fontlist><li ng-if=\"getFilteredFonts().length === 0\" class=jdfs-fontlist-noresults>{{text.noResultsLabel}}</li><jd-font ng-repeat=\"font in getFilteredFonts() | startFrom: page.current * page.size | limitTo: page.size\"></ul><button class=\"jdfs-fontpagination jdfs-fontpagination-next\" ng-click=\"paginate('next', $event)\" ng-class=\"{'jdfs-disabled': !paginationButtonActive('next')}\" ng-disabled=\"!paginationButtonActive('next')\">{{text.page.next}}</button></div>"
+      "<div class=jdfs-fontlistcon ng-class=\"{'jdfs-active': isActive()}\"><button class=\"jdfs-fontpagination jdfs-fontpagination-prev\" ng-click=\"paginate('prev', $event)\" ng-class=\"{'jdfs-disabled': !paginationButtonActive('prev')}\" ng-disabled=\"!paginationButtonActive('prev')\">{{text.page.prev}}</button><ul class=jdfs-fontlist><jd-fontlist-entry current=current entry=entry ng-repeat=\"entry in getFontlistEntries() | startFrom: page.current * page.size | limitTo: page.size\"></jd-fontlist-entry></ul><button class=\"jdfs-fontpagination jdfs-fontpagination-next\" ng-click=\"paginate('next', $event)\" ng-class=\"{'jdfs-disabled': !paginationButtonActive('next')}\" ng-disabled=\"!paginationButtonActive('next')\">{{text.page.next}}</button></div>"
     );
 
 
     $templateCache.put('fontselect.html',
-      "<div class=jdfs-main id=jd-fontselect-{{suffixedId}}><button ng-click=toggleSearch($event) ng-class=\"{'jdfs-highlight': searching}\" class=jdfs-search-indicator>{{text.searchToggleLabel}}</button> <button ng-click=toggleSearch($event) class=jdfs-toggle-search id=jd-fontselect-{{suffixedId}}-toggle-search ng-show=!searching><span class=jdfs-font-name style=\"font-family: {{current.font.stack}}\">{{current.font.name || text.toggleSearchLabel}}</span></button> <input class=jdfs-search placeholder={{text.search}} name=jdfs-{{id}}-search ng-show=searching ng-model=\"current.search\"> <button class=jdfs-reset-search ng-click=resetSearch($event) ng-show=\"searching && current.search.length > 0\">x</button> <button class=jdfs-toggle ng-click=toggle($event) id=jd-fontselect-{{suffixedId}}-toggle ng-class=\"{'jdfs-highlight': active}\">{{active ? text.toggleCloseLabel : text.toggleOpenLabel}}</button><div class=jdfs-window ng-show=active><jd-fontlist fsid=id text=text meta=meta current=current fonts=fonts active=active></jd-fontlist><div class=jdfs-footer-con><a class=\"jdfs-footer-tab-toggle jdfs-styles-label\" ng-click=toggleStyles() ng-class=\"{'jdfs-footer-tab-open': stylesActive}\">{{text.styleLabel}}</a> <a class=\"jdfs-footer-tab-toggle jdfs-settings-label\" ng-click=toggleSettings() ng-class=\"{'jdfs-footer-tab-open': settingsActive}\">{{text.settingsLabel}}</a><div class=jdfs-footer><div class=jdfs-styles ng-show=stylesActive><button class=\"jdfs-filterbtn jdfs-fontstyle-{{category.key}}\" ng-repeat=\"category in categories\" ng-class=\"{'jdfs-active jdfs-highlight': category.key == current.category}\" ng-click=\"setCategoryFilter(category.key, $event)\" ng-model=current.category>{{text.category[category.key] || toName(category.key)}}</button></div><div class=jdfs-settings ng-show=settingsActive><div class=jdfs-provider-list><h4 class=jdfs-settings-headline>{{text.providerLabel}}</h4><div ng-repeat=\"(provider, active) in current.providers\" class=jdfs-provider ng-class=\"{'jdfs-active jdfs-highlight': current.providers[provider]}\"><input ng-model=current.providers[provider] type=checkbox id=\"jdfs-{{id}}-provider-{{provider}}\"><label for=jdfs-{{id}}-provider-{{provider}}>{{text.provider[provider] || toName(provider)}}</label></div></div><div class=jdfs-subsets><h4 class=jdfs-settings-headline>{{text.subsetLabel}}</h4><div ng-repeat=\"(key, name) in current.subsets\" class=jdfs-subset ng-class=\"{'jdfs-active jdfs-highlight': current.subsets[key]}\"><input ng-model=current.subsets[key] type=checkbox id=\"jdfs-{{id}}-subset-{{key}}\"><label for=jdfs-{{id}}-subset-{{key}}>{{text.subset[key] || toName(key)}}</label></div></div></div></div></div><jd-meta meta=meta></jd-meta><button ng-click=toggle($event) class=jdfs-close><span>{{text.closeButton}}</span></button></div></div>"
+      "<div class=jdfs-main id=jd-fontselect-{{suffixedId}}><button ng-click=toggleSearch($event) ng-class=\"{'jdfs-highlight': searching}\" class=jdfs-search-indicator>{{text.searchToggleLabel}}</button> <button ng-click=toggleSearch($event) class=jdfs-toggle-search id=jd-fontselect-{{suffixedId}}-toggle-search ng-show=!searching><span class=jdfs-font-name style=\"font-family: {{current.font.stack}}\">{{current.font.name || text.toggleSearchLabel}}</span></button> <input class=jdfs-search placeholder={{text.search}} name=jdfs-{{id}}-search ng-show=searching ng-model=\"current.search\"> <button class=jdfs-reset-search ng-click=resetSearch($event) ng-show=\"searching && current.search.length > 0\">x</button> <button class=jdfs-toggle ng-click=toggle($event) id=jd-fontselect-{{suffixedId}}-toggle ng-class=\"{'jdfs-highlight': active}\">{{active ? text.toggleCloseLabel : text.toggleOpenLabel}}</button><div class=jdfs-window ng-if=active><jd-fontlist fsid=id text=text meta=meta current=current fonts=fonts></jd-fontlist><div class=jdfs-footer-con><a class=\"jdfs-footer-tab-toggle jdfs-styles-label\" ng-click=toggleStyles() ng-class=\"{'jdfs-footer-tab-open': stylesActive}\">{{text.styleLabel}}</a> <a class=\"jdfs-footer-tab-toggle jdfs-settings-label\" ng-click=toggleSettings() ng-class=\"{'jdfs-footer-tab-open': settingsActive}\">{{text.settingsLabel}}</a><div class=jdfs-footer><div class=jdfs-styles ng-show=stylesActive><button class=\"jdfs-filterbtn jdfs-fontstyle-{{category.key}}\" ng-repeat=\"category in categories\" ng-class=\"{'jdfs-active jdfs-highlight': category.key == current.category}\" ng-click=\"setCategoryFilter(category.key, $event)\" ng-model=current.category>{{text.category[category.key] || toName(category.key)}}</button></div><div class=jdfs-settings ng-show=settingsActive><div class=jdfs-provider-list><h4 class=jdfs-settings-headline>{{text.providerLabel}}</h4><div ng-repeat=\"(provider, active) in current.providers\" class=jdfs-provider ng-class=\"{'jdfs-active jdfs-highlight': current.providers[provider]}\"><input ng-model=current.providers[provider] type=checkbox id=\"jdfs-{{id}}-provider-{{provider}}\"><label for=jdfs-{{id}}-provider-{{provider}}>{{text.provider[provider] || toName(provider)}}</label></div></div><div class=jdfs-subsets><h4 class=jdfs-settings-headline>{{text.subsetLabel}}</h4><div ng-repeat=\"(key, name) in current.subsets\" class=jdfs-subset ng-class=\"{'jdfs-active jdfs-highlight': current.subsets[key]}\"><input ng-model=current.subsets[key] type=checkbox id=\"jdfs-{{id}}-subset-{{key}}\"><label for=jdfs-{{id}}-subset-{{key}}>{{text.subset[key] || toName(key)}}</label></div></div></div></div></div><jd-meta meta=meta></jd-meta><button ng-click=toggle($event) class=jdfs-close><span>{{text.closeButton}}</span></button></div></div>"
     );
 
 
