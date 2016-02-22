@@ -9,6 +9,8 @@ fontselectModule.provider('jdfsCuratedFonts', function jdfsCuratedFontsProvider(
   function getCuratedFontObjects(fonts, curatedFontKeys) {
     return fonts.filter(function(font) {
       return curatedFontKeys.indexOf(font.provider + '.' + font.key) !== -1;
+    }).map(function(font) {
+      return angular.copy(font);
     });
   }
 
