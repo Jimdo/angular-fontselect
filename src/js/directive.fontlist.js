@@ -69,7 +69,15 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
     }
 
     $scope.keyfocus = function(direction, amount) {
-      var index = _fontlistEntries.indexOf($scope.current.font);
+      var index = -1;
+      var i, l = _fontlistEntries.length;
+      for (i = 0; i < l; i++) {
+        if (_fontlistEntries[i].content === $scope.current.font) {
+          index = i;
+          break;
+        }
+      }
+
       var pageoffset = page.size * page.current;
       var onPage = isOnCurrentPage(index);
 
@@ -83,8 +91,12 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
         index += pageoffset;
       }
 
+      while (_fontlistEntries[index] && _fontlistEntries[index].type !== FONTLIST_ENTRY_TYPE_FONT) {
+        index += (direction === DIRECTION_PREVIOUS ? -1 : 1);
+      }
+
       if (_fontlistEntries[index]) {
-        $scope.current.font = _fontlistEntries[index];
+        $scope.current.font = _fontlistEntries[index].content;
 
         page.currentAbs = page.current = Math.floor(index / page.size);
 
