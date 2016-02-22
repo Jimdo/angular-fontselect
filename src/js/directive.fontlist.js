@@ -159,7 +159,7 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
           _scrollBuffer = 0;
         }
 
-        if ($scope.paginate(delta > 0 ? -subpage : subpage) !== false) {
+        if (delta !== 0 && $scope.paginate(delta > 0 ? -subpage : subpage) !== false) {
           $scope.$digest();
         }
       }
