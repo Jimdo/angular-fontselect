@@ -192,7 +192,8 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
     /**
      * Go to the next or previous page.
      *
-     * @param  {String} direction 'next' or 'prev'
+     * @param  {Number} amount subpage steps
+     * @param  {Object} $event jQuery scroll event
      * @return {void}
      */
     $scope.paginate = function(amount, $event) {
