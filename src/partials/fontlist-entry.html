@@ -1,5 +1,5 @@
-<li>
-  <jd-font ng-if="entry.type === 'FONT'" current="current" font="entry.content"></jd-font>
-  <span ng-if="entry.type === 'HEADLINE'" class="jdfs-fontlist-headline">{{entry.content}}</span>
-  <span ng-if="entry.type === 'TEXT'" class="jdfs-fontlist-text">{{entry.content}}</span>
-</li>
+<ng-switch on="entry.type">
+  <li ng-switch-when="FONT"><jd-font current="current" font="entry.content"></jd-font></li>
+  <li ng-switch-when="HEADLINE" class="jdfs-fontlist-headline">{{entry.content}}</li>
+  <li ng-switch-when="TEXT" class="jdfs-fontlist-text">{{entry.content}}</li>
+</ng-switch>
