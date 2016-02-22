@@ -1,5 +1,5 @@
 /*!
- * angular-fontselect v0.13.0
+ * angular-fontselect v0.13.1
  * https://github.com/Jimdo/angular-fontselect
  *
  * A fontselect directive for AngularJS
@@ -1832,7 +1832,7 @@
 
           $scope.$broadcast(OPEN_EVENT);
           if (angular.isFunction($scope.onOpen)) {
-            $scope.onOpen();
+            $scope.onOpen({$scope: $scope});
           }
         }
 
@@ -1842,7 +1842,7 @@
 
           $scope.$broadcast(CLOSE_EVENT);
           if (angular.isFunction($scope.onClose)) {
-            $scope.onClose();
+            $scope.onClose({$scope: $scope});
           }
         }
 
