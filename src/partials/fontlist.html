@@ -6,12 +6,8 @@
 			ng-disabled="!paginationButtonActive('prev')"
 		>{{text.page.prev}}</button>
 		<ul class='jdfs-fontlist'>
-			<li ng-if="getFilteredFonts().length === 0" class="jdfs-fontlist-noresults">
-				{{text.noResultsLabel}}
-			</li>
-			<jd-font ng-repeat="font in getFilteredFonts() | startFrom: page.current * page.size | limitTo: page.size" />
+			<jd-fontlist-entry current="current" entry="entry" ng-repeat="entry in getFontlistEntries() | startFrom: page.current * page.size | limitTo: page.size"></jd-fontlist-entry>
 		</ul>
-
 
 		<button
 				class="jdfs-fontpagination jdfs-fontpagination-next"

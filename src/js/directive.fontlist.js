@@ -1,6 +1,7 @@
 /* global NAME_CONTROLLER, DIRECTION_NEXT, DIRECTION_PREVIOUS, KEY_DOWN */
 /* global KEY_UP, KEY_RIGHT, KEY_LEFT, PAGE_SIZE_DEFAULT, SCROLL_BUFFER, CLOSE_EVENT */
-/* global OPEN_EVENT, NAME_FONTSSERVICE */
+/* global OPEN_EVENT, NAME_FONTSSERVICE, FONTLIST_ENTRY_TYPE_FONT, WeakMap */
+/* global FONTLIST_ENTRY_TYPE_HEADLINE, FONTLIST_ENTRY_TYPE_TEXT */
 var NAME_JDFONTLIST = 'jdFontlist';
 var NAME_JDFONTLIST_CONTROLLER = NAME_JDFONTLIST + NAME_CONTROLLER;
 
@@ -11,8 +12,7 @@ fontselectModule.directive(NAME_JDFONTLIST, function() {
       fonts: '=',
       meta: '=',
       current: '=',
-      text: '=',
-      active: '='
+      text: '='
     },
     restrict: 'E',
     templateUrl: 'fontlist.html',
@@ -28,27 +28,35 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
   NAME_FONTSSERVICE,
   '$element',
   '$document',
-  /* jshint maxparams: 6 */
-  function($scope, $rootScope, $filter, fontsService, $element, $document) {
+  'jdfsCuratedFonts',
+  /* jshint maxparams: 7 */
+  function($scope, $rootScope, $filter, fontsService, $element, $document, jdfsCuratedFonts) {
   /* jshint maxparams: 3 */
-    var _filteredFonts = [];
-    var _sortedFonts = [];
-    var _searchedFonts = [];
-    var _categorizedFonts = [];
-    var _fontsInSubsets = [];
-    var _fontsInProviders = [];
+    var _fontlistEntries = [];
     var _lastPageCount = 0;
-    var _sortCache = {};
     var _scrollBuffer = 0;
-    var _forceNextFilters = false;
 
+    var ALL_FONTS_FILTER_STATE = {
+      forceNext: false,
+      fontsInProviders: [],
+      fontsInSubsets: [],
+      sortedFonts: [],
+      categorizedFonts: [],
+      searchedFonts: [],
+      sortCache: { search: $scope.current.search }
+    };
 
-    var page = $scope.page = $scope.meta.page = {
+    var CURATED_FONTS_FILTER_STATE = angular.copy(ALL_FONTS_FILTER_STATE);
+
+    var defaultPage = {
       size: PAGE_SIZE_DEFAULT,
       count: 0,
-      current: 0,
+      current:  0,
       currentAbs: 0
     };
+
+    var page = $scope.page = $scope.meta.page = angular.extend({}, defaultPage, $scope.meta.page);
+
     var fontmeta = $scope.meta.fonts = {
       total: 0,
       current: 0
@@ -61,7 +69,15 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
     }
 
     $scope.keyfocus = function(direction, amount) {
-      var index = _filteredFonts.indexOf($scope.current.font);
+      var index = -1;
+      var i, l = _fontlistEntries.length;
+      for (i = 0; i < l; i++) {
+        if (_fontlistEntries[i].content === $scope.current.font) {
+          index = i;
+          break;
+        }
+      }
+
       var pageoffset = page.size * page.current;
       var onPage = isOnCurrentPage(index);
 
@@ -71,12 +87,16 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
 
       index += (direction === DIRECTION_PREVIOUS ? -amount : amount);
 
-      if (!onPage && _filteredFonts[index + pageoffset]) {
+      if (!onPage && _fontlistEntries[index + pageoffset]) {
         index += pageoffset;
       }
 
-      if (_filteredFonts[index]) {
-        $scope.current.font = _filteredFonts[index];
+      while (_fontlistEntries[index] && _fontlistEntries[index].type !== FONTLIST_ENTRY_TYPE_FONT) {
+        index += (direction === DIRECTION_PREVIOUS ? -1 : 1);
+      }
+
+      if (_fontlistEntries[index]) {
+        $scope.current.font = _fontlistEntries[index].content;
 
         page.currentAbs = page.current = Math.floor(index / page.size);
 
@@ -85,10 +105,6 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
     };
 
     function keyDownHandler(event) {
-      if (!$scope.active) {
-        return;
-      }
-
       function prevent() {
         event.preventDefault();
         return false;
@@ -155,7 +171,7 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
           _scrollBuffer = 0;
         }
 
-        if ($scope.paginate(delta > 0 ? -subpage : subpage) !== false) {
+        if (delta !== 0 && $scope.paginate(delta > 0 ? -subpage : subpage) !== false) {
           $scope.$digest();
         }
       }
@@ -188,7 +204,8 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
     /**
      * Go to the next or previous page.
      *
-     * @param  {String} direction 'next' or 'prev'
+     * @param  {Number} amount subpage steps
+     * @param  {Object} $event jQuery scroll event
      * @return {void}
      */
     $scope.paginate = function(amount, $event) {
@@ -231,7 +248,7 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
       _updateCurrentPage();
 
       return (
-        (direction === DIRECTION_NEXT && (page.current + 1) * page.size < _filteredFonts.length) ||
+        (direction === DIRECTION_NEXT && (page.current + 1) * page.size < _fontlistEntries.length) ||
         (direction === DIRECTION_PREVIOUS && page.current > 0)
       );
     };
@@ -262,38 +279,40 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
      * @param {Array} fonts
      * @return {Array}
      */
-    function _filterProviders(fonts) {
+    function _filterProviders(fonts, filterState) {
       var providersString = JSON.stringify($scope.current.providers);
-      if (_forceNextFilters || _sortCache.providers !== providersString) {
-        _sortCache.providers = providersString;
-        _forceNextFilters = true;
+      if (filterState.forceNext || filterState.sortCache.providers !== providersString) {
+        filterState.sortCache.providers = providersString;
+        filterState.forceNext = true;
 
-        _fontsInProviders = fonts.filter(function(font) {
+        filterState.fontsInProviders = fonts.filter(function(font) {
           return $scope.current.providers[font.provider];
         });
       }
 
-      return _fontsInProviders;
+      return filterState.fontsInProviders;
     }
+
+
 
     /**
      * Apply current subset filters to given font list
      * @param  {Array} fonts
      * @return {Array}
      */
-    function _filterSubsets(fonts) {
+    function _filterSubsets(fonts, filterState) {
       var subSetString = JSON.stringify($scope.current.subsets);
-      if (_forceNextFilters || _sortCache.subsets !== subSetString) {
-        _sortCache.subsets = subSetString;
-        _forceNextFilters = true;
+      if (filterState.forceNext || filterState.sortCache.subsets !== subSetString) {
+        filterState.sortCache.subsets = subSetString;
+        filterState.forceNext = true;
 
-        _fontsInSubsets = $filter('hasAllSubsets')(
+        filterState.fontsInSubsets = $filter('hasAllSubsets')(
           fonts,
           $scope.current.subsets
         );
       }
 
-      return _fontsInSubsets;
+      return filterState.fontsInSubsets;
     }
 
     /**
@@ -301,26 +320,26 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
      * @param  {Array} fonts
      * @return {Array}
      */
-    function _filterSort(fonts) {
+    function _filterSort(fonts, filterState) {
       var attrDirection = $scope.current.sort.attr.dir;
       var direction = $scope.current.sort.direction;
 
-      if (_forceNextFilters ||
-        _sortCache.sortattr !== $scope.current.sort.attr.key ||
-        _sortCache.sortdir !== direction)
+      if (filterState.forceNext ||
+        filterState.sortCache.sortattr !== $scope.current.sort.attr.key ||
+        filterState.sortCache.sortdir !== direction)
       {
-        _sortCache.sortattr = $scope.current.sort.attr.key;
-        _sortCache.sortdir = direction;
-        _forceNextFilters = true;
+        filterState.sortCache.sortattr = $scope.current.sort.attr.key;
+        filterState.sortCache.sortdir = direction;
+        filterState.forceNext = true;
 
-        _sortedFonts = $filter('orderBy')(
+        filterState.sortedFonts = $filter('orderBy')(
           fonts,
           $scope.current.sort.attr.key,
           $scope.current.sort.direction ? attrDirection : !attrDirection
         );
       }
 
-      return _sortedFonts;
+      return filterState.sortedFonts;
     }
 
     /**
@@ -328,20 +347,20 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
      * @param  {Array} fonts
      * @return {Array}
      */
-    function _filterCategory(fonts) {
+    function _filterCategory(fonts, filterState) {
       var category = $scope.current.category;
-      if (_forceNextFilters || _sortCache.category !== category) {
-        _sortCache.category = category;
-        _forceNextFilters = true;
+      if (filterState.forceNext || filterState.sortCache.category !== category) {
+        filterState.sortCache.category = category;
+        filterState.forceNext = true;
 
         if (angular.isUndefined(category)) {
-          _categorizedFonts = fonts;
+          filterState.categorizedFonts = fonts;
         } else {
-          _categorizedFonts = $filter('filter')(fonts, {category: category}, true);
+          filterState.categorizedFonts = $filter('filter')(fonts, {category: category}, true);
         }
       }
 
-      return _categorizedFonts;
+      return filterState.categorizedFonts;
     }
 
     /**
@@ -349,12 +368,12 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
      * @param  {Array} fonts
      * @return {Array}
      */
-    function _filterSearch(fonts) {
+    function _filterSearch(fonts, filterState) {
       var search = $scope.current.search || '';
-      var searchTermChanged = _sortCache.search !== search;
-      if (_forceNextFilters || searchTermChanged) {
-        _sortCache.search = search;
-        _forceNextFilters = true;
+      var searchTermChanged = filterState.sortCache.search !== search;
+      if (filterState.forceNext || searchTermChanged) {
+        filterState.sortCache.search = search;
+        filterState.forceNext = true;
 
         /* Unset category filter so every font is visible. */
         if (searchTermChanged) {
@@ -362,34 +381,23 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
         }
 
         if (search.length) {
-          _searchedFonts = _priorize(
+          filterState.searchedFonts = _priorize(
             $filter('fuzzySearch')(fonts, {name: search}),
             search.toLowerCase()
           );
         } else {
-          _searchedFonts = fonts;
+          filterState.searchedFonts = fonts;
         }
       }
 
-      return _searchedFonts;
+      return filterState.searchedFonts;
     }
 
-    /**
-     * Apply the current filters to our internal font object.
-     *
-     * Ensure we only apply filters when the filter parameters
-     * or the source have changed.
-     *
-     * @return {Array}
-     */
-    $scope.getFilteredFonts = function() {
-      if (!angular.isArray($scope.fonts)) {
-        return [];
-      }
+    var EMPTY_FILTERED_FONTS = [];
 
-      var fonts = $scope.fonts;
-      _forceNextFilters = _sortCache.fontAmount !== fonts.length;
-      _sortCache.fontAmount = fonts.length;
+    function filterFontList(fonts, filterState) {
+      filterState.forceNext = filterState.sortCache.fontAmount !== fonts.length;
+      filterState.sortCache.fontAmount = fonts.length;
 
       var queue = [
         _filterProviders,
@@ -399,16 +407,64 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
         _filterCategory
       ];
 
+      var filteredList = fonts;
       for (var i = 0, l = queue.length; i < l; i++) {
-        fonts = queue[i](fonts);
+        filteredList = queue[i](filteredList, filterState);
       }
 
-      _filteredFonts = fonts;
+      return filteredList;
+    }
 
-      fontmeta.total = $scope.fonts.length;
-      fontmeta.current = _filteredFonts.length;
+    function convertFontToFontlistEntry(font) {
+      return {
+        type: FONTLIST_ENTRY_TYPE_FONT,
+        content: font
+      };
+    }
 
-      return _filteredFonts;
+    function createHeadlineEntry(content) {
+      return {
+        type: FONTLIST_ENTRY_TYPE_HEADLINE,
+        content: content
+      };
+    }
+
+    function createTextEntry(content) {
+      return {
+        type: FONTLIST_ENTRY_TYPE_TEXT,
+        content: content
+      };
+    }
+
+    var entryMap = new WeakMap();
+
+    $scope.getFontlistEntries = function() {
+      var filteredFonts = filterFontList($scope.fonts || EMPTY_FILTERED_FONTS, ALL_FONTS_FILTER_STATE);
+      if (!entryMap.has(filteredFonts)) {
+
+        var fontlistEntries = [];
+        if (filteredFonts.length === 0) {
+          fontlistEntries.push(createTextEntry($scope.text.noResultsLabel));
+        } else {
+          fontlistEntries = filteredFonts.map(convertFontToFontlistEntry);
+
+          if (jdfsCuratedFonts.length !== 0) {
+            var filteredCuratedFonts = filterFontList(jdfsCuratedFonts, CURATED_FONTS_FILTER_STATE);
+            fontlistEntries = [createHeadlineEntry($scope.text.curatedFontsListHeadline)]
+              .concat(filteredCuratedFonts.map(convertFontToFontlistEntry))
+              .concat([createHeadlineEntry($scope.text.allFontsListHeadline)])
+              .concat(fontlistEntries);
+          }
+        }
+
+        fontmeta.total = $scope.fonts.length;
+        fontmeta.current = filteredFonts.length;
+
+        _fontlistEntries = fontlistEntries;
+        entryMap.set(filteredFonts, fontlistEntries);
+      }
+
+      return entryMap.get(filteredFonts);
     };
 
     /**
@@ -468,8 +524,8 @@ fontselectModule.controller(NAME_JDFONTLIST_CONTROLLER, [
         return 0;
       }
 
-      if (_filteredFonts.length) {
-        page.count = Math.ceil(_filteredFonts.length / page.size);
+      if (_fontlistEntries.length) {
+        page.count = Math.ceil(_fontlistEntries.length / page.size);
       }
     }
 

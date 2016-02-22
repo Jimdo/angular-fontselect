@@ -5,8 +5,16 @@
 describe('fontselect directive', function() {
   'use strict';
 
-  var mainToggleButton, closeButton, mainSearchToggleButton, resetSearchButton,
-      $listScope, listElm, $scope, elm, fontsService;
+  var mainToggleButton, mainSearchToggleButton, resetSearchButton,
+      $scope, elm, fontsService;
+
+  function getListElm() {
+    return elm.find(LIST_CONTAINER_CLASS);
+  }
+
+  function getListScope() {
+    return getListElm().isolateScope();
+  }
 
   beforeEach(function() {
     initGlobals();
@@ -17,13 +25,9 @@ describe('fontselect directive', function() {
 
     fontsService = $injector.get(NAME_FONTSSERVICE);
 
-    listElm = elm.find(LIST_CONTAINER_CLASS);
-    $listScope = listElm.isolateScope();
-
     mainToggleButton = elm.find('button.jdfs-toggle');
     mainSearchToggleButton = elm.find('button.jdfs-toggle-search');
     resetSearchButton = elm.find('button.jdfs-reset-search');
-    closeButton = elm.find('button.jdfs-close');
   });
 
   it('should add an wrapper element with fs-main class.', function() {
@@ -41,7 +45,7 @@ describe('fontselect directive', function() {
 
     it('should have a close button', function() {
       mainToggleButton.click();
-      expect(closeButton.length).toBe(1);
+      expect(elm.find('button.jdfs-close').length).toBe(1);
     });
 
     it('should become active when button is clicked', function() {
@@ -131,11 +135,12 @@ describe('fontselect directive', function() {
   });
 
   it('should provide a list with some fonts', function() {
+    mainToggleButton.click();
     expect(elm.find('li').length).toBe(10);
   });
 
   it('should not show the font-select window when inactive', function() {
-    expect(elm.find('.jdfs-window.ng-hide').length).toBe(1);
+    expect(elm.find('.jdfs-window').length).toBe(0);
   });
 
   it('should show the font-select window when active', function() {
@@ -144,9 +149,13 @@ describe('fontselect directive', function() {
   });
 
   it('should expend if we add a new font via the fonts service', function() {
+    mainToggleButton.click();
+
     var length = elm.find('li').length;
 
     fontsService.add(ANOTHER_FONT);
+
+    var $listScope = getListScope();
 
     $listScope.page.size = 200;
     $listScope.$digest();
@@ -191,6 +200,10 @@ describe('fontselect directive', function() {
   });
 
   describe('providers', function() {
+    beforeEach(function() {
+      mainToggleButton.click();
+    });
+
     it('should have a wrapper for the provider selection', function() {
       expect(elm.find('.jdfs-provider-list').length).toBe(1);
     });
@@ -217,6 +230,10 @@ describe('fontselect directive', function() {
       return stack.join(',');
     }
 
+    beforeEach(function() {
+      mainToggleButton.click();
+    });
+
     it('should have radio buttons inside the list items', function() {
       expect(elm.find('li input[type="radio"]').length).toBe(10);
     });
@@ -228,7 +245,7 @@ describe('fontselect directive', function() {
     it('should link the labels to the radio buttons', function() {
       var radio = elm.find('input[type="radio"]');
       expect(radio.attr('id'))
-        .toBe(radio.siblings('label').first().attr('for'));
+        .toBe(radio.first().parent().attr('for'));
     });
 
     it('should provide a preview of the font', function() {
@@ -245,6 +262,7 @@ describe('fontselect directive', function() {
 
   describe('category filter', function() {
     it('should have a list with categories', function() {
+      mainToggleButton.click();
       expect(elm.find('button[ng-model="current.category"]').length).toBe(5);
     });
 
@@ -272,6 +290,10 @@ describe('fontselect directive', function() {
   });
 
   describe('character sets', function() {
+    beforeEach(function() {
+      mainToggleButton.click();
+    });
+
     it('should have a list of subsets', function() {
       expect(fontsService.getSubsets()).toBeInstanceOf(Object);
     });
@@ -296,6 +318,7 @@ describe('fontselect directive', function() {
   describe('filter caching', function() {
 
     var spies = {};
+    var $listScope;
 
     function expectAllSpiesCalled(times) {
       filterCalled('orderBy', times);
@@ -315,6 +338,9 @@ describe('fontselect directive', function() {
       spies.hasAllSubsets = jasmine.createSpy('hasAllSubsets');
 
       var $filter = $injector.get('$filter');
+      mainToggleButton.click();
+      var listElm = getListElm();
+      $listScope = getListScope();
 
       $controller(NAME_JDFONTLIST_CONTROLLER, {
         $element: listElm,
@@ -326,36 +352,36 @@ describe('fontselect directive', function() {
       });
 
       expectAllSpiesCalled(0);
-      $listScope.getFilteredFonts();
+      $listScope.getFontlistEntries();
       expectAllSpiesCalled(1);
     });
 
     it('should not execute the filters twice if the filters have not changed', function() {
-      $listScope.getFilteredFonts();
+      $listScope.getFontlistEntries();
       expectAllSpiesCalled(1);
     });
 
     it('should call all filters when we change the source', function() {
       $injector.get(NAME_FONTSSERVICE).add(ANOTHER_FONT);
-      $listScope.getFilteredFonts();
+      $listScope.getFontlistEntries();
       expectAllSpiesCalled(2);
     });
 
     it('should call all filters when we change the subset', function() {
       expectAllSpiesCalled(1);
       $listScope.current.subsets = {foo: true};
-      $listScope.getFilteredFonts();
+      $listScope.getFontlistEntries();
       expectAllSpiesCalled(2);
     });
 
     it('should call all next filters when we resort', function() {
       $listScope.current.category = CATEGORY_SERIF;
       $listScope.current.sort.direction = false;
-      $listScope.getFilteredFonts();
+      $listScope.getFontlistEntries();
       filterCalled('filter', 1);
       filterCalled('fuzzySearch', 2);
       $listScope.current.sort.attr = false;
-      $listScope.getFilteredFonts();
+      $listScope.getFontlistEntries();
       filterCalled('filter', 2);
       filterCalled('fuzzySearch', 3);
     });
@@ -363,24 +389,24 @@ describe('fontselect directive', function() {
     it('should not call orderBy filter when we change the category or search', function() {
       filterCalled('orderBy', 1);
       $listScope.current.category = CATEGORY_SERIF;
-      $listScope.getFilteredFonts();
+      $listScope.getFontlistEntries();
       filterCalled('orderBy', 1);
       $listScope.current.search = 'foob';
-      $listScope.getFilteredFonts();
+      $listScope.getFontlistEntries();
       filterCalled('orderBy', 1);
     });
 
     it('should not call filter filter when we search ', function() {
       filterCalled('filter', 0);
       $listScope.current.search = 'foob';
-      $listScope.getFilteredFonts();
+      $listScope.getFontlistEntries();
       filterCalled('filter', 0);
     });
 
     it('should call the fuzzySearch filter when we search', function() {
       filterCalled('fuzzySearch', 1);
       $listScope.current.search = 'olive';
-      $listScope.getFilteredFonts();
+      $listScope.getFontlistEntries();
       filterCalled('fuzzySearch', 2);
     });
 
@@ -388,7 +414,7 @@ describe('fontselect directive', function() {
       filterCalled('orderBy', 1);
       filterCalled('fuzzySearch', 1);
       $listScope.current.category = CATEGORY_SERIF;
-      $listScope.getFilteredFonts();
+      $listScope.getFontlistEntries();
       filterCalled('orderBy', 1);
       filterCalled('fuzzySearch', 1);
     });
@@ -401,12 +427,11 @@ describe('fontselect directive', function() {
 
       expect(fontsService._fonts[0].provider).not.toBe(PROVIDER_GOOGLE);
       spyOn(jdfsWebFont, 'load');
-      $listScope.page.size = 1;
-      $scope.current.font = googleFont;
-      $scope.$digest();
+
+      mainToggleButton.click();
 
       expect(jdfsWebFont.load).toHaveBeenCalled();
-      expect(jdfsWebFont.load.calls.argsFor(0)[0].google.text).toBe(googleFont.name);
+      expect(jdfsWebFont.load.calls.argsFor(1)[0].google.text).toBe(googleFont.name);
     });
   });
 
@@ -429,6 +454,7 @@ describe('fontselect directive', function() {
     var $buttons;
 
     beforeEach(function() {
+      mainToggleButton.click();
       $buttons = elm.find('.jdfs-footer-tab-toggle');
     });
 

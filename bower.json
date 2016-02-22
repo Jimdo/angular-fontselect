@@ -43,6 +43,7 @@
     "package.json"
   ],
   "dependencies": {
-    "angular": "^1.2.25 <= 1.4.1"
+    "angular": "^1.2.25 <= 1.4.1",
+    "weakmap-polyfill": "^1.0.1"
   }
 }

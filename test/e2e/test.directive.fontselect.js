@@ -7,8 +7,8 @@ describe('fontselect directive', function() {
     expect(element.all(by.css('.jdfs-toggle')).count()).toBe(1);
   });
 
-  it('should be invisible before toggle click', function() {
-    expect(element(by.className('jdfs-window')).isDisplayed()).toBe(false);
+  it('should not exist before toggle click', function() {
+    expect(element(by.className('jdfs-window')).isPresent()).toBe(false);
   });
 
   it('should become visible after toggle click', function() {
@@ -16,21 +16,22 @@ describe('fontselect directive', function() {
     expect(element(by.className('jdfs-window')).isDisplayed()).toBe(true);
   });
 
-  it('should become invisible when we click the close button', function() {
+  it('should not exist after we click the close button', function() {
     Helpers.toggle();
     element(by.css('button.jdfs-close')).click();
-    expect(element(by.className('jdfs-window')).isDisplayed()).toBe(false);
+    expect(element(by.className('jdfs-window')).isPresent()).toBe(false);
   });
 
   it('should have a list of checkboxes', function() {
+    Helpers.toggle();
     expect(element.all(by.css('li input')).count()).toBe(Helpers.PAGE_SIZE_DEFAULT);
   });
 
-  it('should become invisible when we click somewhere on the window', function() {
+  it('should not exist after we click somewhere on the window', function() {
     Helpers.toggle();
 
     element(by.tagName('body')).click();
-    expect(element(by.className('jdfs-window')).isDisplayed()).toBe(false);
+    expect(element(by.className('jdfs-window')).isPresent()).toBe(false);
   });
 
   describe('search', function() {
@@ -253,7 +254,7 @@ describe('fontselect directive', function() {
     it('should close the directive when we hit ESC', function() {
       expect(element(by.className('jdfs-window')).isDisplayed()).toBe(true);
       browser.actions().sendKeys(protractor.Key.ESCAPE).perform();
-      expect(element(by.className('jdfs-window')).isDisplayed()).toBe(false);
+      expect(element(by.className('jdfs-window')).isPresent()).toBe(false);
     });
 
     it('should select the first font when we hit the down arrow key', function() {

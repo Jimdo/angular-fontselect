@@ -1,5 +1,5 @@
 /* global LIST_CONTAINER_CLASS, PROVIDER_WEBSAFE, PROVIDER_GOOGLE, initGlobals */
-/* global CATEGORY_SERIF, createDirective, $injector */
+/* global CATEGORY_SERIF, createDirective, $rootScope */
 describe('fontlist directive', function() {
   'use strict';
 
@@ -10,6 +10,8 @@ describe('fontlist directive', function() {
     var d = createDirective();
     $scope = d.scope;
     elm = d.elm;
+    $scope.toggle();
+    $rootScope.$digest();
 
     fontlist = elm.find(LIST_CONTAINER_CLASS);
     $childScope = fontlist.children().first().scope();
@@ -26,21 +28,6 @@ describe('fontlist directive', function() {
 
   it('should have two pagination buttons', function() {
     expect(fontlist.find('button').length).toBe(2);
-  });
-
-  it('should load the preview fonts when we open the font selection', function() {
-    var jdfsWebFont = $injector.get('jdfsWebFont').getFontLoader();
-    spyOn(jdfsWebFont, 'load');
-    $scope.active = true;
-    $scope.$digest();
-    expect(jdfsWebFont.load).toHaveBeenCalled();
-  });
-
-  it('should not load the preview fonts when the font selection is not active', function() {
-    var jdfsWebFont = $injector.get('jdfsWebFont').getFontLoader();
-    spyOn(jdfsWebFont, 'load');
-    $scope.$digest();
-    expect(jdfsWebFont.load).not.toHaveBeenCalled();
   });
 
   describe('pagination', function() {
@@ -85,20 +72,20 @@ describe('fontlist directive', function() {
 
   describe('search', function() {
     it('should reduce a list of fonts to those matching our search input', function() {
-      var amountOfFonts = $childScope.getFilteredFonts().length;
+      var amountOfFonts = $childScope.getFontlistEntries().length;
       $scope.current.search = 'arl';
-      expect($childScope.getFilteredFonts().length).toBeLessThan(amountOfFonts);
+      expect($childScope.getFontlistEntries().length).toBeLessThan(amountOfFonts);
     });
 
     it('should sort results by relevance*', function() {
       /* *We're doing this by checking the amount of unmatched chars in the font name */
       $scope.current.search = 'rana';
-      expect($childScope.getFilteredFonts()[0].name).toBe('Verdana');
+      expect($childScope.getFontlistEntries()[0].content.name).toBe('Verdana');
     });
 
     it('should prioritize matches that start with the same char as the search', function() {
       $scope.current.search = 'dana';
-      expect($childScope.getFilteredFonts()[0].name).toBe('Droid Sans');
+      expect($childScope.getFontlistEntries()[0].content.name).toBe('Droid Sans');
     });
 
     it('should reset to first page when searching', function() {

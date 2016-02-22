@@ -46,7 +46,7 @@
 	{{active ? text.toggleCloseLabel : text.toggleOpenLabel}}
 </button>
 
-	<div class="jdfs-window" ng-show="active">
+	<div class="jdfs-window" ng-if="active">
 
 			<!-- <select ng-model="current.sort.attr" ng-options="text.sort[a.key] for a in sortAttrs"></select> -->
 			<!-- <button ng-click="reverseSort()">{{current.sort.direction ? text.sortdir.desc : text.sortdir.asc}}</button> -->
@@ -56,7 +56,6 @@
 			meta="meta"
 			current="current"
 			fonts="fonts"
-			active="active"
 		></jd-fontlist>
 
 

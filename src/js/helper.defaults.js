@@ -337,6 +337,8 @@ var TEXT_DEFAULTS = {
   pageLabel: 'Page: ',
   fontFabel: 'Fonts: ',
   closeButton: 'Close',
+  allFontsListHeadline: 'All Fonts',
+  curatedFontsListHeadline: 'Curated Fonts',
   page: {
     prev: '▲',
     next: '▼'
@@ -377,3 +379,7 @@ var TEXT_DEFAULTS = {
 fontselectModule.constant('jdFontselectConfig', {
   googleApiKey: window._jdFontselectGoogleApiKey || false
 });
+
+var FONTLIST_ENTRY_TYPE_HEADLINE = 'HEADLINE';
+var FONTLIST_ENTRY_TYPE_FONT = 'FONT';
+var FONTLIST_ENTRY_TYPE_TEXT = 'TEXT';
