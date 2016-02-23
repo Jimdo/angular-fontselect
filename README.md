@@ -10,6 +10,12 @@ A font selection directive for AngularJS - [Try it, it's beautiful](http://jimdo
 Breaking Changes
 ----------------
 
+### `0.13`
+
+  - Markup changes. See:
+     - [c8d4453](https://github.com/Jimdo/angular-fontselect/commit/c8d4453e48aaacb1c79b367a00f7cfe2f933bdd6)
+     - [7fffb26](https://github.com/Jimdo/angular-fontselect/commit/7fffb260572e935473b93a1e2ab8c81b6c89f27b)
+
 ### `0.12`
 
   - `jdFontselect.fonts` has been renamed to `jdFontselectFonts`
