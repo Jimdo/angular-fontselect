@@ -1,5 +1,5 @@
 /*!
- * angular-fontselect v0.13.2
+ * angular-fontselect v0.13.3
  * https://github.com/Jimdo/angular-fontselect
  *
  * A fontselect directive for AngularJS
@@ -1324,7 +1324,7 @@
 
       function getDeltaFromEvent(event) {
         var delta = event.wheelDeltaY || event.wheelDelta ||
-          event.deltaY * -1 || event.detail * -1;
+          event.deltaY * -1;
 
         if (!isFinite(delta) &&
           !angular.isUndefined(event.originalEvent)) {
