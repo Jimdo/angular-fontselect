@@ -1,5 +1,5 @@
 /*!
- * angular-fontselect v0.13.1
+ * angular-fontselect v0.13.2
  * https://github.com/Jimdo/angular-fontselect
  *
  * A fontselect directive for AngularJS
@@ -87,11 +87,7 @@
   display: inline-flex;
   margin: 0;
   list-style-type: none;
-  height: 10%;
   width: 100%;
-}
-.jdfs-fontlist li:last-child {
-  border-bottom: none;
 }
 .jdfs-fontlist-font {
   display: -webkit-box;
