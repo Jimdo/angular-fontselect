@@ -154,6 +154,8 @@ string, evaluating into a translation object.
   pageLabel: 'Page: ',
   fontFabel: 'Fonts: ',
   closeButton: 'Close',
+  allFontsListHeadline: 'All Fonts',
+  curatedFontsListHeadline: 'Curated Fonts',
   page: {
     prev: '▲',
     next: '▼'
@@ -198,6 +200,21 @@ string, evaluating into a translation object.
 
 This calls `$scope.myInitiation` with the font selection scope and element
 once the selection is initiated.
+
+
+#### Curated Fonts
+
+In order to show a list of curated fonts on top the list with all fonts
+configure the `jdfsCuratedFontsProvider` with an array of `${font.provider}.${font.key}`-strings.
+
+```js
+angular.module('myApp', ['jdFontselect'])
+  .config(function (jdfsCuratedFontsProvider) {
+    jdfsCuratedFontsProvider.setCuratedFontKeys(['websafe.timesnewroman', 'google.alef']);
+  });
+```
+
+see [demo](https://github.com/Jimdo/angular-fontselect/blob/4446fbc4ed7d56cd2e8c19cadcaadfa284b37dfe/demo/app.js#L5-L7)
 
 
 Contributing
