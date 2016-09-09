@@ -12,7 +12,7 @@ env:
   - secure: "NwL+WhB/vBbs3eTXrtp+18apGigtrVZEnP03+9cJeBHFfY27Rmy2J4VT6TilnYDYBqOiE+BDIszOFJo/cSx0buXd4ca5jlPcojNvipYiOXEp0RP+jLBUBXYPo7ocgwWI7xk2mIbdqgS1EXr0Fyr9nmFArriYThvSiXRsLN5Zs6s="
 
 install:
-  - npm install
+  - npm install && npm setup
 
 before_script:
   - export DISPLAY=:99.0

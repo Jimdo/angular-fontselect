@@ -28,7 +28,7 @@
   ],
   "scripts": {
     "test": "grunt test",
-    "postinstall": "bower install && grunt build"
+    "setup": "bower install && grunt build"
   },
   "repository": {
     "type": "git",
