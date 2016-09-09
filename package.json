@@ -4,6 +4,7 @@
   "description": "A fontselect directive for AngularJS",
   "homepage": "https://github.com/Jimdo/angular-fontselect",
   "author": "Jimdo GmbH",
+  "main": "dist/angular-fontselect.js",
   "maintainers": [
     "Hannes Diercks <hannes.diercks@jimdo.com>",
     "Lasse Diercks <lasse@jimdo.com>",
