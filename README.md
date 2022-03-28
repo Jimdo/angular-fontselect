@@ -1,4 +1,4 @@
-⚠️ This package is discontinued. Active maintenance is stopped and the package is as-is still available on npmjs.org.
+⚠️ This package is discontinued. Active maintenance is stopped and the package is as-is still available on npmjs.org. For details check out internal ticket CRE-1204.
 
 Angular Font-Selector
 =====================
