@@ -1,3 +1,5 @@
+⚠️ This package is discontinued. Active maintenance is stopped and the package is as-is still available on npmjs.org.
+
 Angular Font-Selector
 =====================
 
